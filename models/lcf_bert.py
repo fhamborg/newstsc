@@ -8,7 +8,7 @@ import torch.nn as nn
 import copy
 import numpy as np
 
-from pytorch_pretrained_bert.modeling import BertPooler, BertSelfAttention
+from transformers.modeling_bert import BertSelfAttention, BertPooler
 
 
 class SelfAttention(nn.Module):
