@@ -7,9 +7,8 @@ based on https://github.com/songyouwei/ABSA-PyTorch
 ```bash
 conda create --yes -n cope-tsa python=3.7
 conda activate cope-tsa
-conda install --yes pandas tqdm
+conda install --yes pandas tqdm scikit-learn
 conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch # w/o cuda: conda install --yes pytorch torchvision -c pytorch
-conda install --yes scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses
 conda install --yes -c anaconda requests
 ```
