@@ -3,11 +3,11 @@
 # author: yangheng <yangheng@m.scnu.edu.cn>
 # Copyright (C) 2019. All Rights Reserved.
 
+import copy
+
+import numpy as np
 import torch
 import torch.nn as nn
-import copy
-import numpy as np
-
 from transformers.modeling_bert import BertSelfAttention, BertPooler
 
 
@@ -24,6 +24,7 @@ class SelfAttention(nn.Module):
                                             dtype=np.float32), dtype=torch.float32).to(self.opt.device)
         SA_out = self.SA(inputs, zero_tensor)
         return self.tanh(SA_out)
+
 
 class LCF_BERT(nn.Module):
     def __init__(self, bert, opt):
@@ -75,10 +76,10 @@ class LCF_BERT(nn.Module):
             except:
                 continue
             distances = np.zeros(np.count_nonzero(texts[text_i]), dtype=np.float32)
-            for i in range(1, np.count_nonzero(texts[text_i])-1):
+            for i in range(1, np.count_nonzero(texts[text_i]) - 1):
                 if abs(i - asp_avg_index) + asp_len / 2 > self.opt.SRD:
-                    distances[i] = 1 - (abs(i - asp_avg_index)+asp_len/2
-                                        - self.opt.SRD)/np.count_nonzero(texts[text_i])
+                    distances[i] = 1 - (abs(i - asp_avg_index) + asp_len / 2
+                                        - self.opt.SRD) / np.count_nonzero(texts[text_i])
                 else:
                     distances[i] = 1
             for i in range(len(distances)):
