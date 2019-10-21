@@ -131,7 +131,7 @@ class Instructor:
 
     def _evaluate_acc_f1(self, data_loader):
         n_correct, n_total = 0, 0
-        t_targets_all, t_outputs_all = None, None
+        t_labels_all, t_predictions_all = None, None
 
         # switch model to evaluation mode
         self.model.eval()
@@ -139,23 +139,27 @@ class Instructor:
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
                 t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.inputs_cols]
-                t_targets = t_sample_batched['polarity'].to(self.opt.device)
-                t_outputs = self.model(t_inputs)
+                t_labels = t_sample_batched['polarity'].to(self.opt.device)
+                t_predictions = self.model(t_inputs)
 
-                n_correct += (torch.argmax(t_outputs, -1) == t_targets).sum().item()
-                n_total += len(t_outputs)
+                n_correct += (torch.argmax(t_predictions, -1) == t_labels).sum().item()
+                n_total += len(t_predictions)
 
-                if t_targets_all is None:
-                    t_targets_all = t_targets
-                    t_outputs_all = t_outputs
+                if t_labels_all is None:
+                    t_labels_all = t_labels
+                    t_predictions_all = t_predictions
                 else:
-                    t_targets_all = torch.cat((t_targets_all, t_targets), dim=0)
-                    t_outputs_all = torch.cat((t_outputs_all, t_outputs), dim=0)
+                    t_labels_all = torch.cat((t_labels_all, t_labels), dim=0)
+                    t_predictions_all = torch.cat((t_predictions_all, t_predictions), dim=0)
 
         acc = n_correct / n_total
 
-        f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[-1, 0, 1],
-                              average='macro')
+        logger.info("labels :     {}".format(t_labels_all))
+        logger.info("predictions: {}".format(t_predictions_all))
+
+        f1 = metrics.f1_score(t_labels_all.cpu(), torch.argmax(t_predictions_all, -1).cpu(), average='macro')
+        # f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[-1, 0, 1],
+        #                     average='macro')
         # orig was: labels=[0, 1, 2]
         return acc, f1
 
