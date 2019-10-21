@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# file: data_utils.py
-# author: songyouwei <youwei0314@gmail.com>
-# Copyright (C) 2018. All Rights Reserved.
-
 import os
 import pickle
 
@@ -21,7 +16,7 @@ logger = get_logger()
 
 def build_tokenizer(fnames, max_seq_len, dat_fname):
     if os.path.exists(dat_fname):
-        print('loading tokenizer:', dat_fname)
+        logger.info('loading tokenizer: {}'.format(dat_fname))
         tokenizer = pickle.load(open(dat_fname, 'rb'))
     else:
         text = ''
@@ -130,46 +125,48 @@ class Tokenizer4Bert:
         return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
 
 
-class DataPreparer:
+class TextTokenizer:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
 
-    def create_ml_data(self, text_left, target_phrase, text_right, polarity):
+    def create_text_to_indexes(self, text_left, target_phrase, text_right, polarity):
         text_raw_indices = self.tokenizer.text_to_sequence(text_left + " " + target_phrase + " " + text_right)
-        text_raw_without_aspect_indices = self.tokenizer.text_to_sequence(text_left + " " + text_right)
+        text_raw_without_target_phrase_indices = self.tokenizer.text_to_sequence(text_left + " " + text_right)
         text_left_indices = self.tokenizer.text_to_sequence(text_left)
-        text_left_with_aspect_indices = self.tokenizer.text_to_sequence(text_left + " " + target_phrase)
+        text_left_with_target_phrase_indices = self.tokenizer.text_to_sequence(text_left + " " + target_phrase)
         text_right_indices = self.tokenizer.text_to_sequence(text_right, reverse=True)
-        text_right_with_aspect_indices = self.tokenizer.text_to_sequence(" " + target_phrase + " " + text_right,
-                                                                         reverse=True)
-        aspect_indices = self.tokenizer.text_to_sequence(target_phrase)
+        text_right_with_target_phrase_indices = self.tokenizer.text_to_sequence(" " + target_phrase + " " + text_right,
+                                                                                reverse=True)
+        target_phrase_indices = self.tokenizer.text_to_sequence(target_phrase)
         left_context_len = np.sum(text_left_indices != 0)
-        aspect_len = np.sum(aspect_indices != 0)
-        aspect_in_text = torch.tensor([left_context_len.item(), (left_context_len + aspect_len - 1).item()])
-        polarity = int(polarity) + 1
+        target_phrase_len = np.sum(target_phrase_indices != 0)
+        target_phrase_in_text = torch.tensor(
+            [left_context_len.item(), (left_context_len + target_phrase_len - 1).item()])
+
+
 
         text_bert_indices = self.tokenizer.text_to_sequence(
             '[CLS] ' + text_left + " " + target_phrase + " " + text_right + ' [SEP] ' + target_phrase + " [SEP]")
-        bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (aspect_len + 1))
+        bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (target_phrase_len + 1))
         bert_segments_ids = pad_and_truncate(bert_segments_ids, self.tokenizer.max_seq_len)
 
         text_raw_bert_indices = self.tokenizer.text_to_sequence(
             "[CLS] " + text_left + " " + target_phrase + " " + text_right + " [SEP]")
-        aspect_bert_indices = self.tokenizer.text_to_sequence("[CLS] " + target_phrase + " [SEP]")
+        target_phrase_bert_indices = self.tokenizer.text_to_sequence("[CLS] " + target_phrase + " [SEP]")
 
         data = {
             'text_bert_indices': text_bert_indices,
             'bert_segments_ids': bert_segments_ids,
             'text_raw_bert_indices': text_raw_bert_indices,
-            'aspect_bert_indices': aspect_bert_indices,
+            'aspect_bert_indices': target_phrase_bert_indices,
             'text_raw_indices': text_raw_indices,
-            'text_raw_without_aspect_indices': text_raw_without_aspect_indices,
+            'text_raw_without_aspect_indices': text_raw_without_target_phrase_indices,
             'text_left_indices': text_left_indices,
-            'text_left_with_aspect_indices': text_left_with_aspect_indices,
+            'text_left_with_aspect_indices': text_left_with_target_phrase_indices,
             'text_right_indices': text_right_indices,
-            'text_right_with_aspect_indices': text_right_with_aspect_indices,
-            'aspect_indices': aspect_indices,
-            'aspect_in_text': aspect_in_text,
+            'text_right_with_aspect_indices': text_right_with_target_phrase_indices,
+            'aspect_indices': target_phrase_indices,
+            'aspect_in_text': target_phrase_in_text,
             'polarity': polarity,
         }
         return data
@@ -177,9 +174,9 @@ class DataPreparer:
 
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer):
-        polarity_associations = {'positive': 1, 'neutral': 0, 'negative': -1}
+        polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
 
-        self.data_preparer = DataPreparer(tokenizer)
+        self.data_preparer = TextTokenizer(tokenizer)
         self.data = []
 
         logger.info("reading dataset file {}".format(filepath))
@@ -202,7 +199,9 @@ class FXDataset(Dataset):
                 text_left = text[:start_char - 1]
                 text_right = text[end_char + 1:]
                 polarity = polarity_associations[task['label']]
-                data = self.data_preparer.create_ml_data(text_left, target_phrase, text_right, polarity)
+
+                # text to indexes
+                data = self.data_preparer.create_text_to_indexes(text_left, target_phrase, text_right, polarity)
                 self.data.append(data)
                 pbar.update(1)
 
@@ -212,26 +211,3 @@ class FXDataset(Dataset):
     def __len__(self):
         return len(self.data)
 
-
-class ABSADataset(Dataset):
-    def __init__(self, fname, tokenizer):
-        self.data_preparer = DataPreparer(tokenizer)
-
-        fin = open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
-        lines = fin.readlines()
-        fin.close()
-
-        all_data = []
-        for i in range(0, len(lines), 3):
-            text_left, _, text_right = [s.lower().strip() for s in lines[i].partition("$T$")]
-            aspect = lines[i + 1].lower().strip()
-            polarity = lines[i + 2].strip()
-            data = self.data_preparer.create_ml_data(text_left, aspect, text_right, polarity)
-            all_data.append(data)
-        self.data = all_data
-
-    def __getitem__(self, index):
-        return self.data[index]
-
-    def __len__(self):
-        return len(self.data)
