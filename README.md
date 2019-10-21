@@ -1,4 +1,6 @@
-# ABSA-PyTorch
+# Concept Perception - Target-dependent Sentiment Analysis (cope-tsa)
+
+based on https://github.com/songyouwei/ABSA-PyTorch
 
 > Aspect Based Sentiment Analysis, PyTorch Implementations.
 >
@@ -9,6 +11,15 @@
 [![Gitter](https://badges.gitter.im/ABSA-PyTorch/community.svg)](https://gitter.im/ABSA-PyTorch/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Requirement
+
+```bash
+conda create --yes -n tsaml python=3.7 pandas tqdm
+conda activate tsaml
+conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch
+conda install --yes scikit-learn
+conda install --yes -c conda-forge boto3 regex sacremoses
+conda install --yes -c anaconda requests
+```
 
 * pytorch >= 0.4.0
 * numpy >= 1.13.3
