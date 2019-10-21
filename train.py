@@ -86,8 +86,11 @@ class Instructor:
             logger.info('>' * 100)
             logger.info('epoch: {}'.format(epoch))
             n_correct, n_total, loss_total = 0, 0, 0
+
             # switch model to training mode
             self.model.train()
+
+            # train on batches
             for i_batch, sample_batched in enumerate(train_data_loader):
                 global_step += 1
                 # clear gradient accumulators
@@ -113,7 +116,7 @@ class Instructor:
             logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
 
             if dev_acc > max_dev_acc:
-                max_val_acc = dev_acc
+                max_dev_acc = dev_acc
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
                 path = 'state_dict/{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name,
@@ -121,16 +124,18 @@ class Instructor:
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
 
-            if dev_f1 > max_val_f1:
-                max_val_f1 = dev_f1
+            if dev_f1 > max_dev_f1:
+                max_dev_f1 = dev_f1
 
         return path
 
     def _evaluate_acc_f1(self, data_loader):
         n_correct, n_total = 0, 0
         t_targets_all, t_outputs_all = None, None
+
         # switch model to evaluation mode
         self.model.eval()
+
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
                 t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.inputs_cols]
@@ -148,8 +153,10 @@ class Instructor:
                     t_outputs_all = torch.cat((t_outputs_all, t_outputs), dim=0)
 
         acc = n_correct / n_total
-        f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[0, 1, 2],
+
+        f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[-1, 0, 1],
                               average='macro')
+        # orig was: labels=[0, 1, 2]
         return acc, f1
 
     def run(self):
