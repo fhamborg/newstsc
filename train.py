@@ -46,8 +46,8 @@ class Instructor:
         logger.info("loading datasets...")
         # self.trainset = ABSADataset(opt.dataset_file['train'], tokenizer)
         # self.testset = ABSADataset(opt.dataset_file['test'], tokenizer)
-        self.trainset = FXDataset(opt.datasetpath + 'train.jsonl', tokenizer)
-        self.testset = FXDataset(opt.datasetpath + 'dev.jsonl', tokenizer)
+        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer)
+        self.testset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer)
         logger.info("done")
         assert 0 <= opt.valset_ratio < 1
         if opt.valset_ratio > 0:
@@ -58,6 +58,8 @@ class Instructor:
 
         if opt.device.type == 'cuda':
             logger.info('cuda memory allocated: {}'.format(torch.cuda.memory_allocated(device=opt.device.index)))
+        else:
+            logger.info("not using cuda, using CPU instead")
         self._print_args()
 
     def _print_args(self):
@@ -123,7 +125,8 @@ class Instructor:
                 max_val_acc = val_acc
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
-                path = 'state_dict/{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset, round(val_acc, 4))
+                path = 'state_dict/{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name,
+                                                              round(val_acc, 4))
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
             if val_f1 > max_val_f1:
@@ -179,8 +182,8 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='aen_bert', type=str)
-    parser.add_argument('--datasetpath', default='datasets/poltsanews', type=str,
-                        help='path to the folder containing files called [train,dev,test].jsonl')
+    parser.add_argument('--dataset_name', default='poltsanews', type=str,
+                        help='name of the sub-folder in \'datasets\' containing files called [train,dev,test].jsonl')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -267,8 +270,10 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
-    if not opt.datasetpath.endswith('/'):
-        opt.datasetpath = opt.datasetpath + '/'
+
+    opt.dataset_path = os.path.join('datasets', opt.dataset_name)
+    if not opt.dataset_path.endswith('/'):
+        opt.dataset_path = opt.dataset_path + '/'
 
     opt.inputs_cols = input_colses[opt.model_name]
     opt.initializer = initializers[opt.initializer]
