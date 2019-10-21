@@ -55,7 +55,7 @@ class Cabasc(nn.Module):
         return memory
     
     def locationed_memory(self, memory, memory_len):
-        # based on the absolute distance to the first border word of the aspect
+        # based on the absolute distance to the first border word of the target_phrase
         '''
         # differ from description in paper here, but may be better
         for i in range(memory.size(0)):
@@ -79,7 +79,7 @@ class Cabasc(nn.Module):
         memory_len = torch.sum(text_raw_indices != 0, dim = -1)
         aspect_len = torch.sum(aspect_indices != 0, dim = -1)
         
-        # aspect representation
+        # target_phrase representation
         nonzeros_aspect = aspect_len.float()
         aspect = self.embed(aspect_indices)
         aspect = torch.sum(aspect, dim=1)

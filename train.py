@@ -2,30 +2,25 @@
 # file: train.py
 # author: songyouwei <youwei0314@gmail.com>
 # Copyright (C) 2018. All Rights Reserved.
-import logging
 import argparse
 import math
 import os
-import sys
-from time import strftime, localtime
 import random
-import numpy
 
-from sklearn import metrics
+import numpy
 import torch
 import torch.nn as nn
+from sklearn import metrics
 from torch.utils.data import DataLoader, random_split
 from transformers import BertModel
 
-from data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, ABSADataset
-
+from data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, FXDataset
+from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
-from models.aen import CrossEntropyLoss_LSR, AEN_BERT
+from models.aen import AEN_BERT, AEN_GloVe
 from models.bert_spc import BERT_SPC
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+logger = get_logger()
 
 
 class Instructor:
@@ -48,13 +43,16 @@ class Instructor:
                 dat_fname='{0}_{1}_embedding_matrix.dat'.format(str(opt.embed_dim), opt.dataset))
             self.model = opt.model_class(embedding_matrix, opt).to(opt.device)
 
-        logger.info("loading datasets")
-        self.trainset = ABSADataset(opt.dataset_file['train'], tokenizer)
-        self.testset = ABSADataset(opt.dataset_file['test'], tokenizer)
+        logger.info("loading datasets...")
+        # self.trainset = ABSADataset(opt.dataset_file['train'], tokenizer)
+        # self.testset = ABSADataset(opt.dataset_file['test'], tokenizer)
+        self.trainset = FXDataset(opt.datasetpath + 'train.jsonl', tokenizer)
+        self.testset = FXDataset(opt.datasetpath + 'dev.jsonl', tokenizer)
+        logger.info("done")
         assert 0 <= opt.valset_ratio < 1
         if opt.valset_ratio > 0:
             valset_len = int(len(self.trainset) * opt.valset_ratio)
-            self.trainset, self.valset = random_split(self.trainset, (len(self.trainset)-valset_len, valset_len))
+            self.trainset, self.valset = random_split(self.trainset, (len(self.trainset) - valset_len, valset_len))
         else:
             self.valset = self.testset
 
@@ -70,7 +68,8 @@ class Instructor:
                 n_trainable_params += n_params
             else:
                 n_nontrainable_params += n_params
-        logger.info('n_trainable_params: {0}, n_nontrainable_params: {1}'.format(n_trainable_params, n_nontrainable_params))
+        logger.info(
+            'n_trainable_params: {0}, n_nontrainable_params: {1}'.format(n_trainable_params, n_nontrainable_params))
         logger.info('> training arguments:')
         for arg in vars(self.opt):
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.opt, arg)))
@@ -103,8 +102,8 @@ class Instructor:
                 optimizer.zero_grad()
 
                 inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.inputs_cols]
-                outputs = self.model(inputs)
                 targets = sample_batched['polarity'].to(self.opt.device)
+                outputs = self.model(inputs)
 
                 loss = criterion(outputs, targets)
                 loss.backward()
@@ -154,7 +153,8 @@ class Instructor:
                     t_outputs_all = torch.cat((t_outputs_all, t_outputs), dim=0)
 
         acc = n_correct / n_total
-        f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[0, 1, 2], average='macro')
+        f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[0, 1, 2],
+                              average='macro')
         return acc, f1
 
     def run(self):
@@ -179,7 +179,8 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='aen_bert', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--datasetpath', default='datasets/poltsanews', type=str,
+                        help='path to the folder containing files called [train,dev,test].jsonl')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -197,7 +198,8 @@ def main():
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
     parser.add_argument('--seed', default=None, type=int, help='set seed for reproducibility')
-    parser.add_argument('--valset_ratio', default=0, type=float, help='set ratio between 0 and 1 for validation support')
+    parser.add_argument('--valset_ratio', default=0, type=float,
+                        help='set ratio between 0 and 1 for validation support')
     # The following parameters are only valid for the lcf-bert model
     parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
     # semantic-relative-distance, see the paper of LCF-BERT model
@@ -225,26 +227,13 @@ def main():
         'mgan': MGAN,
         'bert_spc': BERT_SPC,
         'aen_bert': AEN_BERT,
+        'aen_glove': AEN_GloVe,
         'lcf_bert': LCF_BERT,
         # default hyper-parameters for LCF-BERT model is as follws:
         # lr: 2e-5
         # l2: 1e-5
         # batch size: 16
         # num epochs: 5
-    }
-    dataset_files = {
-        'twitter': {
-            'train': './datasets/acl-14-short-data/train.raw',
-            'test': './datasets/acl-14-short-data/test.raw'
-        },
-        'restaurant': {
-            'train': './datasets/semeval14/Restaurants_Train.xml.seg',
-            'test': './datasets/semeval14/Restaurants_Test_Gold.xml.seg'
-        },
-        'laptop': {
-            'train': './datasets/semeval14/Laptops_Train.xml.seg',
-            'test': './datasets/semeval14/Laptops_Test_Gold.xml.seg'
-        }
     }
     input_colses = {
         'lstm': ['text_raw_indices'],
@@ -253,12 +242,14 @@ def main():
         'ian': ['text_raw_indices', 'aspect_indices'],
         'memnet': ['text_raw_without_aspect_indices', 'aspect_indices'],
         'ram': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
-        'cabasc': ['text_raw_indices', 'aspect_indices', 'text_left_with_aspect_indices', 'text_right_with_aspect_indices'],
+        'cabasc': ['text_raw_indices', 'aspect_indices', 'text_left_with_aspect_indices',
+                   'text_right_with_aspect_indices'],
         'tnet_lf': ['text_raw_indices', 'aspect_indices', 'aspect_in_text'],
         'aoa': ['text_raw_indices', 'aspect_indices'],
         'mgan': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
         'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
         'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
+        'aen_glove': ['text_raw_indices', 'aspect_indices'],
         'lcf_bert': ['text_bert_indices', 'bert_segments_ids', 'text_raw_bert_indices', 'aspect_bert_indices'],
     }
     initializers = {
@@ -276,15 +267,15 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
-    opt.dataset_file = dataset_files[opt.dataset]
+    if not opt.datasetpath.endswith('/'):
+        opt.datasetpath = opt.datasetpath + '/'
+
     opt.inputs_cols = input_colses[opt.model_name]
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
+
     opt.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') \
         if opt.device is None else torch.device(opt.device)
-
-    log_file = '{}-{}-{}.log'.format(opt.model_name, opt.dataset, strftime("%y%m%d-%H%M", localtime()))
-    logger.addHandler(logging.FileHandler(log_file))
 
     ins = Instructor(opt)
     ins.run()

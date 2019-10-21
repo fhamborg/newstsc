@@ -5,10 +5,18 @@
 
 import os
 import pickle
+
+import jsonlines
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+from tqdm import tqdm
 from transformers import BertTokenizer
+
+from fxlogger import get_logger
+
+# get logger
+logger = get_logger()
 
 
 def build_tokenizer(fnames, max_seq_len, dat_fname):
@@ -99,7 +107,7 @@ class Tokenizer(object):
         if self.lower:
             text = text.lower()
         words = text.split()
-        unknownidx = len(self.word2idx)+1
+        unknownidx = len(self.word2idx) + 1
         sequence = [self.word2idx[w] if w in self.word2idx else unknownidx for w in words]
         if len(sequence) == 0:
             sequence = [0]
@@ -122,8 +130,93 @@ class Tokenizer4Bert:
         return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
 
 
+class DataPreparer:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+
+    def create_ml_data(self, text_left, target_phrase, text_right, polarity):
+        text_raw_indices = self.tokenizer.text_to_sequence(text_left + " " + target_phrase + " " + text_right)
+        text_raw_without_aspect_indices = self.tokenizer.text_to_sequence(text_left + " " + text_right)
+        text_left_indices = self.tokenizer.text_to_sequence(text_left)
+        text_left_with_aspect_indices = self.tokenizer.text_to_sequence(text_left + " " + target_phrase)
+        text_right_indices = self.tokenizer.text_to_sequence(text_right, reverse=True)
+        text_right_with_aspect_indices = self.tokenizer.text_to_sequence(" " + target_phrase + " " + text_right,
+                                                                         reverse=True)
+        aspect_indices = self.tokenizer.text_to_sequence(target_phrase)
+        left_context_len = np.sum(text_left_indices != 0)
+        aspect_len = np.sum(aspect_indices != 0)
+        aspect_in_text = torch.tensor([left_context_len.item(), (left_context_len + aspect_len - 1).item()])
+        polarity = int(polarity) + 1
+
+        text_bert_indices = self.tokenizer.text_to_sequence(
+            '[CLS] ' + text_left + " " + target_phrase + " " + text_right + ' [SEP] ' + target_phrase + " [SEP]")
+        bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (aspect_len + 1))
+        bert_segments_ids = pad_and_truncate(bert_segments_ids, self.tokenizer.max_seq_len)
+
+        text_raw_bert_indices = self.tokenizer.text_to_sequence(
+            "[CLS] " + text_left + " " + target_phrase + " " + text_right + " [SEP]")
+        aspect_bert_indices = self.tokenizer.text_to_sequence("[CLS] " + target_phrase + " [SEP]")
+
+        data = {
+            'text_bert_indices': text_bert_indices,
+            'bert_segments_ids': bert_segments_ids,
+            'text_raw_bert_indices': text_raw_bert_indices,
+            'aspect_bert_indices': aspect_bert_indices,
+            'text_raw_indices': text_raw_indices,
+            'text_raw_without_aspect_indices': text_raw_without_aspect_indices,
+            'text_left_indices': text_left_indices,
+            'text_left_with_aspect_indices': text_left_with_aspect_indices,
+            'text_right_indices': text_right_indices,
+            'text_right_with_aspect_indices': text_right_with_aspect_indices,
+            'aspect_indices': aspect_indices,
+            'aspect_in_text': aspect_in_text,
+            'polarity': polarity,
+        }
+        return data
+
+
+class FXDataset(Dataset):
+    def __init__(self, filepath, tokenizer):
+        polarity_associations = {'positive': 1, 'neutral': 0, 'negative': -1}
+
+        self.data_preparer = DataPreparer(tokenizer)
+        self.data = []
+
+        logger.info("reading dataset file {}".format(filepath))
+
+        tasks = []
+        with jsonlines.open(filepath, 'r') as reader:
+            for task in reader:
+                tasks.append(task)
+
+        with tqdm(total=len(tasks)) as pbar:
+            for task in tasks:
+                text = task['text']
+                target_phrase = task['targetphrase']
+                outlet = task['outlet']
+                year_month_publish = task['year_month_publish']
+                example_id = task['example_id']
+                label = task['label']
+                start_char = task['targetphrase_in_sentence_start']
+                end_char = task['targetphrase_in_sentence_end']
+                text_left = text[:start_char - 1]
+                text_right = text[end_char + 1:]
+                polarity = polarity_associations[task['label']]
+                data = self.data_preparer.create_ml_data(text_left, target_phrase, text_right, polarity)
+                self.data.append(data)
+                pbar.update(1)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __len__(self):
+        return len(self.data)
+
+
 class ABSADataset(Dataset):
     def __init__(self, fname, tokenizer):
+        self.data_preparer = DataPreparer(tokenizer)
+
         fin = open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
         lines = fin.readlines()
         fin.close()
@@ -133,42 +226,7 @@ class ABSADataset(Dataset):
             text_left, _, text_right = [s.lower().strip() for s in lines[i].partition("$T$")]
             aspect = lines[i + 1].lower().strip()
             polarity = lines[i + 2].strip()
-
-            text_raw_indices = tokenizer.text_to_sequence(text_left + " " + aspect + " " + text_right)
-            text_raw_without_aspect_indices = tokenizer.text_to_sequence(text_left + " " + text_right)
-            text_left_indices = tokenizer.text_to_sequence(text_left)
-            text_left_with_aspect_indices = tokenizer.text_to_sequence(text_left + " " + aspect)
-            text_right_indices = tokenizer.text_to_sequence(text_right, reverse=True)
-            text_right_with_aspect_indices = tokenizer.text_to_sequence(" " + aspect + " " + text_right, reverse=True)
-            aspect_indices = tokenizer.text_to_sequence(aspect)
-            left_context_len = np.sum(text_left_indices != 0)
-            aspect_len = np.sum(aspect_indices != 0)
-            aspect_in_text = torch.tensor([left_context_len.item(), (left_context_len + aspect_len - 1).item()])
-            polarity = int(polarity) + 1
-
-            text_bert_indices = tokenizer.text_to_sequence('[CLS] ' + text_left + " " + aspect + " " + text_right + ' [SEP] ' + aspect + " [SEP]")
-            bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (aspect_len + 1))
-            bert_segments_ids = pad_and_truncate(bert_segments_ids, tokenizer.max_seq_len)
-
-            text_raw_bert_indices = tokenizer.text_to_sequence("[CLS] " + text_left + " " + aspect + " " + text_right + " [SEP]")
-            aspect_bert_indices = tokenizer.text_to_sequence("[CLS] " + aspect + " [SEP]")
-
-            data = {
-                'text_bert_indices': text_bert_indices,
-                'bert_segments_ids': bert_segments_ids,
-                'text_raw_bert_indices': text_raw_bert_indices,
-                'aspect_bert_indices': aspect_bert_indices,
-                'text_raw_indices': text_raw_indices,
-                'text_raw_without_aspect_indices': text_raw_without_aspect_indices,
-                'text_left_indices': text_left_indices,
-                'text_left_with_aspect_indices': text_left_with_aspect_indices,
-                'text_right_indices': text_right_indices,
-                'text_right_with_aspect_indices': text_right_with_aspect_indices,
-                'aspect_indices': aspect_indices,
-                'aspect_in_text': aspect_in_text,
-                'polarity': polarity,
-            }
-
+            data = self.data_preparer.create_ml_data(text_left, aspect, text_right, polarity)
             all_data.append(data)
         self.data = all_data
 
