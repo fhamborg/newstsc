@@ -280,11 +280,13 @@ def main():
 
     if torch.cuda.is_available():
         opt.device = torch.device('cuda')
+        logger.info("GPGPU enabled. CUDA dev info: {}".format(str(opt.device)))
     else:
         opt.device = torch.device('cpu')
 
     if opt.device.type == 'cuda':
-        logger.info('cuda memory allocated: {}'.format(torch.cuda.memory_allocated(device=opt.device.index)))
+        logger.info(
+            'using GPU (cuda memory allocated: {})'.format(torch.cuda.memory_allocated(device=opt.device.index)))
     else:
         logger.info("using CPU (cuda not available)")
 
