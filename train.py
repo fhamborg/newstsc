@@ -20,6 +20,7 @@ from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
 from models.aen import AEN_BERT, AEN_GloVe
 from models.bert_spc import BERT_SPC
+from plotter_utils import create_save_plotted_confusion_matrices
 
 logger = get_logger()
 
@@ -49,6 +50,8 @@ class Instructor:
         self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer)
         self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer)
         logger.info("loaded three datasets")
+
+        self.expected_labels = [0, 1, 2]
 
         self._print_args()
 
@@ -112,26 +115,32 @@ class Instructor:
                     train_loss = loss_total / n_total
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-            dev_acc, dev_f1, dev_confusion_matrix = self._evaluate_acc_f1_confmat(dev_data_loader)
+            dev_acc, dev_f1, dev_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(dev_data_loader)
             logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
             logger.info("confusion matrix")
             logger.info(dev_confusion_matrix)
 
             if dev_acc > max_dev_acc:
+                logger.info("model yields best performance so far, saving to disk...")
                 max_dev_acc = dev_acc
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
-                path = 'state_dict/{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name,
-                                                              round(dev_acc, 4))
+                filename = '{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name, round(dev_acc, 4))
+                path = 'state_dict/' + filename
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
+
+                # save confusion matrices
+                create_save_plotted_confusion_matrices(dev_confusion_matrix, expected_labels=self.expected_labels,
+                                                       basefilename=filename)
+                logger.info("created confusion matrices in folder statistics/")
 
             if dev_f1 > max_dev_f1:
                 max_dev_f1 = dev_f1
 
         return path
 
-    def _evaluate_acc_f1_confmat(self, data_loader):
+    def _evaluate_acc_f1_confusionmatrix(self, data_loader):
         n_correct, n_total = 0, 0
         t_labels_all, t_outputs_all = None, None
 
@@ -161,8 +170,9 @@ class Instructor:
         logger.debug("labels :     {}".format(t_labels_all))
         logger.debug("predictions: {}".format(t_predictions_all))
 
-        f1 = metrics.f1_score(t_labels_all.cpu(), t_predictions_all, labels=[0, 1, 2], average='macro')
-        confusion_mat = metrics.multilabel_confusion_matrix(t_labels_all.cpu(), t_predictions_all)
+        f1 = metrics.f1_score(t_labels_all.cpu(), t_predictions_all, labels=self.expected_labels, average='macro')
+        confusion_mat = metrics.multilabel_confusion_matrix(t_labels_all.cpu(), t_predictions_all,
+                                                            labels=self.expected_labels)
 
         return acc, f1, confusion_mat
 
@@ -190,7 +200,7 @@ class Instructor:
         # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
         # do the actual evaluation
-        test_acc, test_f1, test_confusion_matrix = self._evaluate_acc_f1_confmat(test_data_loader)
+        test_acc, test_f1, test_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(test_data_loader)
         logger.info("evaluation finished.")
         logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
 

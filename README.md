@@ -9,7 +9,7 @@ conda create --yes -n cope-tsa python=3.7
 conda activate cope-tsa
 conda install --yes pandas tqdm scikit-learn
 conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch # w/o cuda: conda install --yes pytorch torchvision -c pytorch
-conda install --yes -c conda-forge boto3 regex sacremoses jsonlines
+conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib
 conda install --yes -c anaconda requests
 conda install --yes  -c conda-forge transformers
 ```
@@ -22,6 +22,13 @@ conda install --yes  -c conda-forge transformers
   * extract the [glove.twitter.27B.zip](http://nlp.stanford.edu/data/wordvecs/glove.twitter.27B.zip) and [glove.42B.300d.zip](http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip) to the root directory
 * pytorch-pretrained-bert 0.6.1
   * See [pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT) for more detail.
+
+## development tips
+
+you may want to mount a remote folder via ssh, so that you can locally access a server's files
+
+* follow: https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh
+
 
 ## Usage
 
