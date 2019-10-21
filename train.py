@@ -112,8 +112,10 @@ class Instructor:
                     train_loss = loss_total / n_total
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-            dev_acc, dev_f1 = self._evaluate_acc_f1(dev_data_loader)
+            dev_acc, dev_f1, dev_confusion_matrix = self._evaluate_acc_f1_confmat(dev_data_loader)
             logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
+            logger.info("confusion matrix")
+            logger.info(dev_confusion_matrix)
 
             if dev_acc > max_dev_acc:
                 max_dev_acc = dev_acc
@@ -129,7 +131,7 @@ class Instructor:
 
         return path
 
-    def _evaluate_acc_f1(self, data_loader):
+    def _evaluate_acc_f1_confmat(self, data_loader):
         n_correct, n_total = 0, 0
         t_labels_all, t_outputs_all = None, None
 
@@ -160,8 +162,9 @@ class Instructor:
         logger.debug("predictions: {}".format(t_predictions_all))
 
         f1 = metrics.f1_score(t_labels_all.cpu(), t_predictions_all, labels=[0, 1, 2], average='macro')
+        confusion_mat = metrics.multilabel_confusion_matrix(t_labels_all.cpu(), t_predictions_all)
 
-        return acc, f1
+        return acc, f1, confusion_mat
 
     def run(self):
         # Loss and Optimizer
@@ -187,7 +190,7 @@ class Instructor:
         # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
         # do the actual evaluation
-        test_acc, test_f1 = self._evaluate_acc_f1(test_data_loader)
+        test_acc, test_f1, test_confusion_matrix = self._evaluate_acc_f1_confmat(test_data_loader)
         logger.info("evaluation finished.")
         logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
 
