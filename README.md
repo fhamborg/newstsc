@@ -5,8 +5,8 @@ based on https://github.com/songyouwei/ABSA-PyTorch
 ## Requirements
 
 ```bash
-conda create --yes -n copetsa python=3.7 pandas tqdm
-conda activate copetsa
+conda create --yes -n cope-tsa python=3.7 pandas tqdm
+conda activate cope-tsa
 conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch
 conda install --yes scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses
