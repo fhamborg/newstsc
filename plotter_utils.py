@@ -4,11 +4,10 @@ from sklearn.metrics import multilabel_confusion_matrix
 
 
 def create_save_plotted_confusion_matrices(multilabel_confusion_matrices, expected_labels, basefilename):
-    # based on https://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
     assert len(expected_labels) == multilabel_confusion_matrices.shape[0]
 
     for index, label_class in enumerate(expected_labels):
-        binary_expected_labels = [label_class, "not_" + label_class]
+        binary_expected_labels = [str(label_class), "not_" + str(label_class)]
         confusion_matrix = multilabel_confusion_matrices[index]
         ax, title = plot_confusion_matrix(confusion_matrix, binary_expected_labels, normalize=False,
                                           title='Label={}'.format(label_class))
@@ -19,6 +18,7 @@ def create_save_plotted_confusion_matrices(multilabel_confusion_matrices, expect
 def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix. Normalization can be applied by setting `normalize=True`.
+    based on https://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
     """
     if not title:
         if normalize:
