@@ -2,15 +2,7 @@
 
 based on https://github.com/songyouwei/ABSA-PyTorch
 
-> Aspect Based Sentiment Analysis, PyTorch Implementations.
->
-> 基于方面的情感分析，使用PyTorch实现。
-
-![LICENSE](https://img.shields.io/packagist/l/doctrine/orm.svg)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
-[![Gitter](https://badges.gitter.im/ABSA-PyTorch/community.svg)](https://gitter.im/ABSA-PyTorch/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
-## Requirement
+## Requirements
 
 ```bash
 conda create --yes -n tsaml python=3.7 pandas tqdm
