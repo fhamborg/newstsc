@@ -155,7 +155,7 @@ class Instructor:
         acc = n_correct / n_total
 
         logger.info("labels :     {}".format(t_labels_all))
-        logger.info("predictions: {}".format(t_predictions_all))
+        logger.info("predictions: {}".format(torch.argmax(t_predictions_all, -1).cpu()))
 
         f1 = metrics.f1_score(t_labels_all.cpu(), torch.argmax(t_predictions_all, -1).cpu(), average='macro')
         # f1 = metrics.f1_score(t_targets_all.cpu(), torch.argmax(t_outputs_all, -1).cpu(), labels=[-1, 0, 1],
