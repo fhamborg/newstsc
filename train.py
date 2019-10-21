@@ -85,6 +85,7 @@ class Instructor:
         max_dev_f1 = 0
         global_step = 0
         path = None
+        filename = None
         for epoch in range(self.opt.num_epoch):
             logger.info('>' * 100)
             logger.info('epoch: {}'.format(epoch))
@@ -138,7 +139,7 @@ class Instructor:
             if dev_f1 > max_dev_f1:
                 max_dev_f1 = dev_f1
 
-        return path
+        return path, filename
 
     def _evaluate_acc_f1_confusionmatrix(self, data_loader):
         n_correct, n_total = 0, 0
@@ -189,7 +190,7 @@ class Instructor:
         self._reset_params()
         logger.info("starting training...")
         time_training_start = time.time()
-        best_model_path = self._train(criterion, optimizer, train_data_loader, dev_data_loader)
+        best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, dev_data_loader)
         time_training_elapsed_mins = (time.time() - time_training_start) // 60
         logger.info("training finished. duration={}mins".format(time_training_elapsed_mins))
 
@@ -203,6 +204,11 @@ class Instructor:
         test_acc, test_f1, test_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(test_data_loader)
         logger.info("evaluation finished.")
         logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
+
+        # save confusion matrices
+        create_save_plotted_confusion_matrices(test_confusion_matrix, expected_labels=self.expected_labels,
+                                               basefilename=best_model_filename + "_testset")
+        logger.info("created confusion matrices in folder statistics/")
 
 
 def main():
