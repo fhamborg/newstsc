@@ -9,8 +9,9 @@ conda create --yes -n cope-tsa python=3.7
 conda activate cope-tsa
 conda install --yes pandas tqdm scikit-learn
 conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch # w/o cuda: conda install --yes pytorch torchvision -c pytorch
-conda install --yes -c conda-forge boto3 regex sacremoses
+conda install --yes -c conda-forge boto3 regex sacremoses jsonlines
 conda install --yes -c anaconda requests
+conda install --yes  -c conda-forge transformers
 ```
 
 * pytorch >= 0.4.0
