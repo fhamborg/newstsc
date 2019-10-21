@@ -6,12 +6,13 @@ import argparse
 import math
 import os
 import random
+import time
 
 import numpy
 import torch
 import torch.nn as nn
 from sklearn import metrics
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 from transformers import BertModel
 
 from data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, FXDataset
@@ -43,23 +44,12 @@ class Instructor:
                 dat_fname='{0}_{1}_embedding_matrix.dat'.format(str(opt.embed_dim), opt.dataset))
             self.model = opt.model_class(embedding_matrix, opt).to(opt.device)
 
-        logger.info("loading datasets...")
-        # self.trainset = ABSADataset(opt.dataset_file['train'], tokenizer)
-        # self.testset = ABSADataset(opt.dataset_file['test'], tokenizer)
+        logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
         self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer)
-        self.testset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer)
-        logger.info("done")
-        assert 0 <= opt.valset_ratio < 1
-        if opt.valset_ratio > 0:
-            valset_len = int(len(self.trainset) * opt.valset_ratio)
-            self.trainset, self.valset = random_split(self.trainset, (len(self.trainset) - valset_len, valset_len))
-        else:
-            self.valset = self.testset
+        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer)
+        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer)
+        logger.info("loaded three datasets")
 
-        if opt.device.type == 'cuda':
-            logger.info('cuda memory allocated: {}'.format(torch.cuda.memory_allocated(device=opt.device.index)))
-        else:
-            logger.info("not using cuda, using CPU instead")
         self._print_args()
 
     def _print_args(self):
@@ -167,14 +157,25 @@ class Instructor:
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
 
         train_data_loader = DataLoader(dataset=self.trainset, batch_size=self.opt.batch_size, shuffle=True)
+        dev_data_loader = DataLoader(dataset=self.devset, batch_size=self.opt.batch_size, shuffle=False)
         test_data_loader = DataLoader(dataset=self.testset, batch_size=self.opt.batch_size, shuffle=False)
-        val_data_loader = DataLoader(dataset=self.valset, batch_size=self.opt.batch_size, shuffle=False)
 
         self._reset_params()
-        best_model_path = self._train(criterion, optimizer, train_data_loader, val_data_loader)
+        logger.info("starting training...")
+        time_training_start = time.time()
+        best_model_path = self._train(criterion, optimizer, train_data_loader, dev_data_loader)
+        time_training_elapsed_mins = (time.time() - time_training_start) // 60
+        logger.info("training finished. duration={}mins".format(time_training_elapsed_mins))
+
+        logger.info("loading model that performed best during training: {}".format(best_model_path))
         self.model.load_state_dict(torch.load(best_model_path))
+
+        logger.info("evaluating best model on test-set")
+        # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
+        # do the actual evaluation
         test_acc, test_f1 = self._evaluate_acc_f1(test_data_loader)
+        logger.info("evaluation finished.")
         logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
 
 
@@ -201,8 +202,6 @@ def main():
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
     parser.add_argument('--seed', default=None, type=int, help='set seed for reproducibility')
-    parser.add_argument('--valset_ratio', default=0, type=float,
-                        help='set ratio between 0 and 1 for validation support')
     # The following parameters are only valid for the lcf-bert model
     parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
     # semantic-relative-distance, see the paper of LCF-BERT model
@@ -279,8 +278,15 @@ def main():
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
 
-    opt.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') \
-        if opt.device is None else torch.device(opt.device)
+    if torch.cuda.is_available():
+        opt.device = torch.device('cuda')
+    else:
+        opt.device = torch.device('cpu')
+
+    if opt.device.type == 'cuda':
+        logger.info('cuda memory allocated: {}'.format(torch.cuda.memory_allocated(device=opt.device.index)))
+    else:
+        logger.info("using CPU (cuda not available)")
 
     ins = Instructor(opt)
     ins.run()
