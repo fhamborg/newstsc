@@ -78,8 +78,8 @@ class Instructor:
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader):
-        max_val_acc = 0
-        max_val_f1 = 0
+        max_dev_acc = 0
+        max_dev_f1 = 0
         global_step = 0
         path = None
         for epoch in range(self.opt.num_epoch):
@@ -109,18 +109,20 @@ class Instructor:
                     train_loss = loss_total / n_total
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-            val_acc, val_f1 = self._evaluate_acc_f1(dev_data_loader)
-            logger.info('> val_acc: {:.4f}, val_f1: {:.4f}'.format(val_acc, val_f1))
-            if val_acc > max_val_acc:
-                max_val_acc = val_acc
+            dev_acc, dev_f1 = self._evaluate_acc_f1(dev_data_loader)
+            logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
+
+            if dev_acc > max_dev_acc:
+                max_val_acc = dev_acc
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
                 path = 'state_dict/{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name,
-                                                              round(val_acc, 4))
+                                                              round(dev_acc, 4))
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
-            if val_f1 > max_val_f1:
-                max_val_f1 = val_f1
+
+            if dev_f1 > max_val_f1:
+                max_val_f1 = dev_f1
 
         return path
 
