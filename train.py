@@ -280,7 +280,7 @@ def main():
 
     if torch.cuda.is_available():
         opt.device = torch.device('cuda')
-        logger.info("GPGPU enabled. CUDA dev info: {}".format(str(opt.device)))
+        logger.info("GPGPU enabled. CUDA dev index: {}".format(opt.device.index))
     else:
         opt.device = torch.device('cpu')
 
