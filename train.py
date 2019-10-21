@@ -77,7 +77,7 @@ class Instructor:
                             stdv = 1. / math.sqrt(p.shape[0])
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
-    def _train(self, criterion, optimizer, train_data_loader, val_data_loader):
+    def _train(self, criterion, optimizer, train_data_loader, dev_data_loader):
         max_val_acc = 0
         max_val_f1 = 0
         global_step = 0
@@ -109,7 +109,7 @@ class Instructor:
                     train_loss = loss_total / n_total
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-            val_acc, val_f1 = self._evaluate_acc_f1(val_data_loader)
+            val_acc, val_f1 = self._evaluate_acc_f1(dev_data_loader)
             logger.info('> val_acc: {:.4f}, val_f1: {:.4f}'.format(val_acc, val_f1))
             if val_acc > max_val_acc:
                 max_val_acc = val_acc
