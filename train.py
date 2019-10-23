@@ -167,7 +167,7 @@ class Instructor:
 
     def run(self):
         # Loss and Optimizer
-        class_weights = torch.tensor([1 / 82, 1 / 528, 1 / 10])
+        class_weights = torch.tensor([1 / 82, 1 / 528, 1 / 10]).to(opt.device)
         criterion = nn.CrossEntropyLoss(weight=class_weights)
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
