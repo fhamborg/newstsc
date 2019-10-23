@@ -109,11 +109,11 @@ class AEN_DISTILBERT(nn.Module):
         target_len = torch.sum(target != 0, dim=-1)
         context = self.squeeze_embedding(context, context_len)
         # context, _ = self.bert(context, output_all_encoded_layers=False)
-        context = self.distilbert(context)
+        context = self.distilbert(context)[0]
         context = self.dropout(context)
         target = self.squeeze_embedding(target, target_len)
         # target, _ = self.bert(target, output_all_encoded_layers=False)
-        target = self.distilbert(target)
+        target = self.distilbert(target)[0]
         target = self.dropout(target)
 
         hc, _ = self.attn_k(context, context)

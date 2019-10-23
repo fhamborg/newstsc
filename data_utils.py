@@ -192,9 +192,8 @@ class TextTokenizer:
 
 
 class FXDataset(Dataset):
-    def __init__(self, filepath, tokenizer):
-        self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
-
+    def __init__(self, filepath, tokenizer, named_polarity_to_class_number):
+        self.polarity_associations = named_polarity_to_class_number
         self.data_preparer = TextTokenizer(tokenizer)
         self.data = []
 
@@ -207,7 +206,7 @@ class FXDataset(Dataset):
 
         if DEV_MODE:
             logger.info("devmode=True: truncating dataset to 20 lines")
-            tasks = tasks[:20]
+            tasks = tasks[:60]
 
         with tqdm(total=len(tasks)) as pbar:
             for task in tasks:

@@ -11,11 +11,11 @@ import time
 import numpy
 import torch
 import torch.nn as nn
-from sklearn import metrics
 from torch.utils.data import DataLoader
 from transformers import BertModel, DistilBertModel
 
 from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
+from evaluator import Evaluator
 from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
 from models.aen import AEN_BERT, AEN_GloVe, AEN_DISTILBERT
@@ -40,13 +40,15 @@ class Instructor:
             self.model = opt.model_class(pretrained_model, opt).to(opt.device)
         logger.info("initialized pretrained model: {}".format(opt.model_name))
 
-        logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
-        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer)
-        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer)
-        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer)
-        logger.info("loaded three datasets")
+        self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
+        self.sorted_expected_label_values = [0, 1, 2]
+        self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
-        self.expected_labels = [0, 1, 2]
+        logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
+        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer, self.polarity_associations)
+        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer, self.polarity_associations)
+        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer, self.polarity_associations)
+        logger.info("loaded dataset {}".format(opt.dataset_name))
 
         self._print_args()
 
@@ -76,8 +78,7 @@ class Instructor:
                             torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader):
-        max_dev_acc = 0
-        max_dev_f1 = 0
+        max_dev_snem = 0
         global_step = 0
         path = None
         filename = None
@@ -111,12 +112,14 @@ class Instructor:
                     train_loss = loss_total / n_total
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-            dev_acc, dev_f1, dev_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(dev_data_loader)
-            logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
+            dev_stats = self._evaluate(dev_data_loader)
+            self.evaluator.log_statistics(dev_stats)
 
-            if dev_acc > max_dev_acc:
+            dev_snem = dev_stats[self.opt.snem]
+
+            if dev_snem > max_dev_snem:
                 logger.info("model yields best performance so far, saving to disk...")
-                max_dev_acc = dev_acc
+                max_dev_snem = dev_snem
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
                 filename = '{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name, round(dev_acc, 4))
@@ -125,17 +128,14 @@ class Instructor:
                 logger.info('>> saved: {}'.format(path))
 
                 # save confusion matrices
-                create_save_plotted_confusion_matrices(dev_confusion_matrix, expected_labels=self.expected_labels,
+                create_save_plotted_confusion_matrices(dev_stats['multilabel_confusion_matrix'],
+                                                       expected_labels=self.sorted_expected_label_values,
                                                        basefilename=filename)
                 logger.info("created confusion matrices in folder statistics/")
 
-            if dev_f1 > max_dev_f1:
-                max_dev_f1 = dev_f1
-
         return path, filename
 
-    def _evaluate_acc_f1_confusionmatrix(self, data_loader):
-        n_correct, n_total = 0, 0
+    def _evaluate(self, data_loader):
         t_labels_all, t_outputs_all = None, None
 
         # switch model to evaluation mode
@@ -147,9 +147,6 @@ class Instructor:
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
                 t_outputs = self.model(t_inputs)
 
-                n_correct += (torch.argmax(t_outputs, -1) == t_labels).sum().item()
-                n_total += len(t_outputs)
-
                 if t_labels_all is None:
                     t_labels_all = t_labels
                     t_outputs_all = t_outputs
@@ -157,18 +154,13 @@ class Instructor:
                     t_labels_all = torch.cat((t_labels_all, t_labels), dim=0)
                     t_outputs_all = torch.cat((t_outputs_all, t_outputs), dim=0)
 
-        acc = n_correct / n_total
+        # softmax: get predictions from outputs
+        y_pred = torch.argmax(t_outputs_all, -1).cpu()
+        y_true = t_labels_all.cpu()
 
-        t_predictions_all = torch.argmax(t_outputs_all, -1).cpu()
+        stats = self.evaluator.calc_statistics(y_true, y_pred)
 
-        logger.debug("labels :     {}".format(t_labels_all))
-        logger.debug("predictions: {}".format(t_predictions_all))
-
-        f1 = metrics.f1_score(t_labels_all.cpu(), t_predictions_all, labels=self.expected_labels, average='macro')
-        confusion_mat = metrics.multilabel_confusion_matrix(t_labels_all.cpu(), t_predictions_all,
-                                                            labels=self.expected_labels)
-
-        return acc, f1, confusion_mat
+        return stats
 
     def run(self):
         # Loss and Optimizer
@@ -194,9 +186,12 @@ class Instructor:
         # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
         # do the actual evaluation
-        test_acc, test_f1, test_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(test_data_loader)
+        test_stats = self._evaluate(test_data_loader)
+        test_snem = test_stats[self.opt.snem]
+        test_confusion_matrix = test_stats['multilabel_confusion_matrix']
+
         logger.info("evaluation finished.")
-        logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
+        self.evaluator.log_statistics(test_stats)
 
         # save confusion matrices
         create_save_plotted_confusion_matrices(test_confusion_matrix, expected_labels=self.expected_labels,
@@ -225,14 +220,17 @@ def main():
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
-    parser.add_argument('--seed', default=None, type=int, help='set seed for reproducibility')
+    # parser.add_argument('--seed', default=None, type=int, help='set seed for reproducibility')
     # The following parameters are only valid for the lcf-bert model
     parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
     # semantic-relative-distance, see the paper of LCF-BERT model
     parser.add_argument('--SRD', default=3, type=int, help='set SRD')
+    parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
     opt = parser.parse_args()
 
+    opt.seed = 1337
     if opt.seed is not None:
+        logger.info("setting random seed: {}".format(opt.seed))
         random.seed(opt.seed)
         numpy.random.seed(opt.seed)
         torch.manual_seed(opt.seed)
@@ -256,11 +254,6 @@ def main():
         'aen_glove': AEN_GloVe,
         'aen_distilbert': AEN_DISTILBERT,
         'lcf_bert': LCF_BERT,
-        # default hyper-parameters for LCF-BERT model is as follws:
-        # lr: 2e-5
-        # l2: 1e-5
-        # batch size: 16
-        # num epochs: 5
     }
     model_name_to_pretrained_model_name = {
         'aen_bert': 'bert-base-uncased',
