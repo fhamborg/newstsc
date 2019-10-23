@@ -14,28 +14,17 @@ conda install --yes -c anaconda requests
 conda install --yes  -c conda-forge transformers
 ```
 
-* pytorch >= 0.4.0
-* numpy >= 1.13.3
-* python 3.6 / 3.7
-* GloVe pre-trained word vectors (See [data_utils.py](./data_utils.py) for more detail)
-  * Download pre-trained word vectors [here](https://github.com/stanfordnlp/GloVe#download-pre-trained-word-vectors),
-  * extract the [glove.twitter.27B.zip](http://nlp.stanford.edu/data/wordvecs/glove.twitter.27B.zip) and [glove.42B.300d.zip](http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip) to the root directory
-* pytorch-pretrained-bert 0.6.1
-  * See [pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT) for more detail.
 
 ## development tips
 
-you may want to mount a remote folder via ssh, so that you can locally access a server's files
-
-* follow: https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh
-
+scp -r scc:/home/scc/fhamborg/code/cope-tsa/statistics .
 
 ## Usage
 
 ### Training
 
 ```sh
-python train.py --model_name bert_spc --dataset restaurant
+python train.py --model_name aen_distilbert --dataset_name poltsanews
 ```
 
 See [train.py](./train.py) for more training arguments.

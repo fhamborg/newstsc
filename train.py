@@ -13,12 +13,12 @@ import torch
 import torch.nn as nn
 from sklearn import metrics
 from torch.utils.data import DataLoader
-from transformers import BertModel
+from transformers import BertModel, DistilBertModel
 
-from data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, FXDataset
+from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
 from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
-from models.aen import AEN_BERT, AEN_GloVe
+from models.aen import AEN_BERT, AEN_GloVe, AEN_DISTILBERT
 from models.bert_spc import BERT_SPC
 from plotter_utils import create_save_plotted_confusion_matrices
 
@@ -30,20 +30,15 @@ class Instructor:
         self.opt = opt
         logger.info(opt)
 
-        if 'bert' in opt.model_name:
-            tokenizer = Tokenizer4Bert(opt.max_seq_len, opt.pretrained_bert_name)
-            bert = BertModel.from_pretrained(opt.pretrained_bert_name)
-            self.model = opt.model_class(bert, opt).to(opt.device)
-        else:
-            tokenizer = build_tokenizer(
-                fnames=[opt.dataset_file['train'], opt.dataset_file['test']],
-                max_seq_len=opt.max_seq_len,
-                dat_fname='{0}_tokenizer.dat'.format(opt.dataset))
-            embedding_matrix = build_embedding_matrix(
-                word2idx=tokenizer.word2idx,
-                embed_dim=opt.embed_dim,
-                dat_fname='{0}_{1}_embedding_matrix.dat'.format(str(opt.embed_dim), opt.dataset))
-            self.model = opt.model_class(embedding_matrix, opt).to(opt.device)
+        if opt.model_name == 'aen_bert':
+            tokenizer = Tokenizer4Bert(opt.max_seq_len, opt.pretrained_model_name)
+            pretrained_model = BertModel.from_pretrained(opt.pretrained_model_name)
+            self.model = opt.model_class(pretrained_model, opt).to(opt.device)
+        elif opt.model_name == 'aen_distilbert':
+            tokenizer = Tokenizer4Distilbert(opt.max_seq_len, opt.pretrained_model_name)
+            pretrained_model = DistilBertModel.from_pretrained(opt.pretrained_model_name)
+            self.model = opt.model_class(pretrained_model, opt).to(opt.device)
+        logger.info("initialized pretrained model: {}".format(opt.model_name))
 
         logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
         self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer)
@@ -118,8 +113,6 @@ class Instructor:
 
             dev_acc, dev_f1, dev_confusion_matrix = self._evaluate_acc_f1_confusionmatrix(dev_data_loader)
             logger.info('> dev_acc: {:.4f}, dev_f1: {:.4f}'.format(dev_acc, dev_f1))
-            logger.info("confusion matrix")
-            logger.info(dev_confusion_matrix)
 
             if dev_acc > max_dev_acc:
                 logger.info("model yields best performance so far, saving to disk...")
@@ -214,8 +207,8 @@ class Instructor:
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', default='aen_bert', type=str)
-    parser.add_argument('--dataset_name', default='poltsanews', type=str,
+    parser.add_argument('--model_name', default=None, type=str)
+    parser.add_argument('--dataset_name', default=None, type=str,
                         help='name of the sub-folder in \'datasets\' containing files called [train,dev,test].jsonl')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
@@ -228,7 +221,6 @@ def main():
     parser.add_argument('--embed_dim', default=300, type=int)
     parser.add_argument('--hidden_dim', default=300, type=int)
     parser.add_argument('--bert_dim', default=768, type=int)
-    parser.add_argument('--pretrained_bert_name', default='bert-base-uncased', type=str)
     parser.add_argument('--max_seq_len', default=80, type=int)
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
@@ -262,6 +254,7 @@ def main():
         'bert_spc': BERT_SPC,
         'aen_bert': AEN_BERT,
         'aen_glove': AEN_GloVe,
+        'aen_distilbert': AEN_DISTILBERT,
         'lcf_bert': LCF_BERT,
         # default hyper-parameters for LCF-BERT model is as follws:
         # lr: 2e-5
@@ -269,7 +262,11 @@ def main():
         # batch size: 16
         # num epochs: 5
     }
-    input_colses = {
+    model_name_to_pretrained_model_name = {
+        'aen_bert': 'bert-base-uncased',
+        'aen_distilbert': 'distilbert-base-uncased',
+    }
+    input_columns = {
         'lstm': ['text_raw_indices'],
         'td_lstm': ['text_left_with_aspect_indices', 'text_right_with_aspect_indices'],
         'atae_lstm': ['text_raw_indices', 'aspect_indices'],
@@ -283,6 +280,7 @@ def main():
         'mgan': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
         'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
         'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
+        'aen_distilbert': ['text_raw_bert_indices', 'aspect_bert_indices'],
         'aen_glove': ['text_raw_indices', 'aspect_indices'],
         'lcf_bert': ['text_bert_indices', 'bert_segments_ids', 'text_raw_bert_indices', 'aspect_bert_indices'],
     }
@@ -301,12 +299,13 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
+    opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
 
     opt.dataset_path = os.path.join('datasets', opt.dataset_name)
     if not opt.dataset_path.endswith('/'):
         opt.dataset_path = opt.dataset_path + '/'
 
-    opt.inputs_cols = input_colses[opt.model_name]
+    opt.inputs_cols = input_columns[opt.model_name]
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
 

@@ -6,12 +6,19 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
-from transformers import BertTokenizer
+from transformers import BertTokenizer, DistilBertTokenizer
 
 from fxlogger import get_logger
 
 # get logger
 logger = get_logger()
+
+DEV_MODE = True
+
+if DEV_MODE:
+    logger.warning("DEV MODE IS ENABLED!!!")
+    logger.warning("DEV MODE IS ENABLED!!!")
+    logger.warning("DEV MODE IS ENABLED!!!")
 
 
 def build_tokenizer(fnames, max_seq_len, dat_fname):
@@ -125,6 +132,20 @@ class Tokenizer4Bert:
         return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
 
 
+class Tokenizer4Distilbert:
+    def __init__(self, max_seq_len, pretrained_distilbert_name):
+        self.tokenizer = DistilBertTokenizer.from_pretrained(pretrained_distilbert_name)
+        self.max_seq_len = max_seq_len
+
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+        sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
+        if len(sequence) == 0:
+            sequence = [0]
+        if reverse:
+            sequence = sequence[::-1]
+        return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
+
+
 class TextTokenizer:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
@@ -142,8 +163,6 @@ class TextTokenizer:
         target_phrase_len = np.sum(target_phrase_indices != 0)
         target_phrase_in_text = torch.tensor(
             [left_context_len.item(), (left_context_len + target_phrase_len - 1).item()])
-
-
 
         text_bert_indices = self.tokenizer.text_to_sequence(
             '[CLS] ' + text_left + " " + target_phrase + " " + text_right + ' [SEP] ' + target_phrase + " [SEP]")
@@ -174,7 +193,7 @@ class TextTokenizer:
 
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer):
-        polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
+        self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
 
         self.data_preparer = TextTokenizer(tokenizer)
         self.data = []
@@ -186,28 +205,39 @@ class FXDataset(Dataset):
             for task in reader:
                 tasks.append(task)
 
+        if DEV_MODE:
+            logger.info("devmode=True: truncating dataset to 20 lines")
+            tasks = tasks[:20]
+
         with tqdm(total=len(tasks)) as pbar:
             for task in tasks:
-                text = task['text']
-                target_phrase = task['targetphrase']
-                outlet = task['outlet']
-                year_month_publish = task['year_month_publish']
-                example_id = task['example_id']
-                label = task['label']
-                start_char = task['targetphrase_in_sentence_start']
-                end_char = task['targetphrase_in_sentence_end']
-                text_left = text[:start_char - 1]
-                text_right = text[end_char + 1:]
-                polarity = polarity_associations[task['label']]
-
-                # text to indexes
-                data = self.data_preparer.create_text_to_indexes(text_left, target_phrase, text_right, polarity)
-                self.data.append(data)
+                item = self.task_to_dataset_item(task)
+                self.data.append(item)
                 pbar.update(1)
+
+    def task_to_dataset_item(self, task):
+        text = task['text']
+        target_phrase = task['targetphrase']
+        outlet = task['outlet']
+        year_month_publish = task['year_month_publish']
+        example_id = task['example_id']
+        label = task['label']
+        start_char = task['targetphrase_in_sentence_start']
+        end_char = task['targetphrase_in_sentence_end']
+        text_left = text[:start_char - 1]
+        text_right = text[end_char + 1:]
+        polarity = self.polarity_associations[task['label']]
+
+        # text to indexes
+        data = self.data_preparer.create_text_to_indexes(text_left, target_phrase, text_right, polarity)
+
+        # add reference information
+        data['example_id'] = example_id
+
+        return data
 
     def __getitem__(self, index):
         return self.data[index]
 
     def __len__(self):
         return len(self.data)
-
