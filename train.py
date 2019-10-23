@@ -202,6 +202,17 @@ class Instructor:
         logger.info("created confusion matrices in folder statistics/")
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
@@ -229,7 +240,9 @@ def main():
     # semantic-relative-distance, see the paper of LCF-BERT model
     parser.add_argument('--SRD', default=3, type=int, help='set SRD')
     parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
-    parser.add_argument('--devmode', default=False, help='devmode, default off, enable by using True')
+    parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
+                        help="devmode, default off, enable by using True")
+
     opt = parser.parse_args()
 
     opt.seed = 1337

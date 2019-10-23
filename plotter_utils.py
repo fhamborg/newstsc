@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import multilabel_confusion_matrix
 
+from fxlogger import get_logger
+
+logger = get_logger()
+
 
 def create_save_plotted_confusion_matrices(multilabel_confusion_matrices, expected_labels, basefilename):
     assert len(expected_labels) == multilabel_confusion_matrices.shape[0]
@@ -28,11 +32,11 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        logger.debug("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        logger.debug('Confusion matrix, without normalization')
 
-    print(cm)
+    logger.debug(cm)
 
     fig, ax = plt.subplots()
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
