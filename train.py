@@ -45,9 +45,11 @@ class Instructor:
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
         logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
-        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer, self.polarity_associations)
-        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer, self.polarity_associations)
-        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer, self.polarity_associations)
+        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer, self.polarity_associations,
+                                  self.opt.devmode)
+        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer, self.polarity_associations, self.opt.devmode)
+        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer, self.polarity_associations,
+                                 self.opt.devmode)
         logger.info("loaded dataset {}".format(opt.dataset_name))
 
         self._print_args()
@@ -226,6 +228,7 @@ def main():
     # semantic-relative-distance, see the paper of LCF-BERT model
     parser.add_argument('--SRD', default=3, type=int, help='set SRD')
     parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
+    parser.add_argument('--devmode', default=False, help='devmode, default off, enable by using True')
     opt = parser.parse_args()
 
     opt.seed = 1337

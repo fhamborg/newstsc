@@ -13,13 +13,6 @@ from fxlogger import get_logger
 # get logger
 logger = get_logger()
 
-DEV_MODE = True
-
-if DEV_MODE:
-    logger.warning("DEV MODE IS ENABLED!!!")
-    logger.warning("DEV MODE IS ENABLED!!!")
-    logger.warning("DEV MODE IS ENABLED!!!")
-
 
 def build_tokenizer(fnames, max_seq_len, dat_fname):
     if os.path.exists(dat_fname):
@@ -192,7 +185,7 @@ class TextTokenizer:
 
 
 class FXDataset(Dataset):
-    def __init__(self, filepath, tokenizer, named_polarity_to_class_number):
+    def __init__(self, filepath, tokenizer, named_polarity_to_class_number, dev_mode):
         self.polarity_associations = named_polarity_to_class_number
         self.data_preparer = TextTokenizer(tokenizer)
         self.data = []
@@ -204,8 +197,11 @@ class FXDataset(Dataset):
             for task in reader:
                 tasks.append(task)
 
-        if DEV_MODE:
-            logger.info("devmode=True: truncating dataset to 20 lines")
+        if dev_mode:
+            logger.warning("DEV MODE IS ENABLED!!!")
+            logger.warning("DEV MODE IS ENABLED!!!")
+            logger.warning("DEV MODE IS ENABLED!!!")
+            logger.info("devmode=True: truncating dataset to 60 lines")
             tasks = tasks[:60]
 
         with tqdm(total=len(tasks)) as pbar:
