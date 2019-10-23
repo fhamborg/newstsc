@@ -124,7 +124,8 @@ class Instructor:
                 max_dev_snem = dev_snem
                 if not os.path.exists('state_dict'):
                     os.mkdir('state_dict')
-                filename = '{0}_{1}_val_acc{2}'.format(self.opt.model_name, self.opt.dataset_name, round(dev_acc, 4))
+                filename = '{0}_{1}_val_{2}{3}'.format(self.opt.model_name, self.opt.dataset_name, self.opt.snem,
+                                                       round(max_dev_snem, 4))
                 path = 'state_dict/' + filename
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
