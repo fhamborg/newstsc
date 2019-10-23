@@ -197,7 +197,7 @@ class Instructor:
         self.evaluator.log_statistics(test_stats)
 
         # save confusion matrices
-        create_save_plotted_confusion_matrices(test_confusion_matrix, expected_labels=self.expected_labels,
+        create_save_plotted_confusion_matrices(test_confusion_matrix, expected_labels=self.sorted_expected_label_values,
                                                basefilename=best_model_filename + "_testset")
         logger.info("created confusion matrices in folder statistics/")
 

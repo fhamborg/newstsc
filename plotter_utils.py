@@ -12,7 +12,7 @@ def create_save_plotted_confusion_matrices(multilabel_confusion_matrices, expect
         ax, title = plot_confusion_matrix(confusion_matrix, binary_expected_labels, normalize=False,
                                           title='Label={}'.format(label_class))
 
-        plt.savefig('statistics/{}_{}.png'.format(basefilename, title), bbox_inches='tight')
+        plt.savefig('statistics/{}_{}.png'.format(basefilename, label_class), bbox_inches='tight')
 
 
 def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.Blues):
