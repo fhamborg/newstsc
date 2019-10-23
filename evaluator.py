@@ -1,3 +1,4 @@
+from collections import Counter
 from statistics import mean
 
 from sklearn import metrics
@@ -17,6 +18,11 @@ class Evaluator:
         self.snem_name = snem_name
 
     def calc_statistics(self, y_true, y_pred):
+        y_true_list = y_true.tolist()
+        y_pred_list = y_pred.tolist()
+        y_true_count = Counter(y_true_list)
+        y_pred_count = Counter(y_pred_list)
+
         f1_macro = metrics.f1_score(y_true, y_pred, labels=self.sorted_expected_label_values, average='macro')
         f1_of_classes = metrics.f1_score(y_true, y_pred, labels=self.sorted_expected_label_values, average=None)
         f1_posneg = (f1_of_classes[self.pos_label_index] + f1_of_classes[self.neg_label_index]) / 2.0
@@ -32,10 +38,13 @@ class Evaluator:
 
         return {'f1_macro': f1_macro, 'multilabel_confusion_matrix': multilabel_confusion_matrix,
                 'recalls_of_classes': recalls_of_classes, 'recall_avg': recall_avg, 'recall_macro': recall_macro,
-                'precision_macro': precision_macro, 'accuracy': accuracy, 'f1_posneg': f1_posneg}
+                'precision_macro': precision_macro, 'accuracy': accuracy, 'f1_posneg': f1_posneg,
+                'y_true_count': y_true_count, 'y_pred_count': y_pred_count}
 
     def log_statistics(self, stats):
         self.logger.info("{}: {}".format(self.snem_name, stats[self.snem_name]))
+        self.logger.info("y_true distribution: {}".format(stats['y_true_count']))
+        self.logger.info("y_pred distribution: {}".format(stats['y_pred_count']))
         self.logger.info('> recall_avg: {:.4f}, f1_posneg: {:.4f}, acc: {:.4f}, f1_macro: {:.4f}'.format(
             stats['recall_avg'], stats['f1_posneg'], stats['accuracy'], stats['f1_macro'],
         ))
