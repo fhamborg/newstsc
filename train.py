@@ -193,9 +193,11 @@ class Instructor:
         logger.info("evaluating best model on test-set")
         # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
+
         # do the actual evaluation
         test_stats = self._evaluate(test_data_loader)
         test_snem = test_stats[self.opt.snem]
+
         test_confusion_matrix = test_stats['multilabel_confusion_matrix']
 
         logger.info("evaluation finished.")
@@ -211,6 +213,9 @@ class Instructor:
                                                basepath=filepath_stats_prefix)
 
         logger.info("finished execution of this run. exiting.")
+
+        # print snem value to stdout, for the controller to parse it
+        print(test_snem)
 
 
 def str2bool(v):
