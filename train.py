@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# file: train.py
-# author: songyouwei <youwei0314@gmail.com>
-# Copyright (C) 2018. All Rights Reserved.
 import argparse
 import math
 import os
@@ -44,7 +40,7 @@ class Instructor:
         self.sorted_expected_label_values = [0, 1, 2]
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
-        logger.info("loading datasets from folder '{}'".format(opt.dataset_name))
+        logger.info("loading dataset {} from path {}".format(opt.dataset_name, opt.dataset_path))
         self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer, self.polarity_associations,
                                   self.opt.devmode)
         self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer, self.polarity_associations, self.opt.devmode)
@@ -82,8 +78,9 @@ class Instructor:
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader):
         max_dev_snem = 0
         global_step = 0
-        path = None
-        filename = None
+        best_model_path = None
+        best_model_filename = None
+
         for epoch in range(self.opt.num_epoch):
             logger.info('>' * 100)
             logger.info('epoch: {}'.format(epoch))
@@ -122,21 +119,28 @@ class Instructor:
             if dev_snem > max_dev_snem:
                 logger.info("model yields best performance so far, saving to disk...")
                 max_dev_snem = dev_snem
-                if not os.path.exists('state_dict'):
-                    os.mkdir('state_dict')
-                filename = '{0}_{1}_val_{2}_{3}'.format(self.opt.model_name, self.opt.dataset_name, self.opt.snem,
-                                                        round(max_dev_snem, 4))
-                path = 'state_dict/' + filename
-                torch.save(self.model.state_dict(), path)
-                logger.info('>> saved: {}'.format(path))
+
+                best_model_filename = '{0}_{1}_val_{2}_{3}_e{4}'.format(self.opt.model_name, self.opt.dataset_name,
+                                                                        self.opt.snem, round(max_dev_snem, 4), epoch)
+                pathdir = os.path.join(self.opt.experiment_path, 'state_dict')
+
+                os.makedirs(pathdir, exist_ok=True)
+                best_model_path = os.path.join(pathdir, best_model_filename)
+
+                torch.save(self.model.state_dict(), best_model_path)
+                logger.info('>> saved: {}'.format(best_model_path))
 
                 # save confusion matrices
+                filepath_stats_base = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
+                if not filepath_stats_base.endswith('/'):
+                    filepath_stats_base += '/'
+                os.makedirs(filepath_stats_base, exist_ok=True)
                 create_save_plotted_confusion_matrices(dev_stats['multilabel_confusion_matrix'],
                                                        expected_labels=self.sorted_expected_label_values,
-                                                       basefilename=filename)
-                logger.info("created confusion matrices in folder statistics/")
+                                                       basepath=filepath_stats_base)
+                logger.info("created confusion matrices in path: {}".format(filepath_stats_base))
 
-        return path, filename
+        return best_model_path, best_model_path
 
     def _evaluate(self, data_loader):
         t_labels_all, t_outputs_all = None, None
@@ -167,7 +171,7 @@ class Instructor:
 
     def run(self):
         # Loss and Optimizer
-        class_weights = torch.tensor([1 / 82, 1 / 528, 1 / 10]).to(opt.device)
+        class_weights = torch.tensor([1 / 82, 1 / 528, 1 / 10]).to(self.opt.device)
         criterion = nn.CrossEntropyLoss(weight=class_weights)
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
@@ -198,9 +202,15 @@ class Instructor:
         self.evaluator.log_statistics(test_stats)
 
         # save confusion matrices
-        create_save_plotted_confusion_matrices(test_confusion_matrix, expected_labels=self.sorted_expected_label_values,
-                                               basefilename=best_model_filename + "_testset")
-        logger.info("created confusion matrices in folder statistics/")
+        filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
+        os.makedirs(filepath_stats_prefix, exist_ok=True)
+        if not filepath_stats_prefix.endswith('/'):
+            filepath_stats_prefix += '/'
+        create_save_plotted_confusion_matrices(test_confusion_matrix,
+                                               expected_labels=self.sorted_expected_label_values,
+                                               basepath=filepath_stats_prefix)
+
+        logger.info("finished execution of this run. exiting.")
 
 
 def str2bool(v):
@@ -220,6 +230,8 @@ def main():
     parser.add_argument('--model_name', default=None, type=str)
     parser.add_argument('--dataset_name', default=None, type=str,
                         help='name of the sub-folder in \'datasets\' containing files called [train,dev,test].jsonl')
+    parser.add_argument('--dataset_path', default=None, type=str,
+                        help='relative or absolute path to dataset folder. If defined, will be used instead of dataset_name')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -235,7 +247,7 @@ def main():
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
-    # parser.add_argument('--seed', default=None, type=int, help='set seed for reproducibility')
+    parser.add_argument('--seed', default=1337, type=int, help='set seed for reproducibility')
     # The following parameters are only valid for the lcf-bert model
     parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
     # semantic-relative-distance, see the paper of LCF-BERT model
@@ -243,10 +255,11 @@ def main():
     parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
     parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
                         help="devmode, default off, enable by using True")
+    parser.add_argument('--experiment_path', default=None, type=str,
+                        help='if defined, all data will be read from / saved to a folder in the experiments folder')
 
     opt = parser.parse_args()
 
-    opt.seed = 1337
     if opt.seed is not None:
         logger.info("setting random seed: {}".format(opt.seed))
         random.seed(opt.seed)
@@ -312,9 +325,19 @@ def main():
     opt.model_class = model_classes[opt.model_name]
     opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
 
-    opt.dataset_path = os.path.join('datasets', opt.dataset_name)
-    if not opt.dataset_path.endswith('/'):
-        opt.dataset_path = opt.dataset_path + '/'
+    if not opt.experiment_path:
+        opt.experiment_path = '.'
+    if not opt.experiment_path.endswith('/'):
+        opt.experiment_path = opt.experiment_path + '/'
+
+    if not opt.dataset_path:
+        logger.info("dataset_path not defined, creating from dataset_name...")
+        opt.dataset_path = os.path.join('datasets', opt.dataset_name)
+        if not opt.dataset_path.endswith('/'):
+            opt.dataset_path = opt.dataset_path + '/'
+        logger.info("dataset_path created from dataset_name: {}".format(opt.dataset_path))
+    else:
+        logger.info("dataset_path defined: {}".format(opt.dataset_path))
 
     opt.inputs_cols = input_columns[opt.model_name]
     opt.initializer = initializers[opt.initializer]
@@ -330,6 +353,9 @@ def main():
         logger.info('using GPU (cuda memory allocated: {})'.format(torch.cuda.memory_allocated()))
     else:
         logger.info("using CPU (cuda not available)")
+
+    # set dataset_path to include experiment_path
+    opt.dataset_path = os.path.join(opt.experiment_path, opt.dataset_path)
 
     ins = Instructor(opt)
     ins.run()

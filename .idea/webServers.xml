@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="469868e9-1597-49bb-a634-0eaa43dbf214" name="scc" url="http://scc.uni-konstanz.de">
+        <fileTransfer host="scc.uni-konstanz.de" port="22" rootFolder="/home/scc/fhamborg/" accessType="SFTP" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
