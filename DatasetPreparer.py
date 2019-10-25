@@ -16,13 +16,16 @@ from fxlogger import get_logger
 
 
 class DatasetPreparer:
-    def __init__(self):
+    def __init__(self, basepath_datasets):
+        self.basepath_datasets = basepath_datasets
         self.name = 'poltsanews'
         self.human_created_filenames = ['human.jsonl']
         self.non_human_created_filenames = ['train_20191021_233454.jsonl']
         self.human_created_filepaths = [self.get_filepath_by_name(x) for x in self.human_created_filenames]
         self.non_human_created_filepaths = [self.get_filepath_by_name(x) for x in self.non_human_created_filenames]
         self.data_types = ['human', 'nonhum']
+
+        self.sets_info = None
 
         self.random_seed = 1337
         random.seed(self.random_seed)
@@ -42,7 +45,7 @@ class DatasetPreparer:
                                                                                     self.non_human_created_filepaths))
 
     def get_filepath_by_name(self, filename):
-        return os.path.join('datasets', self.name, filename)
+        return os.path.join(self.basepath_datasets, self.name, filename)
 
     def file_to_dictlst(self, filepath):
         dict_lst = []
@@ -58,14 +61,14 @@ class DatasetPreparer:
             dict_lst.extend(self.file_to_dictlst(filepath))
         return dict_lst
 
-    def create_slices(self, sets_info, data_type):
+    def create_slices(self, data_type):
         """
 
         :param sets_info:
         :param data_type: 'human', 'nonhum'
         :return:
         """
-        set_names = list(sets_info.keys())
+        set_names = list(self.sets_info.keys())
         assert data_type in self.data_types
 
         # get some vars
@@ -74,7 +77,7 @@ class DatasetPreparer:
 
         prev_split_pos = 0
         for set_index, set_name in enumerate(set_names):
-            cur_setinfo = sets_info[set_name]
+            cur_setinfo = self.sets_info[set_name]
 
             if _id_relative_weight in cur_setinfo:
                 cur_relative_weight = cur_setinfo[_id_relative_weight]
@@ -94,9 +97,9 @@ class DatasetPreparer:
                 else:
                     cur_setinfo[_id_examples] = []
 
-    def merge_slices(self, sets_info):
+    def merge_slices(self):
         total_examples_count = 0
-        for set_name, cur_set in sets_info.items():
+        for set_name, cur_set in self.sets_info.items():
             cur_merged_data = []
             for data_type in self.data_types:
                 _id_examples = '{}-examples'.format(data_type)
@@ -107,28 +110,30 @@ class DatasetPreparer:
             cur_set['examples'] = cur_merged_data
             total_examples_count += len(cur_merged_data)
 
-        for set_name, cur_set in sets_info.items():
+        for set_name, cur_set in self.sets_info.items():
             cur_set['examples-rel'] = len(cur_set['examples']) / total_examples_count
 
-    def print_set_info(self, sets_info):
+    def print_set_info(self):
         header = ['set_name', 'human rel', 'human abs', 'non-hum rel', 'non-hum abs', 'rel', 'abs']
         rows = []
-        for set_name, cur_set in sets_info.items():
+        for set_name, cur_set in self.sets_info.items():
             row = [set_name, cur_set['human-rel-weight'], len(cur_set['human-examples']), cur_set['nonhum-rel-weight'],
                    len(cur_set['nonhum-examples']), cur_set['examples-rel'], len(cur_set['examples'])]
             rows.append(row)
 
         self.logger.info('\n' + tabulate(rows, header))
 
-    def create_set(self, sets_info):
-        set_names = list(sets_info.keys())
+    def init_set(self, sets_info2):
+        self.sets_info = sets_info2
+
+        set_names = list(self.sets_info.keys())
 
         weights_human = Counter()
         weights_nonhum = Counter()
         nonnull_set_names = []
         # sum weights and thereby filter datasets that are 0 in size
         for set_name in set_names:
-            setinfo = sets_info[set_name]
+            setinfo = self.sets_info[set_name]
             weights_human[set_name] = setinfo['human-weight']
             weights_nonhum[set_name] = setinfo['nonhum-weight']
 
@@ -143,7 +148,7 @@ class DatasetPreparer:
 
         # add relative weights
         for set_name in set_names:
-            cur_setinfo = sets_info[set_name]
+            cur_setinfo = self.sets_info[set_name]
             if cur_setinfo['human-weight']:
                 cur_setinfo['human-rel-weight'] = cur_setinfo['human-weight'] / human_weight_sum
             else:
@@ -155,16 +160,28 @@ class DatasetPreparer:
         # at this point, setsinfo contains only positive (non-0) relative weights (or no such key, if the abs. value was 0, too)
 
         # create slices
-        self.create_slices(sets_info, 'human')
-        self.create_slices(sets_info, 'nonhum')
+        self.create_slices('human')
+        self.create_slices('nonhum')
 
         # merge human and non human sets in each set
-        self.merge_slices(sets_info)
+        self.merge_slices()
 
-        self.print_set_info(sets_info)
+        self.print_set_info()
+
+    def export(self, savepath):
+        for set_name, cur_set in self.sets_info.items():
+            set_savefolder = os.path.join(savepath, self.name)
+            os.makedirs(set_savefolder, exist_ok=True)
+            set_savepath = os.path.join(set_savefolder, set_name + '.jsonl')
+
+            with jsonlines.open(set_savepath, 'w') as writer:
+                writer.write_all(cur_set['examples'])
+            self.logger.info('created set (abs={}) at {}'.format(len(cur_set['examples']), set_savepath))
 
     @classmethod
-    def poltsanews_rel801010(cls):
+    def poltsanews_rel801010_allhuman(cls, basepath):
+        dprep = cls(basepath)
+
         sets_info = {
             'train':
                 {'human-weight': 80, 'nonhum-weight': 0},
@@ -173,8 +190,25 @@ class DatasetPreparer:
             'test':
                 {'human-weight': 10, 'nonhum-weight': 0},
         }
-        return cls().create_set(sets_info)
+
+        dprep.init_set(sets_info)
+        return dprep
+
+    @classmethod
+    def poltsanews_crossval8010_allhuman(cls, basepath):
+        dprep = cls(basepath)
+
+        sets_info = {
+            'crossval':
+                {'human-weight': 80, 'nonhum-weight': 0},
+
+            'test':
+                {'human-weight': 10, 'nonhum-weight': 0},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep
 
 
 if __name__ == '__main__':
-    DatasetPreparer.poltsanews_rel801010()
+    DatasetPreparer.poltsanews_rel801010("something")

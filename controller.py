@@ -23,11 +23,11 @@ import subprocess
 from collections import Counter
 from datetime import datetime
 from itertools import product
-from shutil import copytree
 
 from tabulate import tabulate
 from tqdm import tqdm
 
+from DatasetPreparer import DatasetPreparer
 from fxlogger import get_logger
 
 
@@ -35,12 +35,7 @@ class SetupController:
     def __init__(self):
         self.logger = get_logger()
 
-        self.experiment_base_id = datetime.today().strftime('%Y%m%d%H%M%S')
-        self.basecmd = ['python', 'train.py']
-        self.dataset_name = 'poltsanews'
-
         self.use_cross_validation = 10  # if 0: do not use cross validation
-
         self.args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
@@ -54,6 +49,11 @@ class SetupController:
         }
         assert len(self.args_names_ordered) == len(self.combinations.keys())
         assert len(self.combinations['snem']) == 1
+
+        self.experiment_base_id = datetime.today().strftime('%Y%m%d%H%M%S')
+        self.basecmd = ['python', 'train.py']
+        self.basepath = 'controller_data'
+        self.basepath_data = os.path.join(self.basepath, 'datasets')
 
         self.combination_count = 1
         _combination_values = []
@@ -72,9 +72,10 @@ class SetupController:
 
         if self.use_cross_validation > 0:
             self.logger.info("using {}-fold cross validation".format(self.use_cross_validation))
-
+            self.dataset_preparer = DatasetPreparer.poltsanews_crossval8010_allhuman(self.basepath_data)
         else:
             self.logger.info("not using cross validation".format(self.use_cross_validation))
+            self.dataset_preparer = DatasetPreparer.poltsanews_rel801010_allhuman(self.basepath_data)
 
     def _build_args(self, args_combination):
         args_list = []
@@ -84,15 +85,13 @@ class SetupController:
 
     def _add_arg(self, args_list, name, value):
         args_list.append("--" + name)
-        args_list.append(value)
+        args_list.append(str(value))
         return args_list
 
     def _prepare_experiment_env(self, experiment_path):
-        os.makedirs(experiment_path)
+        os.makedirs(experiment_path, exist_ok=True)
 
-        # copy datasets in there
-        copytree(os.path.join('datasets', self.dataset_name),
-                 os.path.join(experiment_path, 'datasets', self.dataset_name))
+        self.dataset_preparer.export(os.path.join(experiment_path, 'datasets'))
 
     def _args_combination_to_single_arg_values(self, args_combination):
         args_names_values = {}
@@ -110,6 +109,7 @@ class SetupController:
         args = self._build_args(args_combination)
         args = self._add_arg(args, 'dataset_name', 'poltsanews')
         args = self._add_arg(args, 'experiment_path', experiment_path)
+        args = self._add_arg(args, 'crossval', self.use_cross_validation)
 
         cmd = self.basecmd + args
 
@@ -132,31 +132,31 @@ class SetupController:
         return snem_line
 
     def run(self):
-        with tqdm(total=self.combination_count) as pbar:
+        results = []
 
-            results = []
+        with tqdm(total=self.combination_count) as pbar:
             for combination in self.combinations:
                 result = self.execute_single_setup(combination)
                 results.append(result)
                 pbar.update(1)
 
-            experiments_rc_overview = Counter()
-            for result in results:
-                rc = result['rc']
-                experiments_rc_overview[rc] += 1
+        experiments_rc_overview = Counter()
+        for result in results:
+            rc = result['rc']
+            experiments_rc_overview[rc] += 1
 
-                if rc != 0:
-                    self.logger.warning("experiment did not return 0: {}".format(result['experiment_id']))
+            if rc != 0:
+                self.logger.warning("experiment did not return 0: {}".format(result['experiment_id']))
 
-            # snem-based performance sort
-            results.sort(key=lambda x: x['snem'], reverse=True)
-            headers = results[0].keys()
-            rows = [x.values() for x in results]
+        # snem-based performance sort
+        results.sort(key=lambda x: x['snem'], reverse=True)
+        headers = results[0].keys()
+        rows = [x.values() for x in results]
 
-            self.logger.info("all experiments finished. statistics:")
-            self.logger.info("return codes: {}".format(experiments_rc_overview))
-            self.logger.info("snem-based performances:")
-            self.logger.info("\n" + tabulate(rows, headers))
+        self.logger.info("all experiments finished. statistics:")
+        self.logger.info("return codes: {}".format(experiments_rc_overview))
+        self.logger.info("snem-based performances:")
+        self.logger.info("\n" + tabulate(rows, headers))
 
 
 if __name__ == '__main__':
