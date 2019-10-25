@@ -262,6 +262,8 @@ def main():
                         help="devmode, default off, enable by using True")
     parser.add_argument('--experiment_path', default=None, type=str,
                         help='if defined, all data will be read from / saved to a folder in the experiments folder')
+    parser.add_argument('--crossval', default=0, type=int,
+                        help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
 
     opt = parser.parse_args()
 

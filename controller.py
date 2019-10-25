@@ -7,7 +7,8 @@ setup: represents a fixed, unique combination of for instance:
 * input style, e.g., input style: QA style, AEN, ...
 
 Procedure:
-Given a single annotated dataset named alldat:
+Given a single annotated dataset named alldat (also called both.jsonl, since it consists of both splits of the devtest
+set):
 * splits alldat into testdat and remainderdat
 
 Given a set of experiment setup descriptions
@@ -38,6 +39,8 @@ class SetupController:
         self.basecmd = ['python', 'train.py']
         self.dataset_name = 'poltsanews'
 
+        self.use_cross_validation = 10  # if 0: do not use cross validation
+
         self.args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
@@ -66,6 +69,12 @@ class SetupController:
             "{} arguments, totaling in {} combinations".format(len(self.args_names_ordered), self.combination_count))
         self.logger.info("combinations:")
         self.logger.info("{}".format(self.combinations))
+
+        if self.use_cross_validation > 0:
+            self.logger.info("using {}-fold cross validation".format(self.use_cross_validation))
+
+        else:
+            self.logger.info("not using cross validation".format(self.use_cross_validation))
 
     def _build_args(self, args_combination):
         args_list = []
