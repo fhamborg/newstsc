@@ -139,7 +139,7 @@ class Instructor:
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
             dev_stats = self._evaluate(dev_data_loader)
-            self.evaluator.log_statistics(dev_stats)
+            self.evaluator.log_statistics(dev_stats, "dev during training")
 
             dev_snem = dev_stats[self.opt.snem]
 
@@ -244,9 +244,12 @@ class Instructor:
             # append its results to the list of results, which will be aggregated after all folds are completed
             all_test_stats.append(test_stats)
 
+            self.evaluator.log_statistics(test_stats, "evaluation of fold {} on test-set".format(fid))
+
         logger.info("aggregating performance statistics from all {} folds".format(self.opt.crossval))
         mean_test_stats = self.evaluator.mean_from_all_statistics(all_test_stats)
-        self.evaluator.log_statistics(mean_test_stats)
+        self.evaluator.log_statistics(mean_test_stats,
+                                      "aggregated evaluation results of all folds on test-set".format(fid))
 
         logger.info("finished execution of this crossval run. exiting.")
 
@@ -290,12 +293,10 @@ class Instructor:
         test_stats = self._evaluate(test_data_loader)
         test_snem = test_stats[self.opt.snem]
 
-        logger.info("evaluation finished.")
-        self.evaluator.log_statistics(test_stats)
+        self.evaluator.log_statistics(test_stats, "evaluation on test-set")
 
         # save confusion matrices
         test_confusion_matrix = test_stats['multilabel_confusion_matrix']
-
         filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
         os.makedirs(filepath_stats_prefix, exist_ok=True)
         if not filepath_stats_prefix.endswith('/'):

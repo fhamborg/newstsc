@@ -27,18 +27,19 @@ class Evaluator:
             value_type = type(all_test_stats[0][key])
 
             if value_type in [float, np.float64, np.float32]:
-                mean_test_stats[key] = 0.0
+                aggr_val = 0.0
                 for test_stat in all_test_stats:
-                    mean_test_stats[key] += test_stat[key]
+                    aggr_val += test_stat[key]
 
-                mean_test_stats[key] = mean_test_stats[key] / number_stats
+                mean_test_stats[key] = aggr_val / number_stats
 
             elif value_type == Counter:
-                mean_test_stats[key] = Counter()
+                aggr_val = Counter()
                 for test_stat in all_test_stats:
-                    mean_test_stats[key] += test_stat[key]
+                    aggr_val += test_stat[key]
+                mean_test_stats[key] = aggr_val
 
-        return dict(mean_test_stats)
+        return mean_test_stats
 
     def calc_statistics(self, y_true, y_pred):
         y_true_list = y_true.tolist()
@@ -64,8 +65,9 @@ class Evaluator:
                 'precision_macro': precision_macro, 'accuracy': accuracy, 'f1_posneg': f1_posneg,
                 'y_true_count': y_true_count, 'y_pred_count': y_pred_count}
 
-    def log_statistics(self, stats):
-        self.logger.info("{}: {}".format(self.snem_name, stats[self.snem_name]))
+    def log_statistics(self, stats, description):
+        self.logger.info(description)
+        self.logger.info("{}: {})".format(self.snem_name, stats[self.snem_name]))
         self.logger.info("y_true distribution: {}".format(sorted(stats['y_true_count'].items())))
         self.logger.info("y_pred distribution: {}".format(sorted(stats['y_pred_count'].items())))
         self.logger.info('> recall_avg: {:.4f}, f1_posneg: {:.4f}, acc: {:.4f}, f1_macro: {:.4f}'.format(

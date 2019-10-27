@@ -37,7 +37,7 @@ class SetupController:
 
         self.use_cross_validation = 2  # if 0: do not use cross validation
         self.args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                                   'lossweighting', 'devmode']
+                                   'lossweighting', 'devmode', 'num_epoch']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         self.combinations = {
