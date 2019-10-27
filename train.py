@@ -244,6 +244,7 @@ class Instructor:
             # append its results to the list of results, which will be aggregated after all folds are completed
             all_test_stats.append(test_stats)
 
+        logger.info("aggregating performance statistics from all {} folds".format(self.opt.crossval))
         mean_test_stats = self.evaluator.mean_from_all_statistics(all_test_stats)
         self.evaluator.log_statistics(mean_test_stats)
 
