@@ -77,14 +77,16 @@ class Instructor:
 
     def create_model(self):
         logger.info("creating model {}".format(self.opt.model_name))
-        if self.opt.model_name == 'aen_bert':
+        if self.opt.model_name in ['aen_bert', 'bert_spc']:
             self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
             pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
-        elif self.opt.model_name == 'aen_distilbert':
+        elif self.opt.model_name in ['aen_distilbert', 'distilbert_spc']:
             self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
             pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+        else:
+            raise Exception("model_name {} unknown".format(self.opt.model_name))
         self.pretrained_model_state_dict = pretrained_model.state_dict()
 
     def _reset_params(self):
@@ -391,6 +393,8 @@ def main():
     model_name_to_pretrained_model_name = {
         'aen_bert': 'bert-base-uncased',
         'aen_distilbert': 'distilbert-base-uncased',
+        'bert_spc': 'bert-base-uncased',
+        'distilbert_spc': 'distilbert-base-uncased',
     }
     input_columns = {
         'lstm': ['text_raw_indices'],

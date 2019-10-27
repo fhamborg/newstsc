@@ -140,7 +140,7 @@ class Tokenizer4Distilbert:
         return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
 
 
-class TextTokenizer:
+class BertlikeTextTokenizer:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
 
@@ -188,7 +188,7 @@ class TextTokenizer:
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer, named_polarity_to_class_number, dev_mode):
         self.polarity_associations = named_polarity_to_class_number
-        self.data_preparer = TextTokenizer(tokenizer)
+        self.data_preparer = BertlikeTextTokenizer(tokenizer)
         self.data = []
 
         logger.info("reading dataset file {}".format(filepath))
