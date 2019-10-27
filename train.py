@@ -1,3 +1,11 @@
+#
+# main entry point to start the training of a single model for target-dependent sentiment analysis in news
+#
+# author: Felix Hamborg <felix.hamborg@uni-konstanz.de>
+# This file is based on https://github.com/songyouwei/ABSA-PyTorch/blob/master/train.py
+# original author: songyouwei <youwei0314@gmail.com>
+# Copyright (C) 2018-2019. All Rights Reserved.
+
 import argparse
 import os
 import random
