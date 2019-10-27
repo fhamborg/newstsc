@@ -1,7 +1,7 @@
 from collections import Counter
-from collections import defaultdict
 from statistics import mean
 
+import numpy as np
 from sklearn import metrics
 
 from fxlogger import get_logger
@@ -19,14 +19,24 @@ class Evaluator:
         self.snem_name = snem_name
 
     def mean_from_all_statistics(self, all_test_stats):
-        mean_test_stats = defaultdict(float)
+        # for Counters, we do not take the mean
+        mean_test_stats = {}
         number_stats = len(all_test_stats)
 
         for key in all_test_stats[0]:
-            for test_stat in all_test_stats:
-                mean_test_stats[key] += test_stat[key]
+            value_type = type(all_test_stats[0][key])
 
-            mean_test_stats[key] = mean_test_stats[key] / number_stats
+            if value_type in [float, np.float64, np.float32]:
+                mean_test_stats[key] = 0.0
+                for test_stat in all_test_stats:
+                    mean_test_stats[key] += test_stat[key]
+
+                mean_test_stats[key] = mean_test_stats[key] / number_stats
+
+            elif value_type == Counter:
+                mean_test_stats[key] = Counter()
+                for test_stat in all_test_stats:
+                    mean_test_stats[key] += test_stat[key]
 
         return dict(mean_test_stats)
 

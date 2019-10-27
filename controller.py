@@ -35,19 +35,21 @@ class SetupController:
     def __init__(self):
         self.logger = get_logger()
 
-        self.use_cross_validation = 10  # if 0: do not use cross validation
+        self.use_cross_validation = 2  # if 0: do not use cross validation
         self.args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                                   'lossweighting']
+                                   'lossweighting', 'devmode']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         self.combinations = {
-            'model_name': ['aen_bert', 'aen_distilbert'],
+            'model_name': ['aen_spc', '', 'aen_bert', 'aen_distilbert'],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
             'initializer': ['xavier_uniform_'],
             'learning_rate': ['1e-3'],  # , '2e-5', '5e-5'],
             'batch_size': ['16'],  # , '32', '64'],
             'lossweighting': ['True', 'False'],
+            'devmode': ['True'],
+            'num_epoch': ['1'],  # later maybe 100
         }
         assert len(self.args_names_ordered) == len(self.combinations.keys())
         assert len(self.combinations['snem']) == 1

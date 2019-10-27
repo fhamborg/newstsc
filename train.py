@@ -1,5 +1,5 @@
 #
-# main entry point to start the training of a single model for target-dependent sentiment analysis in news
+# main entry point to start training of a single model for target-dependent sentiment analysis in news
 #
 # author: Felix Hamborg <felix.hamborg@uni-konstanz.de>
 # This file is based on https://github.com/songyouwei/ABSA-PyTorch/blob/master/train.py
@@ -150,7 +150,7 @@ class Instructor:
                 best_model_filename = '{0}_{1}_val_{2}_{3}_e{4}'.format(self.opt.model_name, self.opt.dataset_name,
                                                                         self.opt.snem, round(max_dev_snem, 4), epoch)
                 if fold_number is not None:
-                    best_model_filename += '_' + str(fold_number)
+                    best_model_filename += '_cvf' + str(fold_number)
 
                 pathdir = os.path.join(self.opt.experiment_path, 'state_dict')
 
@@ -235,13 +235,16 @@ class Instructor:
             val_data_loader = DataLoader(dataset=valset, batch_size=self.opt.batch_size, shuffle=False)
 
             self._reset_params()
-            best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, val_data_loader)
+            best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, val_data_loader,
+                                                               fid)
 
+            # evaluate the model that performed best during training,
             self.model.load_state_dict(torch.load(best_model_path))
             test_stats = self._evaluate(test_data_loader)
+            # append its results to the list of results, which will be aggregated after all folds are completed
             all_test_stats.append(test_stats)
 
-        mean_test_stats = self.evaluator.mean_from_all_statisticss(all_test_stats)
+        mean_test_stats = self.evaluator.mean_from_all_statistics(all_test_stats)
         self.evaluator.log_statistics(mean_test_stats)
 
         logger.info("finished execution of this crossval run. exiting.")
@@ -399,11 +402,13 @@ def main():
         'tnet_lf': ['text_raw_indices', 'aspect_indices', 'aspect_in_text'],
         'aoa': ['text_raw_indices', 'aspect_indices'],
         'mgan': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
-        'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
-        'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
-        'aen_distilbert': ['text_raw_bert_indices', 'aspect_bert_indices'],
         'aen_glove': ['text_raw_indices', 'aspect_indices'],
         'lcf_bert': ['text_bert_indices', 'bert_segments_ids', 'text_raw_bert_indices', 'aspect_bert_indices'],
+
+        'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
+        'aen_distilbert': ['text_raw_bert_indices', 'aspect_bert_indices'],
+        'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
+        'distilbert_spc': ['text_bert_indices', 'bert_segments_ids'],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,
