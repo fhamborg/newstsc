@@ -1,4 +1,5 @@
 from collections import Counter
+from collections import defaultdict
 from statistics import mean
 
 from sklearn import metrics
@@ -16,6 +17,18 @@ class Evaluator:
         self.pos_label_index = self.sorted_expected_label_values.index(self.pos_label_value)
         self.neg_label_index = self.sorted_expected_label_values.index(self.neg_label_value)
         self.snem_name = snem_name
+
+    def mean_from_all_statistics(self, all_test_stats):
+        mean_test_stats = defaultdict(float)
+        number_stats = len(all_test_stats)
+
+        for key in all_test_stats[0]:
+            for test_stat in all_test_stats:
+                mean_test_stats[key] += test_stat[key]
+
+            mean_test_stats[key] = mean_test_stats[key] / number_stats
+
+        return dict(mean_test_stats)
 
     def calc_statistics(self, y_true, y_pred):
         y_true_list = y_true.tolist()
@@ -43,8 +56,8 @@ class Evaluator:
 
     def log_statistics(self, stats):
         self.logger.info("{}: {}".format(self.snem_name, stats[self.snem_name]))
-        self.logger.info("y_true distribution: {}".format(stats['y_true_count']))
-        self.logger.info("y_pred distribution: {}".format(stats['y_pred_count']))
+        self.logger.info("y_true distribution: {}".format(sorted(stats['y_true_count'].items())))
+        self.logger.info("y_pred distribution: {}".format(sorted(stats['y_pred_count'].items())))
         self.logger.info('> recall_avg: {:.4f}, f1_posneg: {:.4f}, acc: {:.4f}, f1_macro: {:.4f}'.format(
             stats['recall_avg'], stats['f1_posneg'], stats['accuracy'], stats['f1_macro'],
         ))

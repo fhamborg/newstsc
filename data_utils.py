@@ -205,14 +205,14 @@ class FXDataset(Dataset):
             logger.info("devmode=True: truncating dataset to 60 lines")
             tasks = tasks[:60]
 
-        label_counter = Counter()
+        self.label_counter = Counter()
         with tqdm(total=len(tasks)) as pbar:
             for task in tasks:
                 item = self.task_to_dataset_item(task)
-                label_counter[task['label']] += 1
+                self.label_counter[task['label']] += 1
                 self.data.append(item)
                 pbar.update(1)
-        logger.info("label distribution: {}".format(label_counter))
+        logger.info("label distribution: {}".format(self.label_counter))
 
     def task_to_dataset_item(self, task):
         text = task['text']

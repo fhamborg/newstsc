@@ -1,5 +1,4 @@
 import argparse
-import math
 import os
 import random
 import time
@@ -7,7 +6,7 @@ import time
 import numpy
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel
 
 from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
@@ -26,27 +25,31 @@ class Instructor:
         self.opt = opt
         logger.info(opt)
 
-        if opt.model_name == 'aen_bert':
-            tokenizer = Tokenizer4Bert(opt.max_seq_len, opt.pretrained_model_name)
-            pretrained_model = BertModel.from_pretrained(opt.pretrained_model_name)
-            self.model = opt.model_class(pretrained_model, opt).to(opt.device)
-        elif opt.model_name == 'aen_distilbert':
-            tokenizer = Tokenizer4Distilbert(opt.max_seq_len, opt.pretrained_model_name)
-            pretrained_model = DistilBertModel.from_pretrained(opt.pretrained_model_name)
-            self.model = opt.model_class(pretrained_model, opt).to(opt.device)
+        self.create_model()
+
         logger.info("initialized pretrained model: {}".format(opt.model_name))
 
         self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
         self.sorted_expected_label_values = [0, 1, 2]
+        self.sorted_expected_label_names = ['negative', 'neutral', 'positive']
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
-        logger.info("loading dataset {} from path {}".format(opt.dataset_name, opt.dataset_path))
-        self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', tokenizer, self.polarity_associations,
-                                  self.opt.devmode)
-        self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', tokenizer, self.polarity_associations, self.opt.devmode)
-        self.testset = FXDataset(opt.dataset_path + 'test.jsonl', tokenizer, self.polarity_associations,
-                                 self.opt.devmode)
-        logger.info("loaded dataset {}".format(opt.dataset_name))
+        if self.opt.crossval > 0:
+            logger.info("loading datasets {} from {}".format(opt.dataset_name, opt.dataset_path))
+            self.crossvalset = FXDataset(opt.dataset_path + 'crossval.jsonl', self.tokenizer,
+                                         self.polarity_associations, self.opt.devmode)
+            self.testset = FXDataset(opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
+                                     self.opt.devmode)
+            logger.info("loaded datasets from {}".format(opt.dataset_path))
+        else:
+            logger.info("loading datasets {} from {}".format(opt.dataset_name, opt.dataset_path))
+            self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
+                                      self.opt.devmode)
+            self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
+                                    self.opt.devmode)
+            self.testset = FXDataset(opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
+                                     self.opt.devmode)
+            logger.info("loaded datasets from {}".format(opt.dataset_path))
 
         self._print_args()
 
@@ -64,18 +67,34 @@ class Instructor:
         for arg in vars(self.opt):
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.opt, arg)))
 
-    def _reset_params(self):
-        for child in self.model.children():
-            if type(child) != BertModel:  # skip bert params
-                for p in child.parameters():
-                    if p.requires_grad:
-                        if len(p.shape) > 1:
-                            self.opt.initializer(p)
-                        else:
-                            stdv = 1. / math.sqrt(p.shape[0])
-                            torch.nn.init.uniform_(p, a=-stdv, b=stdv)
+    def create_model(self):
+        logger.info("creating model {}".format(self.opt.model_name))
+        if self.opt.model_name == 'aen_bert':
+            self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+            pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
+            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+        elif self.opt.model_name == 'aen_distilbert':
+            self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+            pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
+            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+        self.pretrained_model_state_dict = pretrained_model.state_dict()
 
-    def _train(self, criterion, optimizer, train_data_loader, dev_data_loader):
+    def _reset_params(self):
+        self.create_model()
+        # for child in self.model.children():
+        #     if type(child) != BertModel:  # skip bert params
+        #         for p in child.parameters():
+        #             if p.requires_grad:
+        #                 if len(p.shape) > 1:
+        #                     self.opt.initializer(p)
+        #                 else:
+        #                     stdv = 1. / math.sqrt(p.shape[0])
+        #                     torch.nn.init.uniform_(p, a=-stdv, b=stdv)
+        #     else:
+        #         self.model.bert.load_state_dict(self.pretrained_model_state_dict)
+        #         # TODO maybe also rest DISTILBERT model and all the others
+
+    def _train(self, criterion, optimizer, train_data_loader, dev_data_loader, fold_number=None):
         max_dev_snem = 0
         global_step = 0
         best_model_path = None
@@ -122,6 +141,9 @@ class Instructor:
 
                 best_model_filename = '{0}_{1}_val_{2}_{3}_e{4}'.format(self.opt.model_name, self.opt.dataset_name,
                                                                         self.opt.snem, round(max_dev_snem, 4), epoch)
+                if fold_number is not None:
+                    best_model_filename += '_' + str(fold_number)
+
                 pathdir = os.path.join(self.opt.experiment_path, 'state_dict')
 
                 os.makedirs(pathdir, exist_ok=True)
@@ -140,7 +162,7 @@ class Instructor:
                                                        basepath=filepath_stats_base)
                 logger.info("created confusion matrices in path: {}".format(filepath_stats_base))
 
-        return best_model_path, best_model_path
+        return best_model_path, best_model_filename
 
     def _evaluate(self, data_loader):
         t_labels_all, t_outputs_all = None, None
@@ -169,9 +191,64 @@ class Instructor:
 
         return stats
 
+    def get_inv_class_frequencies(self):
+        inv_freqs = []
+        for label_name in self.sorted_expected_label_names:
+            inv_freqs.append(1.0 / self.testset.label_counter[label_name])
+
+        return inv_freqs
+
+    def run_crossval(self):
+        # Loss and Optimizer
+        if self.opt.lossweighting:
+            inv_class_freqs = self.get_inv_class_frequencies()
+            class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
+        else:
+            class_weights = None
+
+        criterion = nn.CrossEntropyLoss(weight=class_weights)
+        _params = filter(lambda p: p.requires_grad, self.model.parameters())
+        optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
+
+        test_data_loader = DataLoader(dataset=self.testset, batch_size=self.opt.batch_size, shuffle=False)
+        valset_len = len(self.crossvalset) // self.opt.crossval
+        splitedsets = random_split(self.crossvalset, tuple([valset_len] * (self.opt.crossval - 1) + [
+            len(self.crossvalset) - valset_len * (self.opt.crossval - 1)]))
+
+        logger.info("starting training...")
+        all_test_stats = []
+        for fid in range(self.opt.crossval):
+            logger.info('>' * 100)
+            logger.info('fold : {}'.format(fid))
+
+            trainset = ConcatDataset([x for i, x in enumerate(splitedsets) if i != fid])
+            valset = splitedsets[fid]
+            train_data_loader = DataLoader(dataset=trainset, batch_size=self.opt.batch_size, shuffle=True)
+            val_data_loader = DataLoader(dataset=valset, batch_size=self.opt.batch_size, shuffle=False)
+
+            self._reset_params()
+            best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, val_data_loader)
+
+            self.model.load_state_dict(torch.load(best_model_path))
+            test_stats = self._evaluate(test_data_loader)
+            all_test_stats.append(test_stats)
+
+        mean_test_stats = self.evaluator.mean_from_all_statisticss(all_test_stats)
+        self.evaluator.log_statistics(mean_test_stats)
+
+        logger.info("finished execution of this crossval run. exiting.")
+
+        # print snem value to stdout, for the controller to parse it
+        print(mean_test_stats[self.opt.snem])
+
     def run(self):
         # Loss and Optimizer
-        class_weights = torch.tensor([1 / 82, 1 / 528, 1 / 10]).to(self.opt.device)
+        if self.opt.lossweighting:
+            inv_class_freqs = self.get_inv_class_frequencies()
+            class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
+        else:
+            class_weights = None
+
         criterion = nn.CrossEntropyLoss(weight=class_weights)
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
@@ -187,6 +264,9 @@ class Instructor:
         time_training_elapsed_mins = (time.time() - time_training_start) // 60
         logger.info("training finished. duration={}mins".format(time_training_elapsed_mins))
 
+        self.post_training(best_model_path, best_model_filename, test_data_loader)
+
+    def post_training(self, best_model_path, best_model_filename, test_data_loader):
         logger.info("loading model that performed best during training: {}".format(best_model_path))
         self.model.load_state_dict(torch.load(best_model_path))
 
@@ -198,12 +278,12 @@ class Instructor:
         test_stats = self._evaluate(test_data_loader)
         test_snem = test_stats[self.opt.snem]
 
-        test_confusion_matrix = test_stats['multilabel_confusion_matrix']
-
         logger.info("evaluation finished.")
         self.evaluator.log_statistics(test_stats)
 
         # save confusion matrices
+        test_confusion_matrix = test_stats['multilabel_confusion_matrix']
+
         filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
         os.makedirs(filepath_stats_prefix, exist_ok=True)
         if not filepath_stats_prefix.endswith('/'):
@@ -264,6 +344,8 @@ def main():
                         help='if defined, all data will be read from / saved to a folder in the experiments folder')
     parser.add_argument('--crossval', default=0, type=int,
                         help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
+    parser.add_argument('--lossweighting', type=str2bool, nargs='?', const=True, default=False,
+                        help="True: loss weights according to class frequencies, False: each class has the same loss per example")
 
     opt = parser.parse_args()
 
@@ -365,7 +447,11 @@ def main():
     opt.dataset_path = os.path.join(opt.experiment_path, opt.dataset_path)
 
     ins = Instructor(opt)
-    ins.run()
+
+    if opt.crossval > 0:
+        ins.run_crossval()
+    else:
+        ins.run()
 
 
 if __name__ == '__main__':
