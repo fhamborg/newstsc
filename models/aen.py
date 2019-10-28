@@ -13,24 +13,34 @@ from layers.squeeze_embedding import SqueezeEmbedding
 
 # CrossEntropyLoss for Label Smoothing Regularization
 class CrossEntropyLoss_LSR(nn.Module):
-    def __init__(self, device, para_LSR=0.2):
+    def __init__(self, device, para_LSR=0.2, weight=None):
         super(CrossEntropyLoss_LSR, self).__init__()
         self.para_LSR = para_LSR
         self.device = device
         self.logSoftmax = nn.LogSoftmax(dim=-1)
+        self.weight = weight
 
     def _toOneHot_smooth(self, label, batchsize, classes):
-        prob = self.para_LSR * 1.0 / classes
-        one_hot_label = torch.zeros(batchsize, classes) + prob
+        base_prob = self.para_LSR * 1.0 / classes
+        one_hot_label = torch.zeros(batchsize, classes) + base_prob
+
+        if self.weight is not None:
+            one_hot_label = one_hot_label * self.weight
+
         for i in range(batchsize):
             index = label[i]
             one_hot_label[i, index] += (1.0 - self.para_LSR)
+
         return one_hot_label
 
     def forward(self, pre, label, size_average=True):
         b, c = pre.size()
+        pre_logsoftmax = self.logSoftmax(pre)
+
         one_hot_label = self._toOneHot_smooth(label, b, c).to(self.device)
-        loss = torch.sum(-one_hot_label * self.logSoftmax(pre), dim=1)
+
+        loss = torch.sum(-one_hot_label * pre_logsoftmax, dim=1)
+
         if size_average:
             return torch.mean(loss)
         else:
@@ -109,7 +119,7 @@ class AEN_DISTILBERT(nn.Module):
         target_len = torch.sum(target != 0, dim=-1)
         context = self.squeeze_embedding(context, context_len)
         # context, _ = self.bert(context, output_all_encoded_layers=False)
-        context = self.distilbert(context)[0]
+        # context = self.distilbert(context)[0] # this works, but we are getting the first batch only!
         context = self.dropout(context)
         target = self.squeeze_embedding(target, target_len)
         # target, _ = self.bert(target, output_all_encoded_layers=False)

@@ -21,8 +21,9 @@ from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
-from models.aen import AEN_BERT, AEN_GloVe, AEN_DISTILBERT
+from models.aen import AEN_BERT, AEN_GloVe, AEN_DISTILBERT, CrossEntropyLoss_LSR
 from models.bert_spc import BERT_SPC
+from models.distilbert_spc import DISTILBERT_SPC
 from plotter_utils import create_save_plotted_confusion_matrices
 
 logger = get_logger()
@@ -201,22 +202,31 @@ class Instructor:
 
         return stats
 
-    def get_inv_class_frequencies(self):
+    def get_normalized_inv_class_frequencies(self):
         inv_freqs = []
+
         for label_name in self.sorted_expected_label_names:
-            inv_freqs.append(1.0 / self.testset.label_counter[label_name])
+            inv_freq_of_class = 1.0 / self.testset.label_counter[label_name]
+            inv_freqs.append(inv_freq_of_class)
+
+        for i in range(len(inv_freqs)):
+            inv_freqs[i] = inv_freqs[i] / sum(inv_freqs)
 
         return inv_freqs
 
     def run_crossval(self):
         # Loss and Optimizer
         if self.opt.lossweighting:
-            inv_class_freqs = self.get_inv_class_frequencies()
+            inv_class_freqs = self.get_normalized_inv_class_frequencies()
             class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
         else:
             class_weights = None
 
-        criterion = nn.CrossEntropyLoss(weight=class_weights)
+        if self.opt.lsr:
+            criterion = CrossEntropyLoss_LSR(self.opt.device, para_LSR=0.2, weight=class_weights)
+        else:
+            criterion = nn.CrossEntropyLoss(weight=class_weights)
+
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
 
@@ -261,12 +271,16 @@ class Instructor:
     def run(self):
         # Loss and Optimizer
         if self.opt.lossweighting:
-            inv_class_freqs = self.get_inv_class_frequencies()
+            inv_class_freqs = self.get_normalized_inv_class_frequencies()
             class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
         else:
             class_weights = None
 
-        criterion = nn.CrossEntropyLoss(weight=class_weights)
+        if self.opt.lsr:
+            criterion = CrossEntropyLoss_LSR(self.opt.device, para_LSR=0.2, weight=class_weights)
+        else:
+            criterion = nn.CrossEntropyLoss(weight=class_weights)
+
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
 
@@ -361,6 +375,8 @@ def main():
                         help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
     parser.add_argument('--lossweighting', type=str2bool, nargs='?', const=True, default=False,
                         help="True: loss weights according to class frequencies, False: each class has the same loss per example")
+    parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
+                        help="True: enable label smoothing regularization; False: disable")
 
     opt = parser.parse_args()
 
@@ -384,11 +400,13 @@ def main():
         'tnet_lf': TNet_LF,
         'aoa': AOA,
         'mgan': MGAN,
-        'bert_spc': BERT_SPC,
-        'aen_bert': AEN_BERT,
         'aen_glove': AEN_GloVe,
-        'aen_distilbert': AEN_DISTILBERT,
         'lcf_bert': LCF_BERT,
+
+        'aen_bert': AEN_BERT,
+        'bert_spc': BERT_SPC,
+        'aen_distilbert': AEN_DISTILBERT,
+        'distilbert_spc': DISTILBERT_SPC,
     }
     model_name_to_pretrained_model_name = {
         'aen_bert': 'bert-base-uncased',
