@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel
 
 from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
+from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
@@ -110,6 +111,9 @@ class Instructor:
         best_model_path = None
         best_model_filename = None
 
+        # initialize the early_stopping object
+        early_stopping = EarlyStopping()
+
         for epoch in range(self.opt.num_epoch):
             logger.info('>' * 100)
             logger.info('epoch: {}'.format(epoch))
@@ -145,12 +149,14 @@ class Instructor:
 
             dev_snem = dev_stats[self.opt.snem]
 
-            if dev_snem > max_dev_snem:
+            early_stopping(dev_snem)
+            if early_stopping.flag_has_score_increased_since_last_check:
                 logger.info("model yields best performance so far, saving to disk...")
                 max_dev_snem = dev_snem
 
-                best_model_filename = '{0}_{1}_val_{2}_{3}_e{4}'.format(self.opt.model_name, self.opt.dataset_name,
-                                                                        self.opt.snem, round(max_dev_snem, 4), epoch)
+                best_model_filename = '{0}_{1}_val_{2}_{3}_epoch{4}'.format(self.opt.model_name, self.opt.dataset_name,
+                                                                            self.opt.snem, round(max_dev_snem, 4),
+                                                                            epoch)
                 if fold_number is not None:
                     best_model_filename += '_cvf' + str(fold_number)
 
@@ -171,6 +177,11 @@ class Instructor:
                                                      expected_labels=self.sorted_expected_label_values,
                                                      basepath=filepath_stats_base)
                 logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
+
+            if early_stopping.early_stop:
+                logger.info("early stopping after {} epochs without improvement, total epochs: {} of {}".format(
+                    early_stopping.patience, epoch, self.opt.num_epoch))
+                break
 
         return best_model_path, best_model_filename
 

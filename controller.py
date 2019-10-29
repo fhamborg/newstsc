@@ -45,13 +45,13 @@ class SetupController:
             'model_name': ['distilbert_spc', 'bert_spc', 'aen_bert', 'aen_distilbert'],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
-            'initializer': ['xavier_uniform_'],  # TODO check this and other parameters, compare with available
-            # options in train.py
-            'learning_rate': ['1e-3'],  # , '2e-5', '5e-5'],
-            'batch_size': ['16'],  # , '32', '64'],
+            'initializer': ['xavier_uniform_'],
+            # TODO check this and other parameters, compare with available options in train.py
+            'learning_rate': ['1e-3', '2e-5', '3e-5', '5e-5'],
+            'batch_size': ['16', '32', '64', '128'],
             'lossweighting': ['True', 'False'],
             'devmode': ['True'],
-            'num_epoch': ['1'],  # later maybe 100
+            'num_epoch': ['200'],
             'lsr': ['True', 'False'],
             'bert_spc_reduction': ['pooler_output', 'mean_last_hidden_states']
         }

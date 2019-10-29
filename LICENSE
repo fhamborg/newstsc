@@ -1,4 +1,6 @@
-This project uses code from the ABSA-PyTorch project by Yury Soong et al. available at https://github.com/songyouwei/ABSA-PyTorch
+This project uses code from various projects, who may have their own license or copyright.
+- ABSA-PyTorch by Yury Soong et al., available at https://github.com/songyouwei/ABSA-PyTorch
+- early-stopping-pytorch by Bjarten, available at https://github.com/Bjarten/early-stopping-pytorch
 
 For newly developed files, the license information is:
 
