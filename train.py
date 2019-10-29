@@ -103,7 +103,6 @@ class Instructor:
         #                     torch.nn.init.uniform_(p, a=-stdv, b=stdv)
         #     else:
         #         self.model.bert.load_state_dict(self.pretrained_model_state_dict)
-        #         # TODO maybe also rest DISTILBERT model and all the others
 
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader, fold_number=None):
         max_dev_snem = 0

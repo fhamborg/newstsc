@@ -7,6 +7,9 @@
           <mappings>
             <mapping deploy="/code/cope-tsa" local="$PROJECT_DIR$" web="/" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/experiments" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
