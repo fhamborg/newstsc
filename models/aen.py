@@ -47,53 +47,6 @@ class CrossEntropyLoss_LSR(nn.Module):
             return torch.sum(loss)
 
 
-class AEN_GloVe(nn.Module):
-    def __init__(self, embedding_matrix, opt):
-        # super(AEN, self).__init__()
-        super(AEN_GloVe, self).__init__()
-        self.opt = opt
-        self.embed = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float))
-        self.squeeze_embedding = SqueezeEmbedding()
-
-        self.attn_k = Attention(opt.embed_dim, out_dim=opt.hidden_dim, n_head=8, score_function='mlp',
-                                dropout=opt.dropout)
-        self.attn_q = Attention(opt.embed_dim, out_dim=opt.hidden_dim, n_head=8, score_function='mlp',
-                                dropout=opt.dropout)
-        self.ffn_c = PositionwiseFeedForward(opt.hidden_dim, dropout=opt.dropout)
-        self.ffn_t = PositionwiseFeedForward(opt.hidden_dim, dropout=opt.dropout)
-
-        self.attn_s1 = Attention(opt.hidden_dim, n_head=8, score_function='mlp', dropout=opt.dropout)
-
-        self.dense = nn.Linear(opt.hidden_dim * 3, opt.polarities_dim)
-
-    def forward(self, inputs):
-        text_raw_indices, target_indices = inputs[0], inputs[1]
-        context_len = torch.sum(text_raw_indices != 0, dim=-1)
-        target_len = torch.sum(target_indices != 0, dim=-1)
-        context = self.embed(text_raw_indices)
-        context = self.squeeze_embedding(context, context_len)
-        target = self.embed(target_indices)
-        target = self.squeeze_embedding(target, target_len)
-
-        hc, _ = self.attn_k(context, context)
-        hc = self.ffn_c(hc)
-        ht, _ = self.attn_q(context, target)
-        ht = self.ffn_t(ht)
-
-        s1, _ = self.attn_s1(hc, ht)
-
-        context_len = torch.tensor(context_len, dtype=torch.float).to(self.opt.device)
-        target_len = torch.tensor(target_len, dtype=torch.float).to(self.opt.device)
-
-        hc_mean = torch.div(torch.sum(hc, dim=1), context_len.view(context_len.size(0), 1))
-        ht_mean = torch.div(torch.sum(ht, dim=1), target_len.view(target_len.size(0), 1))
-        s1_mean = torch.div(torch.sum(s1, dim=1), context_len.view(context_len.size(0), 1))
-
-        x = torch.cat((hc_mean, s1_mean, ht_mean), dim=-1)
-        out = self.dense(x)
-        return out
-
-
 class AEN_DISTILBERT(nn.Module):
     def __init__(self, distilbert, opt):
         super(AEN_DISTILBERT, self).__init__()

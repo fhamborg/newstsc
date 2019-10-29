@@ -21,7 +21,7 @@ from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
-from models.aen import AEN_BERT, AEN_GloVe, AEN_DISTILBERT, CrossEntropyLoss_LSR
+from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR
 from models.bert_spc import BERT_SPC
 from models.distilbert_spc import DISTILBERT_SPC
 from plotter_utils import create_save_plotted_confusion_matrices
@@ -377,6 +377,7 @@ def main():
                         help="True: loss weights according to class frequencies, False: each class has the same loss per example")
     parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
                         help="True: enable label smoothing regularization; False: disable")
+    parser.add_argument('--bert_spc_reduction', type=str, default='mean_last_hidden_states')
 
     opt = parser.parse_args()
 
@@ -400,7 +401,7 @@ def main():
         'tnet_lf': TNet_LF,
         'aoa': AOA,
         'mgan': MGAN,
-        'aen_glove': AEN_GloVe,
+        # 'aen_glove': AEN_GloVe,
         'lcf_bert': LCF_BERT,
 
         'aen_bert': AEN_BERT,
