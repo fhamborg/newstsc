@@ -188,8 +188,6 @@ class SetupController:
         return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
     def execute_single_setup(self, named_combination):
-        # args_names_values = self._args_combination_to_single_arg_values(args_combination)
-
         experiment_id = self._experiment_id_from_named_combination(named_combination)
         experiment_path = "./experiments/{}/{}/".format(self.experiment_base_id, experiment_id)
 

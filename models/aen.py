@@ -72,15 +72,20 @@ class AEN_DISTILBERT(nn.Module):
         target_len = torch.sum(target != 0, dim=-1)
 
         context = self.squeeze_embedding(context, context_len)
-        context, _ = self.distilbert(context)
+        context = self.distilbert(context)
+        if type(context) == tuple:
+            context = context[0]
         context = self.dropout(context)
 
         target = self.squeeze_embedding(target, target_len)
-        target, _ = self.distilbert(target)
+        target = self.distilbert(target)
+        if type(target) == tuple:
+            target = target[0]
         target = self.dropout(target)
 
         hc, _ = self.attn_k(context, context)
         hc = self.ffn_c(hc)
+
         ht, _ = self.attn_q(context, target)
         ht = self.ffn_t(ht)
 
@@ -132,6 +137,7 @@ class AEN_BERT(nn.Module):
 
         hc, _ = self.attn_k(context, context)
         hc = self.ffn_c(hc)
+
         ht, _ = self.attn_q(context, target)
         ht = self.ffn_t(ht)
 

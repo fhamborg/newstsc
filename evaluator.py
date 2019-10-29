@@ -50,8 +50,7 @@ class Evaluator:
         f1_macro = metrics.f1_score(y_true, y_pred, labels=self.sorted_expected_label_values, average='macro')
         f1_of_classes = metrics.f1_score(y_true, y_pred, labels=self.sorted_expected_label_values, average=None)
         f1_posneg = (f1_of_classes[self.pos_label_index] + f1_of_classes[self.neg_label_index]) / 2.0
-        multilabel_confusion_matrix = metrics.multilabel_confusion_matrix(y_true, y_pred,
-                                                                          labels=self.sorted_expected_label_values)
+        confusion_matrix = metrics.confusion_matrix(y_true, y_pred, labels=self.sorted_expected_label_values)
         recalls_of_classes = metrics.recall_score(y_true, y_pred, labels=self.sorted_expected_label_values,
                                                   average=None)
         recall_avg = mean(recalls_of_classes)
@@ -60,10 +59,10 @@ class Evaluator:
                                                   average='macro')
         accuracy = metrics.accuracy_score(y_true, y_pred)
 
-        return {'f1_macro': f1_macro, 'multilabel_confusion_matrix': multilabel_confusion_matrix,
-                'recalls_of_classes': recalls_of_classes, 'recall_avg': recall_avg, 'recall_macro': recall_macro,
-                'precision_macro': precision_macro, 'accuracy': accuracy, 'f1_posneg': f1_posneg,
-                'y_true_count': y_true_count, 'y_pred_count': y_pred_count}
+        return {'f1_macro': f1_macro, 'confusion_matrix': confusion_matrix, 'recalls_of_classes': recalls_of_classes,
+                'recall_avg': recall_avg, 'recall_macro': recall_macro, 'precision_macro': precision_macro,
+                'accuracy': accuracy, 'f1_posneg': f1_posneg, 'y_true_count': y_true_count,
+                'y_pred_count': y_pred_count}
 
     def log_statistics(self, stats, description):
         self.logger.info(description)

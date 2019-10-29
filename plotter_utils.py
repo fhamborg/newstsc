@@ -2,25 +2,18 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import multilabel_confusion_matrix
+from sklearn.metrics import confusion_matrix
 
 from fxlogger import get_logger
 
 logger = get_logger()
 
 
-def create_save_plotted_confusion_matrices(multilabel_confusion_matrices, expected_labels, basepath):
-    assert len(expected_labels) == multilabel_confusion_matrices.shape[0]
-
-    for index, label_class in enumerate(expected_labels):
-        binary_expected_labels = [str(label_class), "not_" + str(label_class)]
-        confusion_matrix = multilabel_confusion_matrices[index]
-        ax, title = plot_confusion_matrix(confusion_matrix, binary_expected_labels, normalize=False,
-                                          title='Label={}'.format(label_class))
-
-        filepath = os.path.join(basepath, 'class-{}.png'.format(label_class))
-        plt.savefig(filepath, bbox_inches='tight')
-        logger.info("created confusion matrices in path: {}".format(filepath))
+def create_save_plotted_confusion_matrix(conf_matrix, expected_labels, basepath):
+    ax, title = plot_confusion_matrix(conf_matrix, expected_labels, normalize=False)
+    filepath = os.path.join(basepath, 'stats.png')
+    plt.savefig(filepath, bbox_inches='tight')
+    logger.debug("created confusion matrices in path: {}".format(filepath))
 
 
 def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.Blues):
@@ -74,6 +67,6 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.
 if __name__ == '__main__':
     y_true = ["cat", "ant", "cat", "cat", "ant", "bird"]
     y_pred = ["ant", "ant", "cat", "cat", "ant", "cat"]
-    multiconfmat = multilabel_confusion_matrix(y_true, y_pred, labels=["ant", "bird", "cat"])
+    confmat = confusion_matrix(y_true, y_pred, labels=["ant", "bird", "cat"])
 
-    create_save_plotted_confusion_matrices(multiconfmat, ["ant", "bird", "cat"])
+    create_save_plotted_confusion_matrix(confmat, ["ant", "bird", "cat"], '.')

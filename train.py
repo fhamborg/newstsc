@@ -24,7 +24,7 @@ from models import RAM
 from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR
 from models.bert_spc import BERT_SPC
 from models.distilbert_spc import DISTILBERT_SPC
-from plotter_utils import create_save_plotted_confusion_matrices
+from plotter_utils import create_save_plotted_confusion_matrix
 
 logger = get_logger()
 
@@ -168,10 +168,10 @@ class Instructor:
                 if not filepath_stats_base.endswith('/'):
                     filepath_stats_base += '/'
                 os.makedirs(filepath_stats_base, exist_ok=True)
-                create_save_plotted_confusion_matrices(dev_stats['multilabel_confusion_matrix'],
-                                                       expected_labels=self.sorted_expected_label_values,
-                                                       basepath=filepath_stats_base)
-                logger.info("created confusion matrices in path: {}".format(filepath_stats_base))
+                create_save_plotted_confusion_matrix(dev_stats['confusion_matrix'],
+                                                     expected_labels=self.sorted_expected_label_values,
+                                                     basepath=filepath_stats_base)
+                logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
 
         return best_model_path, best_model_filename
 
@@ -312,14 +312,14 @@ class Instructor:
         self.evaluator.log_statistics(test_stats, "evaluation on test-set")
 
         # save confusion matrices
-        test_confusion_matrix = test_stats['multilabel_confusion_matrix']
+        test_confusion_matrix = test_stats['confusion_matrix']
         filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
         os.makedirs(filepath_stats_prefix, exist_ok=True)
         if not filepath_stats_prefix.endswith('/'):
             filepath_stats_prefix += '/'
-        create_save_plotted_confusion_matrices(test_confusion_matrix,
-                                               expected_labels=self.sorted_expected_label_values,
-                                               basepath=filepath_stats_prefix)
+        create_save_plotted_confusion_matrix(test_confusion_matrix,
+                                             expected_labels=self.sorted_expected_label_values,
+                                             basepath=filepath_stats_prefix)
 
         logger.info("finished execution of this run. exiting.")
 
