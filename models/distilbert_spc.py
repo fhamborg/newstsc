@@ -11,7 +11,7 @@ class DISTILBERT_SPC(nn.Module):
         self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
 
     def forward(self, inputs):
-        text_bert_indices, bert_segments_ids = inputs[0], inputs[1]
+        text_bert_indices = inputs[0]
         # _, pooled_output = self.distilbert(text_bert_indices, bert_segments_ids)
         _, pooled_output = self.distilbert(text_bert_indices)
         pooled_output = self.dropout(pooled_output)

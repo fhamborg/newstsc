@@ -19,11 +19,11 @@ b) return model from best epoch (or from best fold???!?)
 3) return model that performs best on testdat
 """
 import os
+import pprint
 import subprocess
 from collections import Counter
 from datetime import datetime
 from itertools import product
-import pprint
 
 from tabulate import tabulate
 from tqdm import tqdm
@@ -45,7 +45,8 @@ class SetupController:
             'model_name': ['distilbert_spc', 'bert_spc', 'aen_bert', 'aen_distilbert'],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
-            'initializer': ['xavier_uniform_'],
+            'initializer': ['xavier_uniform_'],  # TODO check this and other parameters, compare with available
+            # options in train.py
             'learning_rate': ['1e-3'],  # , '2e-5', '5e-5'],
             'batch_size': ['16'],  # , '32', '64'],
             'lossweighting': ['True', 'False'],
@@ -68,7 +69,7 @@ class SetupController:
         assert len(args_names_ordered) == len(combinations.keys())
         assert len(combinations['snem']) == 1
 
-        self.experiment_base_id = datetime.today().strftime('%Y%m%d%H%M%S')
+        self.experiment_base_id = datetime.today().strftime('%Y%m%d-%H%M%S')
         self.basecmd = ['python', 'train.py']
         self.basepath = 'controller_data'
         self.basepath_data = os.path.join(self.basepath, 'datasets')
@@ -184,7 +185,7 @@ class SetupController:
         return args_names_values
 
     def _experiment_id_from_named_combination(self, named_combination):
-        return "_".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
+        return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
     def execute_single_setup(self, named_combination):
         # args_names_values = self._args_combination_to_single_arg_values(args_combination)

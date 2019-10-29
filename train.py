@@ -20,7 +20,7 @@ from transformers import BertModel, DistilBertModel
 from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
 from evaluator import Evaluator
 from fxlogger import get_logger
-from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
+from models import RAM
 from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR
 from models.bert_spc import BERT_SPC
 from models.distilbert_spc import DISTILBERT_SPC
@@ -391,18 +391,7 @@ def main():
         torch.backends.cudnn.benchmark = False
 
     model_classes = {
-        'lstm': LSTM,
-        'td_lstm': TD_LSTM,
-        'atae_lstm': ATAE_LSTM,
-        'ian': IAN,
-        'memnet': MemNet,
         'ram': RAM,
-        'cabasc': Cabasc,
-        'tnet_lf': TNet_LF,
-        'aoa': AOA,
-        'mgan': MGAN,
-        # 'aen_glove': AEN_GloVe,
-        'lcf_bert': LCF_BERT,
 
         'aen_bert': AEN_BERT,
         'bert_spc': BERT_SPC,
@@ -433,7 +422,7 @@ def main():
         'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
         'aen_distilbert': ['text_raw_bert_indices', 'aspect_bert_indices'],
         'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
-        'distilbert_spc': ['text_bert_indices', 'bert_segments_ids'],
+        'distilbert_spc': ['text_bert_indices'],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,
@@ -450,7 +439,10 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
-    opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
+    if opt.model_name == 'ram':
+        pass
+    else:
+        opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
 
     if not opt.experiment_path:
         opt.experiment_path = '.'
