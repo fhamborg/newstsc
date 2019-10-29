@@ -73,6 +73,9 @@ class AEN_DISTILBERT(nn.Module):
         context = self.squeeze_embedding(context, context_len)
         # context, _ = self.bert(context, output_all_encoded_layers=False)
         # context = self.distilbert(context)[0] # this works, but we are getting the first batch only!
+
+        # TODO!!!
+
         context = self.dropout(context)
         target = self.squeeze_embedding(target, target_len)
         # target, _ = self.bert(target, output_all_encoded_layers=False)

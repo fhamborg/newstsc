@@ -12,9 +12,13 @@ class DISTILBERT_SPC(nn.Module):
 
     def forward(self, inputs):
         text_bert_indices = inputs[0]
-        # _, pooled_output = self.distilbert(text_bert_indices, bert_segments_ids)
-        _, pooled_output = self.distilbert(text_bert_indices)
-        pooled_output = self.dropout(pooled_output)
-        logits = self.dense(pooled_output)
+
+        last_hidden_state = self.distilbert(text_bert_indices)[0]
+
+        mean_last_hidden_state = last_hidden_state.mean(dim=1, keepdim=True)
+        prepared_output = mean_last_hidden_state[:, 0, :]
+
+        prepared_output = self.dropout(prepared_output)
+        logits = self.dense(prepared_output)
 
         return logits
