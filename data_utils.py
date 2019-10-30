@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 from transformers import BertTokenizer, DistilBertTokenizer
 
-from embeddings.glove import gensim_path
+from embeddings.glove import gensim_path, pickle_path
 from fxlogger import get_logger
 
 # get logger
@@ -128,31 +128,56 @@ class Tokenizer4Bert:
 
 
 class Tokenizer4GloVe:
-    def __init__(self, max_seq_len, lower=True, dev_mode=False):
+    def __init__(self, max_seq_len, lower=True, dev_mode=False, force_build=False):
         self.lower = lower
         self.max_seq_len = max_seq_len
 
-        word_limit = None
-        if dev_mode:
-            word_limit = 12  # int(0.001 * 1917496)
-            logger.warning("DEV MODE IS ENABLED!!! gensim. loading only {} words".format(word_limit))
-            logger.warning("DEV MODE IS ENABLED!!! gensim")
-            logger.warning("DEV MODE IS ENABLED!!! gensim")
+        require_new_build = force_build
 
-        logger.info(f"loading GloVe from {gensim_path}...")
-        start = time.time()
-        self.glove = KeyedVectors.load_word2vec_format(gensim_path, limit=word_limit, binary=False)
-        elapsed = (time.time() - start) / 60
-        logger.info("done in {:.2} min".format(elapsed))
+        if not require_new_build:
+            # attempt deserializing (takes only 1 min on my MBP 2016)
+            if not self.attempt_deserialize():
+                require_new_build = True
 
-        # build embeddings matrix
-        # idx 0 and len(word2idx)+1 are all-zeros
-        self.embedding_matrix = np.insert(self.glove.vectors, 0, np.zeros((1, 300)), axis=0)
-        self.embedding_matrix = np.append(self.embedding_matrix, np.zeros((1, 300)), axis=0)
-        logger.info("built matrix for embeddings")
+        if require_new_build:
+            # takes 16 min on my MacBook Pro 2016
+            # 15 min (for reading the GloVe txt file) + 1 min (for building the matrix) + 2 min (for serializing)
+            word_limit = None
+
+            logger.info(f"loading GloVe from {gensim_path}...")
+            start = time.time()
+            glove = KeyedVectors.load_word2vec_format(gensim_path, limit=word_limit, binary=False)
+            elapsed = (time.time() - start) / 60
+            logger.info("done in {:.2f} min".format(elapsed))
+            self.vocab = glove.vocab
+
+            # build embeddings matrix
+            # idx 0 and len(word2idx)+1 are all-zeros
+            self.embedding_matrix = np.insert(glove.vectors, 0, np.zeros((1, 300)), axis=0)
+            self.embedding_matrix = np.append(self.embedding_matrix, np.zeros((1, 300)), axis=0)
+            logger.debug("built matrix for embeddings")
+
+            # store to disk what we need next time
+            self.serialize()
+
+    def serialize(self):
+        with open(pickle_path, 'wb') as handle:
+            pickle.dump((self.embedding_matrix, self.vocab), handle, protocol=4)
+            logger.info("serialized Tokenizer4GloVe to {}".format(pickle_path))
+
+    def attempt_deserialize(self):
+        try:
+            with open(pickle_path, 'rb') as handle:
+                logger.info("trying to deserialize Tokenizer4GloVe from {}...".format(pickle_path))
+                self.embedding_matrix, self.vocab = pickle.load(handle)
+                logger.info("done")
+                return True
+        except Exception as e:
+            logger.info("failed: {}".format(e))
+            return False
 
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
-        unknownidx = len(self.glove.vocab) + 1
+        unknownidx = len(self.vocab) + 1
 
         if self.lower:
             text = text.lower()
@@ -160,7 +185,7 @@ class Tokenizer4GloVe:
 
         sequence_indexes = []
         for word in words:
-            vocab_item = self.glove.vocab.get(word)
+            vocab_item = self.vocab.get(word)
             if vocab_item:
                 word_index = vocab_item.index
             else:

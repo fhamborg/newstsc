@@ -106,24 +106,10 @@ class Instructor:
         else:
             raise Exception("model_name unknown: {}".format(self.opt.model_name))
 
-        # self.pretrained_model_state_dict = pretrained_model.state_dict()
-
     def _reset_params(self):
         self.create_model(only_model=True)
-        # for child in self.model.children():
-        #     if type(child) != BertModel:  # skip bert params
-        #         for p in child.parameters():
-        #             if p.requires_grad:
-        #                 if len(p.shape) > 1:
-        #                     self.opt.initializer(p)
-        #                 else:
-        #                     stdv = 1. / math.sqrt(p.shape[0])
-        #                     torch.nn.init.uniform_(p, a=-stdv, b=stdv)
-        #     else:
-        #         self.model.bert.load_state_dict(self.pretrained_model_state_dict)
 
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader, fold_number=None):
-        max_dev_snem = 0
         global_step = 0
         best_model_path = None
         best_model_filename = None
@@ -169,11 +155,9 @@ class Instructor:
             early_stopping(dev_snem)
             if early_stopping.flag_has_score_increased_since_last_check:
                 logger.info("model yields best performance so far, saving to disk...")
-                max_dev_snem = dev_snem
 
                 best_model_filename = '{0}_{1}_val_{2}_{3}_epoch{4}'.format(self.opt.model_name, self.opt.dataset_name,
-                                                                            self.opt.snem, round(max_dev_snem, 4),
-                                                                            epoch)
+                                                                            self.opt.snem, round(dev_snem, 4), epoch)
                 if fold_number is not None:
                     best_model_filename += '_cvf' + str(fold_number)
 
@@ -478,13 +462,13 @@ def main():
         opt.experiment_path = opt.experiment_path + '/'
 
     if not opt.dataset_path:
-        logger.info("dataset_path not defined, creating from dataset_name...")
+        logger.debug("dataset_path not defined, creating from dataset_name...")
         opt.dataset_path = os.path.join('datasets', opt.dataset_name)
         if not opt.dataset_path.endswith('/'):
             opt.dataset_path = opt.dataset_path + '/'
-        logger.info("dataset_path created from dataset_name: {}".format(opt.dataset_path))
+        logger.debug("dataset_path created from dataset_name: {}".format(opt.dataset_path))
     else:
-        logger.info("dataset_path defined: {}".format(opt.dataset_path))
+        logger.debug("dataset_path defined: {}".format(opt.dataset_path))
 
     opt.inputs_cols = input_columns[opt.model_name]
     opt.initializer = initializers[opt.initializer]
