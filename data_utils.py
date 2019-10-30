@@ -1,30 +1,31 @@
 import os
 import pickle
+import time
 from collections import Counter
 
 import jsonlines
 import numpy as np
 import torch
+from gensim.models import KeyedVectors
 from torch.utils.data import Dataset
 from tqdm import tqdm
 from transformers import BertTokenizer, DistilBertTokenizer
 
+from embeddings.glove import gensim_path
 from fxlogger import get_logger
 
 # get logger
 logger = get_logger()
 
 
-def build_tokenizer(fnames, max_seq_len, dat_fname):
+def build_tokenizer(all_datasets, max_seq_len, dat_fname):
     if os.path.exists(dat_fname):
         logger.info('loading tokenizer: {}'.format(dat_fname))
         tokenizer = pickle.load(open(dat_fname, 'rb'))
     else:
         text = ''
-        for fname in fnames:
-            fin = open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
-            lines = fin.readlines()
-            fin.close()
+        for dataset in all_datasets:
+            lines = []
             for i in range(0, len(lines), 3):
                 text_left, _, text_right = [s.lower().strip() for s in lines[i].partition("$T$")]
                 aspect = lines[i + 1].lower().strip()
@@ -124,6 +125,54 @@ class Tokenizer4Bert:
         if reverse:
             sequence = sequence[::-1]
         return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
+
+
+class Tokenizer4GloVe:
+    def __init__(self, max_seq_len, lower=True, dev_mode=False):
+        self.lower = lower
+        self.max_seq_len = max_seq_len
+
+        word_limit = None
+        if dev_mode:
+            word_limit = 12  # int(0.001 * 1917496)
+            logger.warning("DEV MODE IS ENABLED!!! gensim. loading only {} words".format(word_limit))
+            logger.warning("DEV MODE IS ENABLED!!! gensim")
+            logger.warning("DEV MODE IS ENABLED!!! gensim")
+
+        logger.info(f"loading GloVe from {gensim_path}...")
+        start = time.time()
+        self.glove = KeyedVectors.load_word2vec_format(gensim_path, limit=word_limit, binary=False)
+        elapsed = (time.time() - start) / 60
+        logger.info("done in {:.2} min".format(elapsed))
+
+        # build embeddings matrix
+        # idx 0 and len(word2idx)+1 are all-zeros
+        self.embedding_matrix = np.insert(self.glove.vectors, 0, np.zeros((1, 300)), axis=0)
+        self.embedding_matrix = np.append(self.embedding_matrix, np.zeros((1, 300)), axis=0)
+        logger.info("built matrix for embeddings")
+
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+        unknownidx = len(self.glove.vocab) + 1
+
+        if self.lower:
+            text = text.lower()
+        words = text.split()
+
+        sequence_indexes = []
+        for word in words:
+            vocab_item = self.glove.vocab.get(word)
+            if vocab_item:
+                word_index = vocab_item.index
+            else:
+                word_index = unknownidx
+            sequence_indexes.append(word_index)
+
+        if len(sequence_indexes) == 0:
+            sequence_indexes = [0]
+        if reverse:
+            sequence_indexes = sequence_indexes[::-1]
+
+        return pad_and_truncate(sequence_indexes, self.max_seq_len, padding=padding, truncating=truncating)
 
 
 class Tokenizer4Distilbert:

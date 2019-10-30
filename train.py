@@ -17,12 +17,12 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel
 
-from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert
+from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert, Tokenizer4GloVe
 from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
-from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR
+from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe
 from models.bert_spc import BERT_SPC
 from models.distilbert_spc import DISTILBERT_SPC
 from plotter_utils import create_save_plotted_confusion_matrix
@@ -33,35 +33,39 @@ logger = get_logger()
 class Instructor:
     def __init__(self, opt):
         self.opt = opt
-        logger.info(opt)
 
         self.create_model()
-
         logger.info("initialized pretrained model: {}".format(opt.model_name))
 
         self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
         self.sorted_expected_label_values = [0, 1, 2]
         self.sorted_expected_label_names = ['negative', 'neutral', 'positive']
+
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
-        if self.opt.crossval > 0:
-            logger.info("loading datasets {} from {}".format(opt.dataset_name, opt.dataset_path))
-            self.crossvalset = FXDataset(opt.dataset_path + 'crossval.jsonl', self.tokenizer,
-                                         self.polarity_associations, self.opt.devmode)
-            self.testset = FXDataset(opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.devmode)
-            logger.info("loaded datasets from {}".format(opt.dataset_path))
-        else:
-            logger.info("loading datasets {} from {}".format(opt.dataset_name, opt.dataset_path))
-            self.trainset = FXDataset(opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.opt.devmode)
-            self.devset = FXDataset(opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.opt.devmode)
-            self.testset = FXDataset(opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.devmode)
-            logger.info("loaded datasets from {}".format(opt.dataset_path))
+        self.load_datasets()
 
         self._print_args()
+
+    def load_datasets(self):
+        if self.opt.crossval > 0:
+            logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
+            self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
+                                         self.polarity_associations, self.opt.devmode)
+            self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
+                                     self.opt.devmode)
+            self.all_datasets = [self.crossvalset, self.testset]
+            logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
+        else:
+            logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
+            self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
+                                      self.opt.devmode)
+            self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
+                                    self.opt.devmode)
+            self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
+                                     self.opt.devmode)
+            self.all_datasets = [self.trainset, self.devset, self.testset]
+            logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
     def _print_args(self):
         n_trainable_params, n_nontrainable_params = 0, 0
@@ -77,22 +81,35 @@ class Instructor:
         for arg in vars(self.opt):
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.opt, arg)))
 
-    def create_model(self):
+    def create_model(self, only_model=False):
         logger.info("creating model {}".format(self.opt.model_name))
         if self.opt.model_name in ['aen_bert', 'bert_spc']:
-            self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+            if not only_model:
+                self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+
             pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+
         elif self.opt.model_name in ['aen_distilbert', 'distilbert_spc']:
-            self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+            if not only_model:
+                self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+
             pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+
+        elif self.opt.model_name == 'aen_glove':
+            if not only_model:
+                self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len, dev_mode=self.opt.devmode)
+
+            self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt).to(self.opt.device)
+
         else:
-            raise Exception("model_name {} unknown".format(self.opt.model_name))
-        self.pretrained_model_state_dict = pretrained_model.state_dict()
+            raise Exception("model_name unknown: {}".format(self.opt.model_name))
+
+        # self.pretrained_model_state_dict = pretrained_model.state_dict()
 
     def _reset_params(self):
-        self.create_model()
+        self.create_model(only_model=True)
         # for child in self.model.children():
         #     if type(child) != BertModel:  # skip bert params
         #         for p in child.parameters():
@@ -407,6 +424,7 @@ def main():
         'bert_spc': BERT_SPC,
         'aen_distilbert': AEN_DISTILBERT,
         'distilbert_spc': DISTILBERT_SPC,
+        'aen_glove': AEN_GloVe,
     }
     model_name_to_pretrained_model_name = {
         'aen_bert': 'bert-base-uncased',
@@ -449,7 +467,7 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
-    if opt.model_name == 'ram':
+    if opt.model_name in ['ram', 'aen_glove']:
         pass
     else:
         opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]

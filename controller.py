@@ -42,7 +42,7 @@ class SetupController:
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
-            'model_name': ['distilbert_spc', 'bert_spc', 'aen_bert', 'aen_distilbert'],
+            'model_name': ['distilbert_spc', 'bert_spc', 'aen_bert', 'aen_distilbert', 'aen_glove'],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
             'initializer': ['xavier_uniform_'],
