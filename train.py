@@ -17,7 +17,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel
 
-from data_utils import Tokenizer4Bert, FXDataset, Tokenizer4Distilbert, Tokenizer4GloVe
+from dataset import FXDataset
 from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
@@ -26,6 +26,7 @@ from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe
 from models.bert_spc import BERT_SPC
 from models.distilbert_spc import DISTILBERT_SPC
 from plotter_utils import create_save_plotted_confusion_matrix
+from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe
 
 logger = get_logger()
 
@@ -97,9 +98,9 @@ class Instructor:
             pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
-        elif self.opt.model_name == 'aen_glove':
+        elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
-                self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len, dev_mode=self.opt.devmode)
+                self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len)
 
             self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt).to(self.opt.device)
 
