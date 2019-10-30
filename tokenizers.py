@@ -65,17 +65,21 @@ class FXTokenizer(ABC):
         pass
 
     @staticmethod
-    def pad_and_truncate(sequence, maxlen, dtype='int64', padding='post', truncating='post', value=0):
-        x = (np.ones(maxlen) * value).astype(dtype)
+    def pad_and_truncate(sequence, maxlen, dtype='int64', padding='post', truncating='post', pad_value=0):
+        x = (np.ones(maxlen) * pad_value).astype(dtype)
+
         if truncating == 'pre':
             trunc = sequence[-maxlen:]
         else:
             trunc = sequence[:maxlen]
+
         trunc = np.asarray(trunc, dtype=dtype)
+
         if padding == 'post':
             x[:len(trunc)] = trunc
         else:
             x[-len(trunc):] = trunc
+
         return x
 
 
@@ -84,6 +88,9 @@ class Tokenizer4Distilbert(FXTokenizer):
         super().__init__()
         self.tokenizer = DistilBertTokenizer.from_pretrained(pretrained_distilbert_name)
         self.max_seq_len = max_seq_len
+        self.pad_value = 0
+        # verified with
+        # print(DistilBertTokenizer.from_pretrained('distilbert-base-uncased').encode("[PAD]"))
 
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
@@ -91,7 +98,8 @@ class Tokenizer4Distilbert(FXTokenizer):
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
-        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
+        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
+                                     pad_value=self.pad_value)
 
     def with_special_tokens(self, text_a, text_b=None):
         # https://huggingface.co/transformers/model_doc/distilbert.html#distilbertmodel
@@ -109,6 +117,8 @@ class Tokenizer4Bert(FXTokenizer):
         super().__init__()
         self.tokenizer = BertTokenizer.from_pretrained(pretrained_bert_name)
         self.max_seq_len = max_seq_len
+        self.pad_value = 0  # taken from original ABSA code, plus the 0th vocab entry is pad, see
+        # https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip file: vocab.txt
 
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
@@ -116,7 +126,8 @@ class Tokenizer4Bert(FXTokenizer):
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
-        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
+        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
+                                     pad_value=self.pad_value)
 
     def with_special_tokens(self, text_a, text_b=None):
         if text_b:
@@ -130,6 +141,8 @@ class Tokenizer4Roberta(FXTokenizer):
         super().__init__()
         self.tokenizer = RobertaTokenizer.from_pretrained(pretrained_model_name)
         self.max_seq_len = max_seq_len
+        self.pad_value = 1  # <pad> https://s3.amazonaws.com/models.huggingface.co/bert/roberta-base-vocab.json
+        # verified with: print(RobertaTokenizer.from_pretrained('roberta-base').encode("<pad>"))
 
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
@@ -137,7 +150,8 @@ class Tokenizer4Roberta(FXTokenizer):
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
-        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
+        return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
+                                     pad_value=self.pad_value)
 
     def with_special_tokens(self, text_a, text_b=None):
         if text_b:
@@ -153,6 +167,7 @@ class Tokenizer4GloVe(FXTokenizer):
         self.max_seq_len = max_seq_len
         self.gensim_path = gensim_path
         self.pickle_path = pickle_path
+        self.pad_value = 0  # the 0th row in the embedding matrix is a 0 vector
 
         require_new_build = force_build
 
@@ -227,4 +242,4 @@ class Tokenizer4GloVe(FXTokenizer):
             sequence_indexes = sequence_indexes[::-1]
 
         return self.pad_and_truncate(sequence_indexes, self.max_seq_len, padding=padding,
-                                     truncating=truncating)
+                                     truncating=truncating, pad_value=self.pad_value)

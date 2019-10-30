@@ -42,28 +42,33 @@ class SetupController:
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
-            'model_name': ['spc_bert', 'spc_distilbert', 'aen_bert', 'aen_distilbert', 'aen_glove'],
+            'model_name': [
+                # SPC
+                'spc_bert', 'spc_distilbert', 'spc_roberta',
+                # AEN
+                'aen_bert', 'aen_distilbert', 'aen_glove',
+            ],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
             'initializer': ['xavier_uniform_'],
             # TODO check this and other parameters, compare with available options in train.py
-            'learning_rate': ['1e-3', '2e-5', '3e-5', '5e-5'],
-            'batch_size': ['64', '128', '256', '512'],
+            'learning_rate': ['1e-5', '2e-5', '3e-5', '5e-5'],
+            'batch_size': ['16', '32', '64'],
             'lossweighting': ['True', 'False'],
             'devmode': ['True'],
-            'num_epoch': ['200'],
+            'num_epoch': ['2', '3', '4', '10', '20', '100'],
             'lsr': ['True', 'False'],
-            'bert_spc_reduction': ['pooler_output', 'mean_last_hidden_states']
+            'spc_reduction': ['pooler_output', 'mean_last_hidden_states']
         }
         # key: name of parameter that is only applied if its conditions are met
-        # value: list of tuples, consisting of parameter name and the value it needs to have in order for the
+        # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
         # condition to be satisfied
         # Note that all tuples in this list are OR connected, so if at least one is satisfied, the conditions are met.
         # If we need AND connected conditions, my idea is to add an outer list, resulting in a list of lists (of
         # tuples) where all lists are AND connected.
         # If a condition is not satisfied, the corresponding parameter will still be pass
         conditions = {
-            'bert_spc_reduction': [('model_name', 'bert_spc')]
+            'spc_reduction': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')]
         }
 
         assert len(args_names_ordered) == len(combinations.keys())
@@ -150,7 +155,7 @@ class SetupController:
                 cond_param_name = cond_tup[0]
                 cond_param_value = cond_tup[1]
 
-                # get parameter and its value in current combination
+                # get parameter and its pad_value in current combination
                 if full_named_combination[cond_param_name] == cond_param_value:
                     return True
 

@@ -5,6 +5,33 @@
 import torch.nn as nn
 
 
+class SPC_ROBERTA(nn.Module):
+    def __init__(self, roberta, opt):
+        super(SPC_ROBERTA, self).__init__()
+        self.roberta = roberta
+        self.dropout = nn.Dropout(opt.dropout)
+        self.reduction = opt.bert_spc_reduction
+        self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
+
+    def forward(self, inputs):
+        text_with_special_indexes = inputs[0], inputs[1]
+
+        last_hidden_state, pooler_output = self.roberta(text_with_special_indexes)
+
+        # according to https://huggingface.co/transformers/model_doc/bert.html#bertmodel we should not use (as in
+        # the original SPC version) the pooler_output but get the last_hidden_state and "averaging or pooling the
+        # sequence of hidden-states for the whole input sequence"
+        if self.reduction == 'pooler_output':
+            prepared_output = pooler_output
+        elif self.reduction == 'mean_last_hidden_states':
+            mean_last_hidden_state = last_hidden_state.mean(dim=1, keepdim=True)
+            prepared_output = mean_last_hidden_state[:, 0, :]
+
+        prepared_output = self.dropout(prepared_output)
+        logits = self.dense(prepared_output)
+
+        return logits
+
 class SPC_BERT(nn.Module):
     def __init__(self, bert, opt):
         super(SPC_BERT, self).__init__()

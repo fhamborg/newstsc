@@ -157,7 +157,7 @@ class DatasetPreparer:
                 cur_setinfo['nonhum-rel-weight'] = cur_setinfo['nonhum-weight'] / nonhuman_weight_sum
             else:
                 cur_setinfo['nonhum-rel-weight'] = 0
-        # at this point, setsinfo contains only positive (non-0) relative weights (or no such key, if the abs. value was 0, too)
+        # at this point, setsinfo contains only positive (non-0) relative weights (or no such key, if the abs. pad_value was 0, too)
 
         # create slices
         self.create_slices('human')

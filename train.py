@@ -15,17 +15,17 @@ import numpy
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split, ConcatDataset
-from transformers import BertModel, DistilBertModel
+from transformers import BertModel, DistilBertModel, RobertaModel
 
 from dataset import FXDataset
 from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
-from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe
+from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe, AEN_ROBERTA
 from models.spc import SPC_BERT, SPC_DISTILBERT
 from plotter_utils import create_save_plotted_confusion_matrix
-from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe
+from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
 
 logger = get_logger()
 
@@ -83,18 +83,25 @@ class Instructor:
 
     def create_model(self, only_model=False):
         logger.info("creating model {}".format(self.opt.model_name))
-        if self.opt.model_name in ['aen_bert', 'bert_spc']:
+        if self.opt.model_name in ['aen_bert', 'spc_bert']:
             if not only_model:
                 self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
             pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
-        elif self.opt.model_name in ['aen_distilbert', 'distilbert_spc']:
+        elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
             if not only_model:
                 self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
             pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
+            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+
+        elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
+            if not only_model:
+                self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
+
+            pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name)
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
         elif self.opt.model_name in ['aen_glove', 'ram']:
@@ -276,7 +283,7 @@ class Instructor:
 
         logger.info("finished execution of this crossval run. exiting.")
 
-        # print snem value to stdout, for the controller to parse it
+        # print snem pad_value to stdout, for the controller to parse it
         print(mean_test_stats[self.opt.snem])
 
     def run(self):
@@ -334,7 +341,7 @@ class Instructor:
 
         logger.info("finished execution of this run. exiting.")
 
-        # print snem value to stdout, for the controller to parse it
+        # print snem pad_value to stdout, for the controller to parse it
         print(test_snem)
 
 
@@ -346,7 +353,7 @@ def str2bool(v):
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError('Boolean pad_value expected.')
 
 
 def main():
@@ -399,18 +406,27 @@ def main():
 
     model_classes = {
         'ram': RAM,
-
+        # AEN
         'aen_bert': AEN_BERT,
-        'bert_spc': SPC_BERT,
         'aen_distilbert': AEN_DISTILBERT,
-        'distilbert_spc': SPC_DISTILBERT,
         'aen_glove': AEN_GloVe,
+        'aen_roberta': AEN_ROBERTA,
+        # SPC
+        'spc_bert': SPC_BERT,
+        'spc_distilbert': SPC_DISTILBERT,
+        'spc_roberta': SPC_DISTILBERT,
+
     }
     model_name_to_pretrained_model_name = {
+        # bert
         'aen_bert': 'bert-base-uncased',
+        'spc_bert': 'bert-base-uncased',
+        # distilbert
         'aen_distilbert': 'distilbert-base-uncased',
-        'bert_spc': 'bert-base-uncased',
-        'distilbert_spc': 'distilbert-base-uncased',
+        'spc_distilbert': 'distilbert-base-uncased',
+        # roberta
+        'aen_roberta': 'roberta-base',
+        'spc_roberta': 'roberta-base',
     }
     input_columns = {
         # AEN
