@@ -46,7 +46,7 @@ class SetupController:
                 # SPC
                 'spc_bert', 'spc_distilbert', 'spc_roberta',
                 # AEN
-                'aen_bert', 'aen_distilbert', 'aen_glove',
+                'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',
             ],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],

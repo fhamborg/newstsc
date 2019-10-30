@@ -67,6 +67,9 @@ class Instructor:
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
+        logger.info("truncated sequences of in total: {} / {}".format(self.tokenizer.count_truncated,
+                                                                      self.tokenizer.count_all_sequences_where_we_count_truncation))
+
     def _print_args(self):
         n_trainable_params, n_nontrainable_params = 0, 0
         for p in self.model.parameters():
@@ -435,8 +438,9 @@ def main():
         'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         # SPC
-        'bert_spc': ['text_with_special_indexes', 'bert_segments_ids'],
-        'distilbert_spc': ['text_with_special_indexes'],
+        'spc_bert': ['text_with_special_indexes', 'bert_segments_ids'],
+        'spc_distilbert': ['text_with_special_indexes'],
+        'spc_roberta': ['text_with_special_indexes'],
         # todo
         'ram': ['text_raw_indices', 'target_phrase_indices', 'text_left_indices'],
     }

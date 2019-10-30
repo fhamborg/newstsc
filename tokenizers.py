@@ -14,9 +14,12 @@ from fxlogger import get_logger
 class FXTokenizer(ABC):
     def __init__(self):
         self.logger = get_logger()
+        self.count_truncated = 0
+        self.count_all_sequences_where_we_count_truncation = 0
 
     def create_text_to_indexes(self, text_left, target_phrase, text_right, polarity):
-        text_raw_indices = self.text_to_sequence(text_left + " " + target_phrase + " " + text_right)
+        text_raw_indices = self.text_to_sequence(text_left + " " + target_phrase + " " + text_right,
+                                                 count_truncated=True)
         text_raw_without_target_phrase_indices = self.text_to_sequence(text_left + " " + text_right)
         text_left_indices = self.text_to_sequence(text_left)
         text_left_with_target_phrase_indices = self.text_to_sequence(text_left + " " + target_phrase)
@@ -33,7 +36,7 @@ class FXTokenizer(ABC):
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right, target_phrase))
 
         bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (target_phrase_len + 1))
-        bert_segments_ids = FXTokenizer.pad_and_truncate(bert_segments_ids, self.max_seq_len)
+        bert_segments_ids = self.pad_and_truncate(bert_segments_ids, self.max_seq_len)
 
         text_raw_with_special_indices = self.text_to_sequence(
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
@@ -57,16 +60,22 @@ class FXTokenizer(ABC):
         return data
 
     @abstractmethod
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
         pass
 
     @abstractmethod
     def with_special_tokens(self, text_a, text_b=None):
         pass
 
-    @staticmethod
-    def pad_and_truncate(sequence, maxlen, dtype='int64', padding='post', truncating='post', pad_value=0):
+    def pad_and_truncate(self, sequence, maxlen, dtype='int64', padding='post', truncating='post', pad_value=0,
+                         count_truncated=False):
         x = (np.ones(maxlen) * pad_value).astype(dtype)
+
+        if count_truncated:
+            self.count_all_sequences_where_we_count_truncation += 1
+            if len(sequence) > maxlen:
+                self.logger.debug("had to truncate by {} items: {}".format(len(sequence) - maxlen, sequence))
+                self.count_truncated += 1
 
         if truncating == 'pre':
             trunc = sequence[-maxlen:]
@@ -92,14 +101,14 @@ class Tokenizer4Distilbert(FXTokenizer):
         # verified with
         # print(DistilBertTokenizer.from_pretrained('distilbert-base-uncased').encode("[PAD]"))
 
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
         if len(sequence) == 0:
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
         return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
-                                     pad_value=self.pad_value)
+                                     pad_value=self.pad_value, count_truncated=count_truncated)
 
     def with_special_tokens(self, text_a, text_b=None):
         # https://huggingface.co/transformers/model_doc/distilbert.html#distilbertmodel
@@ -120,14 +129,14 @@ class Tokenizer4Bert(FXTokenizer):
         self.pad_value = 0  # taken from original ABSA code, plus the 0th vocab entry is pad, see
         # https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip file: vocab.txt
 
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
         if len(sequence) == 0:
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
         return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
-                                     pad_value=self.pad_value)
+                                     pad_value=self.pad_value, count_truncated=count_truncated)
 
     def with_special_tokens(self, text_a, text_b=None):
         if text_b:
@@ -144,14 +153,14 @@ class Tokenizer4Roberta(FXTokenizer):
         self.pad_value = 1  # <pad> https://s3.amazonaws.com/models.huggingface.co/bert/roberta-base-vocab.json
         # verified with: print(RobertaTokenizer.from_pretrained('roberta-base').encode("<pad>"))
 
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
         sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
         if len(sequence) == 0:
             sequence = [0]
         if reverse:
             sequence = sequence[::-1]
         return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
-                                     pad_value=self.pad_value)
+                                     pad_value=self.pad_value, count_truncated=count_truncated)
 
     def with_special_tokens(self, text_a, text_b=None):
         if text_b:
@@ -220,7 +229,7 @@ class Tokenizer4GloVe(FXTokenizer):
     def with_special_tokens(self, text_a, text_b=None):
         return ""
 
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
+    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
         unknownidx = len(self.vocab) + 1
 
         if self.lower:
@@ -242,4 +251,4 @@ class Tokenizer4GloVe(FXTokenizer):
             sequence_indexes = sequence_indexes[::-1]
 
         return self.pad_and_truncate(sequence_indexes, self.max_seq_len, padding=padding,
-                                     truncating=truncating, pad_value=self.pad_value)
+                                     truncating=truncating, pad_value=self.pad_value, count_truncated=count_truncated)
