@@ -23,8 +23,7 @@ from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
 from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe
-from models.bert_spc import BERT_SPC
-from models.distilbert_spc import DISTILBERT_SPC
+from models.spc import SPC_BERT, SPC_DISTILBERT
 from plotter_utils import create_save_plotted_confusion_matrix
 from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe
 
@@ -374,10 +373,6 @@ def main():
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
     parser.add_argument('--seed', default=1337, type=int, help='set seed for reproducibility')
-    # The following parameters are only valid for the lcf-bert model
-    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
-    # semantic-relative-distance, see the paper of LCF-BERT model
-    parser.add_argument('--SRD', default=3, type=int, help='set SRD')
     parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
     parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
                         help="devmode, default off, enable by using True")
@@ -406,9 +401,9 @@ def main():
         'ram': RAM,
 
         'aen_bert': AEN_BERT,
-        'bert_spc': BERT_SPC,
+        'bert_spc': SPC_BERT,
         'aen_distilbert': AEN_DISTILBERT,
-        'distilbert_spc': DISTILBERT_SPC,
+        'distilbert_spc': SPC_DISTILBERT,
         'aen_glove': AEN_GloVe,
     }
     model_name_to_pretrained_model_name = {
@@ -418,24 +413,16 @@ def main():
         'distilbert_spc': 'distilbert-base-uncased',
     }
     input_columns = {
-        'lstm': ['text_raw_indices'],
-        'td_lstm': ['text_left_with_aspect_indices', 'text_right_with_aspect_indices'],
-        'atae_lstm': ['text_raw_indices', 'aspect_indices'],
-        'ian': ['text_raw_indices', 'aspect_indices'],
-        'memnet': ['text_raw_without_aspect_indices', 'aspect_indices'],
-        'ram': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
-        'cabasc': ['text_raw_indices', 'aspect_indices', 'text_left_with_aspect_indices',
-                   'text_right_with_aspect_indices'],
-        'tnet_lf': ['text_raw_indices', 'aspect_indices', 'aspect_in_text'],
-        'aoa': ['text_raw_indices', 'aspect_indices'],
-        'mgan': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
-        'aen_glove': ['text_raw_indices', 'aspect_indices'],
-        'lcf_bert': ['text_bert_indices', 'bert_segments_ids', 'text_raw_bert_indices', 'aspect_bert_indices'],
-
-        'aen_bert': ['text_raw_bert_indices', 'aspect_bert_indices'],
-        'aen_distilbert': ['text_raw_bert_indices', 'aspect_bert_indices'],
-        'bert_spc': ['text_bert_indices', 'bert_segments_ids'],
-        'distilbert_spc': ['text_bert_indices'],
+        # AEN
+        'aen_glove': ['text_raw_indices', 'target_phrase_indexes'],
+        'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        # SPC
+        'bert_spc': ['text_with_special_indexes', 'bert_segments_ids'],
+        'distilbert_spc': ['text_with_special_indexes'],
+        # todo
+        'ram': ['text_raw_indices', 'target_phrase_indices', 'text_left_indices'],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,

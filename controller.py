@@ -42,13 +42,13 @@ class SetupController:
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
-            'model_name': ['distilbert_spc', 'bert_spc', 'aen_bert', 'aen_distilbert', 'aen_glove'],
+            'model_name': ['spc_bert', 'spc_distilbert', 'aen_bert', 'aen_distilbert', 'aen_glove'],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],
             'initializer': ['xavier_uniform_'],
             # TODO check this and other parameters, compare with available options in train.py
             'learning_rate': ['1e-3', '2e-5', '3e-5', '5e-5'],
-            'batch_size': ['16', '32', '64', '128'],
+            'batch_size': ['64', '128', '256', '512'],
             'lossweighting': ['True', 'False'],
             'devmode': ['True'],
             'num_epoch': ['200'],
