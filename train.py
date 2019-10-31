@@ -22,7 +22,7 @@ from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
-from models.aen import AEN_BERT, AEN_DISTILBERT, CrossEntropyLoss_LSR, AEN_GloVe, AEN_ROBERTA
+from models.aen import CrossEntropyLoss_LSR, AEN_Base
 from models.spc import SPC_BERT, SPC_DISTILBERT
 from plotter_utils import create_save_plotted_confusion_matrix
 from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
@@ -86,32 +86,35 @@ class Instructor:
 
     def create_model(self, only_model=False):
         logger.info("creating model {}".format(self.opt.model_name))
-        if self.opt.model_name in ['aen_bert', 'spc_bert']:
+
+        if self.opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'spc_distilbert', 'spc_bert',
+                                   'spc_roberta']:
             if not only_model:
-                self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                if self.opt.model_name in ['aen_bert', 'spc_bert']:
+                    self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
+                    self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
+                    self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
-            pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
-            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+            if self.opt.model_name in ['aen_bert', 'spc_bert']:
+                pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
+            elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
+                pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
+            elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
+                pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name)
 
-        elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
-            if not only_model:
-                self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
-
-            pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
-            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
-
-        elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
-            if not only_model:
-                self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
-
-            pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name)
-            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
+            self.model = self.opt.model_class(pretrained_model, self.opt, self.opt.model_name).to(self.opt.device)
 
         elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
                 self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len)
 
-            self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt).to(self.opt.device)
+            if self.opt.model_name == 'aen_glove':
+                self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt, self.opt.model_name).to(
+                    self.opt.device)
+            elif self.opt.model_name == 'ram':
+                self.model = self.opt.model_class(self.opt).to(self.opt.device)
 
         else:
             raise Exception("model_name unknown: {}".format(self.opt.model_name))
@@ -410,10 +413,12 @@ def main():
     model_classes = {
         'ram': RAM,
         # AEN
-        'aen_bert': AEN_BERT,
-        'aen_distilbert': AEN_DISTILBERT,
-        'aen_glove': AEN_GloVe,
-        'aen_roberta': AEN_ROBERTA,
+        'aen_bert': AEN_Base,
+        'aen_glove': AEN_Base,
+        'aen_roberta': AEN_Base,
+        'aen_distilbert': AEN_Base,
+        'aen_distilgpt2': AEN_Base,
+        'aen_distilroberta': AEN_Base,
         # SPC
         'spc_bert': SPC_BERT,
         'spc_distilbert': SPC_DISTILBERT,
@@ -430,6 +435,10 @@ def main():
         # roberta
         'aen_roberta': 'roberta-base',
         'spc_roberta': 'roberta-base',
+        # distilroberta
+        'aen_distilroberta': 'distilroberta-base',
+        # distilgpt2
+        'aen_distilgpt2': 'distilgpt2-base',
     }
     input_columns = {
         # AEN
