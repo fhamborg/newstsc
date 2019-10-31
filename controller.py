@@ -38,7 +38,7 @@ class SetupController:
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'bert_spc_reduction']
+                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'spc_reduction']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
@@ -46,7 +46,7 @@ class SetupController:
                 # SPC
                 'spc_bert', 'spc_distilbert', 'spc_roberta',
                 # AEN
-                'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',
+                'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
             ],
             'snem': ['recall_avg'],
             'optimizer': ['adam'],

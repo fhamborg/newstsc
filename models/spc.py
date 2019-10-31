@@ -10,7 +10,7 @@ class SPC_ROBERTA(nn.Module):
         super(SPC_ROBERTA, self).__init__()
         self.roberta = roberta
         self.dropout = nn.Dropout(opt.dropout)
-        self.reduction = opt.bert_spc_reduction
+        self.reduction = opt.spc_reduction
         self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
 
     def forward(self, inputs):
@@ -37,7 +37,7 @@ class SPC_BERT(nn.Module):
         super(SPC_BERT, self).__init__()
         self.bert = bert
         self.dropout = nn.Dropout(opt.dropout)
-        self.reduction = opt.bert_spc_reduction
+        self.reduction = opt.spc_reduction
         self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
 
     def forward(self, inputs):

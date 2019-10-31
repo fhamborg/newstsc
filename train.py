@@ -87,14 +87,16 @@ class Instructor:
     def create_model(self, only_model=False):
         logger.info("creating model {}".format(self.opt.model_name))
 
-        if self.opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'spc_distilbert', 'spc_bert',
-                                   'spc_roberta']:
+        if self.opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_distilroberta', 'spc_distilbert',
+                                   'spc_bert', 'spc_roberta']:
             if not only_model:
                 if self.opt.model_name in ['aen_bert', 'spc_bert']:
                     self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
                 elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
                     self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
                 elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
+                    self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                elif self.opt.model_name in ['aen_distilroberta', 'spc_distiloberta']:
                     self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
             if self.opt.model_name in ['aen_bert', 'spc_bert']:
@@ -397,7 +399,8 @@ def main():
                         help="True: loss weights according to class frequencies, False: each class has the same loss per example")
     parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
                         help="True: enable label smoothing regularization; False: disable")
-    parser.add_argument('--bert_spc_reduction', type=str, default='mean_last_hidden_states')
+    parser.add_argument('--spc_reduction', type=str, default='mean_last_hidden_states')
+
 
     opt = parser.parse_args()
 
@@ -417,7 +420,6 @@ def main():
         'aen_glove': AEN_Base,
         'aen_roberta': AEN_Base,
         'aen_distilbert': AEN_Base,
-        'aen_distilgpt2': AEN_Base,
         'aen_distilroberta': AEN_Base,
         # SPC
         'spc_bert': SPC_BERT,
@@ -437,8 +439,6 @@ def main():
         'spc_roberta': 'roberta-base',
         # distilroberta
         'aen_distilroberta': 'distilroberta-base',
-        # distilgpt2
-        'aen_distilgpt2': 'distilgpt2-base',
     }
     input_columns = {
         # AEN
@@ -446,10 +446,12 @@ def main():
         'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_distilroberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         # SPC
         'spc_bert': ['text_with_special_indexes', 'bert_segments_ids'],
         'spc_distilbert': ['text_with_special_indexes'],
         'spc_roberta': ['text_with_special_indexes'],
+        'spc_distilroberta': ['text_with_special_indexes'],
         # todo
         'ram': ['text_raw_indices', 'target_phrase_indices', 'text_left_indices'],
     }
