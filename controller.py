@@ -38,7 +38,8 @@ class SetupController:
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'spc_reduction', 'use_tp_placeholders']
+                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'use_tp_placeholders', 'spc_reduction',
+                              'spc_input_order']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
@@ -58,8 +59,9 @@ class SetupController:
             'devmode': ['True'],
             'num_epoch': ['2', '3', '4', '10', '20', '100'],
             'lsr': ['True', 'False'],
+            'use_tp_placeholders': ['True', 'False'],
             'spc_reduction': ['pooler_output', 'mean_last_hidden_states'],
-            'use_tp_placeholders': ['True', 'False']
+            'spc_input_order': ['target_text', 'text_target'],
         }
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -69,7 +71,8 @@ class SetupController:
         # tuples) where all lists are AND connected.
         # If a condition is not satisfied, the corresponding parameter will still be pass
         conditions = {
-            'spc_reduction': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')]
+            'spc_reduction': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
+            'spc_input_order': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())

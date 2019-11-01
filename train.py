@@ -107,7 +107,7 @@ class Instructor:
             elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
                 pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name)
 
-            self.model = self.opt.model_class(pretrained_model, self.opt, self.opt.model_name).to(self.opt.device)
+            self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
         elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
@@ -406,6 +406,8 @@ def main():
     parser.add_argument('--spc_reduction', type=str, default='mean_last_hidden_states')
     parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
                         help="replace target_phrases with a placeholder. default: off")
+    parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input, '
+                                                                                   'target. text. or text. target.')
 
     opt = parser.parse_args()
 
@@ -445,6 +447,18 @@ def main():
         # distilroberta
         'aen_distilroberta': 'distilroberta-base',
     }
+
+    def get_spc_input(model_name, spc_input_order):
+        if model_name == 'spc_bert':
+            if spc_input_order == 'target_text':
+                return lambda r: [r.special_target_text, r.bert_segments_ids_target_text]
+            elif spc_input_order == 'text_target':
+                return lambda r: [r.special_text_target, r.bert_segments_ids_text_target]
+        if spc_input_order == 'target_text':
+            return lambda r: [r.special_target_text],
+        elif spc_input_order == 'text_target':
+            return lambda r: [r.special_text_target],
+
     input_columns = {
         # AEN
         'aen_glove': lambda r: [r.text_raw_indices, r.target_phrase_indexes],
@@ -453,10 +467,10 @@ def main():
         'aen_roberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
         'aen_distilroberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
         # SPC
-        'spc_bert': lambda r: [r.special_text_target, r.bert_segments_ids],
-        'spc_distilbert': lambda r: [r.special_text_target],
-        'spc_roberta': lambda r: [r.special_text_target],
-        'spc_distilroberta': lambda r: [r.special_text_target],
+        'spc_bert': get_spc_input(opt.model_name, opt.spc_input_order),
+        'spc_distilbert': get_spc_input(opt.model_name, opt.spc_input_order),
+        'spc_roberta': get_spc_input(opt.model_name, opt.spc_input_order),
+        'spc_distilroberta': get_spc_input(opt.model_name, opt.spc_input_order),
         # todo
         'ram': lambda r: [r.text_raw_indices, r.target_phrase_indices, r.text_left_indices],
     }

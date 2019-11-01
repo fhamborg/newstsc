@@ -59,8 +59,13 @@ class FXTokenizer(ABC):
         special_target_text = self.text_to_sequence(
             self.with_special_tokens(target_phrase, text_left + " " + target_phrase + " " + text_right))
 
-        bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (target_phrase_len + 1))
-        bert_segments_ids = self.pad_and_truncate(bert_segments_ids, self.max_seq_len)
+        bert_segments_ids_text_target = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (
+                target_phrase_len + 1))
+        bert_segments_ids_text_target = self.pad_and_truncate(bert_segments_ids_text_target, self.max_seq_len)
+
+        bert_segments_ids_target_text = np.asarray(
+            [0] * (target_phrase_len + 1) + [1] * (np.sum(text_raw_indices != 0) + 2))
+        bert_segments_ids_target_text = self.pad_and_truncate(bert_segments_ids_target_text, self.max_seq_len)
 
         text_raw_with_special_indices = self.text_to_sequence(
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
@@ -69,7 +74,8 @@ class FXTokenizer(ABC):
         r = ExampleRepresentation()
         r.special_text_target = special_text_target  # formerly: text_with_special_indexes
         r.special_target_text = special_target_text
-        r.bert_segments_ids = bert_segments_ids
+        r.bert_segments_ids_text_target = bert_segments_ids_text_target
+        r.bert_segments_ids_target_text = bert_segments_ids_target_text
         r.text_raw_with_special_indices = text_raw_with_special_indices
         r.target_phrase_with_special_indexes = target_phrase_with_special_indexes
         r.text_raw_indices = text_raw_indices

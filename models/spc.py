@@ -14,7 +14,7 @@ class SPC_ROBERTA(nn.Module):
         self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
 
     def forward(self, inputs):
-        text_with_special_indexes = inputs[0], inputs[1]
+        text_with_special_indexes = inputs[0]
 
         last_hidden_state, pooler_output = self.roberta(text_with_special_indexes)
 

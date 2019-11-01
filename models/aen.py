@@ -51,11 +51,11 @@ class CrossEntropyLoss_LSR(nn.Module):
 
 
 class AEN_Base(nn.Module):
-    def __init__(self, language_model_or_embedding_matrix, opt, name):
+    def __init__(self, language_model_or_embedding_matrix, opt):
         super(AEN_Base, self).__init__()
         logger.info("creating AEN_Base")
         self.opt = opt
-        self.name = name
+        self.name = self.opt.model_name
 
         if self.name in ['aen_bert', 'aen_roberta', 'aen_distilbert']:
             self.language_model = language_model_or_embedding_matrix
