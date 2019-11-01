@@ -54,12 +54,13 @@ class AEN_Base(nn.Module):
     def __init__(self, language_model_or_embedding_matrix, opt):
         super(AEN_Base, self).__init__()
         logger.info("creating AEN_Base")
-        self.opt = opt
-        self.name = self.opt.model_name
+        self.device = opt.device
+        self.name = opt.model_name
+        self.lm_representation = opt.lm_representation
 
         if self.name in ['aen_bert', 'aen_roberta', 'aen_distilbert']:
             self.language_model = language_model_or_embedding_matrix
-            embed_dim = self.opt.bert_dim
+            embed_dim = opt.bert_dim
         elif self.name == 'aen_glove':
             self.embed = nn.Embedding.from_pretrained(
                 torch.tensor(language_model_or_embedding_matrix, dtype=torch.float))
@@ -70,27 +71,41 @@ class AEN_Base(nn.Module):
         self.squeeze_embedding = SqueezeEmbedding()
         self.dropout = nn.Dropout(opt.dropout)
 
-        self.attn_k = Attention(embed_dim, out_dim=self.opt.hidden_dim, n_head=8, score_function='mlp',
-                                dropout=self.opt.dropout)
-        self.attn_q = Attention(embed_dim, out_dim=self.opt.hidden_dim, n_head=8, score_function='mlp',
-                                dropout=self.opt.dropout)
-        self.ffn_c = PositionwiseFeedForward(self.opt.hidden_dim, dropout=self.opt.dropout)
-        self.ffn_t = PositionwiseFeedForward(self.opt.hidden_dim, dropout=self.opt.dropout)
+        self.attn_k = Attention(embed_dim, out_dim=opt.hidden_dim, n_head=8, score_function='mlp',
+                                dropout=opt.dropout)
+        self.attn_q = Attention(embed_dim, out_dim=opt.hidden_dim, n_head=8, score_function='mlp',
+                                dropout=opt.dropout)
+        self.ffn_c = PositionwiseFeedForward(opt.hidden_dim, dropout=opt.dropout)
+        self.ffn_t = PositionwiseFeedForward(opt.hidden_dim, dropout=opt.dropout)
 
-        self.attn_s1 = Attention(self.opt.hidden_dim, n_head=8, score_function='mlp', dropout=self.opt.dropout)
+        self.attn_s1 = Attention(opt.hidden_dim, n_head=8, score_function='mlp', dropout=opt.dropout)
 
-        self.dense = nn.Linear(self.opt.hidden_dim * 3, self.opt.polarities_dim)
+        self.dense = nn.Linear(opt.hidden_dim * 3, opt.polarities_dim)
 
     def apply_lm(self, input):
         if self.name in ['aen_bert', 'aen_roberta']:
-            output, _ = self.language_model(input)
+            last_hidden, _, all_hidden = self.language_model(input)
         elif self.name == 'aen_distilbert':
-            output = self.language_model(input)
-            if type(output) == tuple:
-                output = output[0]
+            last_hidden, all_hidden = self.language_model(input)
         else:
             raise Exception("unknown model name")
-        return output
+
+        if self.lm_representation == 'last':
+            return last_hidden
+        elif self.lm_representation == 'sum_last_four':
+            last_four = all_hidden[-4:]  # list of four, each has shape: 16, 80, 768
+            last_four_stacked = torch.stack(last_four)  # shape: 4, 16, 80, 768
+            sum_last_four = torch.sum(last_four_stacked, dim=0)
+            return sum_last_four
+        elif self.lm_representation == 'sum_last_two':
+            last_two = all_hidden[-2:]
+            last_two_stacked = torch.stack(last_two)
+            sum_last_two = torch.sum(last_two_stacked, dim=0)
+            return sum_last_two
+        elif self.lm_representation == 'sum_all':
+            all_stacked = torch.stack(all_hidden)
+            sum_all = torch.sum(all_stacked, dim=0)
+            return sum_all
 
     def forward(self, inputs):
         context, target = inputs[0], inputs[1]
@@ -120,8 +135,8 @@ class AEN_Base(nn.Module):
 
         s1, _ = self.attn_s1(hc, ht)
 
-        context_len = torch.tensor(context_len, dtype=torch.float).to(self.opt.device)
-        target_len = torch.tensor(target_len, dtype=torch.float).to(self.opt.device)
+        context_len = torch.tensor(context_len, dtype=torch.float).to(self.device)
+        target_len = torch.tensor(target_len, dtype=torch.float).to(self.device)
 
         hc_mean = torch.div(torch.sum(hc, dim=1), context_len.view(context_len.size(0), 1))
         ht_mean = torch.div(torch.sum(ht, dim=1), target_len.view(target_len.size(0), 1))

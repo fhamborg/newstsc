@@ -39,7 +39,7 @@ class SetupController:
         self.use_cross_validation = 0  # if 0: do not use cross validation
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
                               'lossweighting', 'devmode', 'num_epoch', 'lsr', 'use_tp_placeholders', 'spc_reduction',
-                              'spc_input_order']
+                              'spc_input_order', 'lm_representation']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
@@ -62,6 +62,7 @@ class SetupController:
             'use_tp_placeholders': ['True', 'False'],
             'spc_reduction': ['pooler_output', 'mean_last_hidden_states'],
             'spc_input_order': ['target_text', 'text_target'],
+            'aen_lm_representation': ['last', 'sum_last_four', 'sum_last_two', 'sum_all']
         }
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -73,6 +74,8 @@ class SetupController:
         conditions = {
             'spc_reduction': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
             'spc_input_order': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
+            'aen_lm_representation': [('model_name', 'aen_bert'), ('model_name', 'aen_roberta'), ('model_name',
+                                                                                                  'aen_distilbert')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())

@@ -101,11 +101,13 @@ class Instructor:
                     self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
             if self.opt.model_name in ['aen_bert', 'spc_bert']:
-                pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name)
+                pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name, output_hidden_states=True)
             elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
-                pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name)
+                pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name,
+                                                                   output_hidden_states=True)
             elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
-                pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name)
+                pretrained_model = RobertaModel.from_pretrained(self.opt.pretrained_model_name,
+                                                                output_hidden_states=True)
 
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
@@ -406,8 +408,9 @@ def main():
     parser.add_argument('--spc_reduction', type=str, default='mean_last_hidden_states')
     parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
                         help="replace target_phrases with a placeholder. default: off")
-    parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input, '
-                                                                                   'target. text. or text. target.')
+    parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input; target_text '
+                                                                                   'or text_target')
+    parser.add_argument('--lm_representation', type=str, default='last', help='last or sum_last_four')
 
     opt = parser.parse_args()
 
