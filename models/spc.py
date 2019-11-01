@@ -7,24 +7,25 @@ import torch.nn as nn
 
 
 class SPC_Base(nn.Module):
-    def __init__(self, lm, opt):
+    def __init__(self, language_model, opt):
         super(SPC_Base, self).__init__()
-        self.lm = lm
+        self.language_model = language_model
         self.dropout = nn.Dropout(opt.dropout)
+        self.name = opt.model_name
         self.spc_lm_representation = opt.spc_lm_representation
         self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
-        self.name = opt.model_name
 
     def apply_lm(self, inputs):
-        if self.name == 'aen_bert':
-            last_hidden, pooler_output, all_hidden = self.language_model(inputs[0], inputs[1])
-        elif self.name == 'aen_roberta':
-            last_hidden, pooler_output, all_hidden = self.language_model(inputs[0])
-        elif self.name == 'aen_distilbert':
-            last_hidden, all_hidden = self.language_model(inputs[0])
+        if self.name == 'spc_bert':
+            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1],
+                                                                         token_type_ids=inputs[2])
+        elif self.name == 'spc_roberta':
+            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1])
+        elif self.name == 'spc_distilbert':
+            last_hidden, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1])
             pooler_output = None
         else:
-            raise Exception("unknown model name")
+            raise Exception("unknown model name: {}", format(self.name))
 
         return last_hidden, pooler_output, all_hidden
 
@@ -58,51 +59,3 @@ class SPC_Base(nn.Module):
 
         return logits
 
-
-class SPC_BERT(nn.Module):
-    def __init__(self, bert, opt):
-        super(SPC_BERT, self).__init__()
-        self.bert = bert
-        self.dropout = nn.Dropout(opt.dropout)
-        self.reduction = opt.spc_reduction
-        self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
-
-    def forward(self, inputs):
-        text_bert_indices, bert_segments_ids = inputs[0], inputs[1]
-
-        last_hidden_state, pooler_output = self.bert(text_bert_indices, bert_segments_ids)
-
-        # according to https://huggingface.co/transformers/model_doc/bert.html#bertmodel we should not use (as in
-        # the original SPC version) the pooler_output but get the last_hidden_state and "averaging or pooling the
-        # sequence of hidden-states for the whole input sequence"
-        if self.reduction == 'pooler_output':
-            prepared_output = pooler_output
-        elif self.reduction == 'mean_last_hidden_states':
-            mean_last_hidden_state = last_hidden_state.mean(dim=1, keepdim=True)
-            prepared_output = mean_last_hidden_state[:, 0, :]
-
-        prepared_output = self.dropout(prepared_output)
-        logits = self.dense(prepared_output)
-
-        return logits
-
-
-class SPC_DISTILBERT(nn.Module):
-    def __init__(self, distilbert, opt):
-        super(SPC_DISTILBERT, self).__init__()
-        self.distilbert = distilbert
-        self.dropout = nn.Dropout(opt.dropout)
-        self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
-
-    def forward(self, inputs):
-        text_bert_indices = inputs[0]
-
-        last_hidden_state = self.distilbert(text_bert_indices)[0]
-
-        mean_last_hidden_state = last_hidden_state.mean(dim=1, keepdim=True)
-        prepared_output = mean_last_hidden_state[:, 0, :]
-
-        prepared_output = self.dropout(prepared_output)
-        logits = self.dense(prepared_output)
-
-        return logits

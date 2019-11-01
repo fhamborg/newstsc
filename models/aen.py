@@ -64,7 +64,7 @@ class AEN_Base(nn.Module):
         elif self.name == 'aen_glove':
             self.embed = nn.Embedding.from_pretrained(
                 torch.tensor(language_model_or_embedding_matrix, dtype=torch.float))
-            embed_dim = self.opt.embed_dim
+            embed_dim = opt.embed_dim
         else:
             raise Exception('unknown model name: {}'.format(self.name))
 
@@ -82,11 +82,11 @@ class AEN_Base(nn.Module):
 
         self.dense = nn.Linear(opt.hidden_dim * 3, opt.polarities_dim)
 
-    def apply_lm(self, input):
+    def apply_lm(self, _input, _input_attention):
         if self.name in ['aen_bert', 'aen_roberta']:
-            last_hidden, _, all_hidden = self.language_model(input)
+            last_hidden, _, all_hidden = self.language_model(input_ids=_input, attention_mask=_input_attention)
         elif self.name == 'aen_distilbert':
-            last_hidden, all_hidden = self.language_model(input)
+            last_hidden, all_hidden = self.language_model(input_ids=_input, attention_mask=_input_attention)
         else:
             raise Exception("unknown model name")
 
@@ -122,17 +122,19 @@ class AEN_Base(nn.Module):
             return mean_all
 
     def forward(self, inputs):
-        context, target = inputs[0], inputs[1]
+        context, context_attention, target, target_attention = inputs[0], inputs[1], inputs[2], inputs[3]
         context_len = torch.sum(context != 0, dim=-1)
         target_len = torch.sum(target != 0, dim=-1)
 
         if hasattr(self, 'language_model'):
             context = self.squeeze_embedding(context, context_len)
-            context = self.apply_lm(context)
+            context_attention = self.squeeze_embedding(context_attention, context_len)
+            context = self.apply_lm(context, context_attention)
             context = self.dropout(context)
 
             target = self.squeeze_embedding(target, target_len)
-            target = self.apply_lm(target)
+            target_attention = self.squeeze_embedding(target_attention, target_len)
+            target = self.apply_lm(target, target_attention)
             target = self.dropout(target)
         else:
             context = self.embed(context)

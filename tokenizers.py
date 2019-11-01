@@ -98,8 +98,9 @@ class FXTokenizer(ABC):
         pass
 
     def pad_and_truncate(self, sequence, maxlen, dtype='int64', padding='post', truncating='post', pad_value=0,
-                         count_truncated=False):
+                         count_truncated=False, masked_value=0, unmasked_value=1):
         x = (np.ones(maxlen) * pad_value).astype(dtype)
+        attention_mask = (np.ones(maxlen) * unmasked_value).astype(dtype)
 
         if count_truncated:
             self.count_all_sequences_where_we_count_truncation += 1
@@ -114,12 +115,17 @@ class FXTokenizer(ABC):
 
         trunc = np.asarray(trunc, dtype=dtype)
 
-        if padding == 'post':
-            x[:len(trunc)] = trunc
-        else:
-            x[-len(trunc):] = trunc
+        len_trunc = len(trunc)
+        no_attention = (np.ones(maxlen - len_trunc) * masked_value).astype(dtype)
 
-        return x
+        if padding == 'post':
+            x[:len_trunc] = trunc
+            attention_mask[len_trunc:] = no_attention
+        else:
+            x[-len_trunc:] = trunc
+            attention_mask[:len(no_attention)] = no_attention
+
+        return x, attention_mask
 
 
 class Tokenizer4Distilbert(FXTokenizer):

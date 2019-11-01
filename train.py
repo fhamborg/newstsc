@@ -115,7 +115,7 @@ class Instructor:
                 self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len)
 
             if self.opt.model_name == 'aen_glove':
-                self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt, self.opt.model_name).to(
+                self.model = self.opt.model_class(self.tokenizer.embedding_matrix, self.opt).to(
                     self.opt.device)
             elif self.opt.model_name == 'ram':
                 self.model = self.opt.model_class(self.opt).to(self.opt.device)
@@ -148,8 +148,13 @@ class Instructor:
                 # clear gradient accumulators
                 optimizer.zero_grad()
                 inputs = []
-                for _input in sample_batched['inputs']:
-                    inputs.append(_input.to(self.opt.device))
+                for _input_pair in sample_batched['inputs']:
+                    assert len(_input_pair) == 2
+                    _indexes = _input_pair[0]
+                    inputs.append(_indexes.to(self.opt.device))
+                    _attention_mask = _input_pair[1]
+                    inputs.append(_attention_mask.to(self.opt.device))
+
                 targets = sample_batched['polarity'].to(self.opt.device)
                 outputs = self.model(inputs)
 
@@ -213,8 +218,13 @@ class Instructor:
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
                 t_inputs = []
-                for t_input in t_sample_batched['inputs']:
-                    t_inputs.append(t_input.to(self.opt.device))
+                for t_input_pair in t_sample_batched['inputs']:
+                    assert len(t_input_pair) == 2
+                    _indexes = t_input_pair[0]
+                    t_inputs.append(_indexes.to(self.opt.device))
+                    _attention_mask = t_input_pair[1]
+                    t_inputs.append(_attention_mask.to(self.opt.device))
+
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
                 t_outputs = self.model(t_inputs)
 
@@ -415,7 +425,8 @@ def main():
     opt = parser.parse_args()
 
     if opt.spc_lm_representation_distilbert:
-        print()
+        logger.info("spc_lm_representation_distilbert defined, overwriting spc_lm_representation")
+        opt.spc_lm_representation = opt.spc_lm_representation_distilbert
 
     if opt.seed is not None:
         logger.info("setting random seed: {}".format(opt.seed))
