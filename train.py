@@ -51,19 +51,20 @@ class Instructor:
         if self.opt.crossval > 0:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
-                                         self.polarity_associations, self.opt.devmode)
+                                         self.polarity_associations, self.opt.inputs_cols, self.opt.use_tp_placeholders,
+                                         self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.devmode)
+                                     self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.opt.devmode)
+                                      self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.opt.devmode)
+                                    self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.devmode)
+                                     self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -145,8 +146,9 @@ class Instructor:
                 global_step += 1
                 # clear gradient accumulators
                 optimizer.zero_grad()
-
-                inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.inputs_cols]
+                inputs = []
+                for _input in sample_batched['inputs']:
+                    inputs.append(_input.to(self.opt.device))
                 targets = sample_batched['polarity'].to(self.opt.device)
                 outputs = self.model(inputs)
 
@@ -209,7 +211,9 @@ class Instructor:
 
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
-                t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.inputs_cols]
+                t_inputs = []
+                for t_input in t_sample_batched['inputs']:
+                    t_inputs.append(t_input.to(self.opt.device))
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
                 t_outputs = self.model(t_inputs)
 
@@ -400,7 +404,8 @@ def main():
     parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
                         help="True: enable label smoothing regularization; False: disable")
     parser.add_argument('--spc_reduction', type=str, default='mean_last_hidden_states')
-
+    parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
+                        help="replace target_phrases with a placeholder. default: off")
 
     opt = parser.parse_args()
 
@@ -442,18 +447,18 @@ def main():
     }
     input_columns = {
         # AEN
-        'aen_glove': ['text_raw_indices', 'target_phrase_indexes'],
-        'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
-        'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
-        'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
-        'aen_distilroberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_glove': lambda r: [r.text_raw_indices, r.target_phrase_indexes],
+        'aen_bert': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
+        'aen_distilbert': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
+        'aen_roberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
+        'aen_distilroberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
         # SPC
-        'spc_bert': ['text_with_special_indexes', 'bert_segments_ids'],
-        'spc_distilbert': ['text_with_special_indexes'],
-        'spc_roberta': ['text_with_special_indexes'],
-        'spc_distilroberta': ['text_with_special_indexes'],
+        'spc_bert': lambda r: [r.special_text_target, r.bert_segments_ids],
+        'spc_distilbert': lambda r: [r.special_text_target],
+        'spc_roberta': lambda r: [r.special_text_target],
+        'spc_distilroberta': lambda r: [r.special_text_target],
         # todo
-        'ram': ['text_raw_indices', 'target_phrase_indices', 'text_left_indices'],
+        'ram': lambda r: [r.text_raw_indices, r.target_phrase_indices, r.text_left_indices],
     }
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,

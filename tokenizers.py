@@ -11,13 +11,35 @@ from embeddings.glove import gensim_path, pickle_path
 from fxlogger import get_logger
 
 
+class ExampleRepresentation:
+    def __init__(self):
+        self.indexes_special_text_target = None
+        self.indexes_special_target_text = None
+        self.bert_segments_ids = None
+        self.text_raw_with_special_indices = None
+        self.target_phrase_with_special_indexes = None
+        self.text_raw_indices = None
+        self.text_raw_without_aspect_indices = None
+        self.text_left_indices = None
+        self.text_left_with_aspect_indices = None
+        self.text_right_indices = None
+        self.text_right_with_aspect_indices = None
+        self.target_phrase_indexes = None
+        self.target_phrase_in_text = None
+        self.polarity = None
+        self.example_id = None
+
+
 class FXTokenizer(ABC):
     def __init__(self):
         self.logger = get_logger()
         self.count_truncated = 0
         self.count_all_sequences_where_we_count_truncation = 0
 
-    def create_text_to_indexes(self, text_left, target_phrase, text_right, polarity):
+    def create_text_to_indexes(self, text_left, target_phrase, text_right, use_target_phrase_placeholders):
+        if use_target_phrase_placeholders:
+            target_phrase = 'placeholder'
+
         text_raw_indices = self.text_to_sequence(text_left + " " + target_phrase + " " + text_right,
                                                  count_truncated=True)
         text_raw_without_target_phrase_indices = self.text_to_sequence(text_left + " " + text_right)
@@ -32,8 +54,10 @@ class FXTokenizer(ABC):
         target_phrase_in_text = torch.tensor(
             [left_context_len.item(), (left_context_len + target_phrase_len - 1).item()])
 
-        text_with_special_indexes = self.text_to_sequence(
+        special_text_target = self.text_to_sequence(
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right, target_phrase))
+        special_target_text = self.text_to_sequence(
+            self.with_special_tokens(target_phrase, text_left + " " + target_phrase + " " + text_right))
 
         bert_segments_ids = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (target_phrase_len + 1))
         bert_segments_ids = self.pad_and_truncate(bert_segments_ids, self.max_seq_len)
@@ -42,22 +66,22 @@ class FXTokenizer(ABC):
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
         target_phrase_with_special_indexes = self.text_to_sequence(self.with_special_tokens(target_phrase))
 
-        data = {
-            'text_with_special_indexes': text_with_special_indexes,
-            'bert_segments_ids': bert_segments_ids,
-            'text_raw_with_special_indices': text_raw_with_special_indices,
-            'target_phrase_with_special_indexes': target_phrase_with_special_indexes,
-            'text_raw_indices': text_raw_indices,
-            'text_raw_without_aspect_indices': text_raw_without_target_phrase_indices,
-            'text_left_indices': text_left_indices,
-            'text_left_with_aspect_indices': text_left_with_target_phrase_indices,
-            'text_right_indices': text_right_indices,
-            'text_right_with_aspect_indices': text_right_with_target_phrase_indices,
-            'target_phrase_indexes': target_phrase_indexes,
-            'target_phrase_in_text': target_phrase_in_text,
-            'polarity': polarity,
-        }
-        return data
+        r = ExampleRepresentation()
+        r.special_text_target = special_text_target  # formerly: text_with_special_indexes
+        r.special_target_text = special_target_text
+        r.bert_segments_ids = bert_segments_ids
+        r.text_raw_with_special_indices = text_raw_with_special_indices
+        r.target_phrase_with_special_indexes = target_phrase_with_special_indexes
+        r.text_raw_indices = text_raw_indices
+        r.text_raw_without_aspect_indices = text_raw_without_target_phrase_indices
+        r.text_left_indices = text_left_indices
+        r.text_left_with_aspect_indices = text_left_with_target_phrase_indices
+        r.text_right_indices = text_right_indices
+        r.text_right_with_aspect_indices = text_right_with_target_phrase_indices
+        r.target_phrase_indexes = target_phrase_indexes
+        r.target_phrase_in_text = target_phrase_in_text
+
+        return r
 
     @abstractmethod
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):

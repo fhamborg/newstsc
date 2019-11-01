@@ -11,10 +11,12 @@ logger = get_logger()
 
 
 class FXDataset(Dataset):
-    def __init__(self, filepath, tokenizer, named_polarity_to_class_number, dev_mode):
+    def __init__(self, filepath, tokenizer, named_polarity_to_class_number, column_getter, use_tp_placeholders,
+                 devmode=False):
         self.polarity_associations = named_polarity_to_class_number
         self.tokenizer = tokenizer
         self.data = []
+        self.use_target_phrase_placeholders = use_tp_placeholders
 
         logger.info("reading dataset file {}".format(filepath))
 
@@ -23,9 +25,7 @@ class FXDataset(Dataset):
             for task in reader:
                 tasks.append(task)
 
-        if dev_mode:
-            logger.warning("DEV MODE IS ENABLED!!!")
-            logger.warning("DEV MODE IS ENABLED!!!")
+        if devmode:
             logger.warning("DEV MODE IS ENABLED!!!")
             logger.info("devmode=True: truncating dataset to 60 lines")
             tasks = tasks[:60]
@@ -34,10 +34,18 @@ class FXDataset(Dataset):
         with tqdm(total=len(tasks)) as pbar:
             for task in tasks:
                 item = self.task_to_dataset_item(task)
+                example = self.get_relevant_data_from_dataset_item(item, column_getter)
                 self.label_counter[task['label']] += 1
-                self.data.append(item)
+                self.data.append(example)
                 pbar.update(1)
         logger.info("label distribution: {}".format(self.label_counter))
+
+    def get_relevant_data_from_dataset_item(self, item, column_getter):
+        data = {}
+        data['inputs'] = column_getter(item)
+        data['polarity'] = item.polarity
+        data['example_id'] = item.example_id
+        return data
 
     def task_to_dataset_item(self, task):
         text = task['text']
@@ -53,12 +61,16 @@ class FXDataset(Dataset):
         polarity = self.polarity_associations[task['label']]
 
         # text to indexes
-        data = self.tokenizer.create_text_to_indexes(text_left, target_phrase, text_right, polarity)
+        example = self.tokenizer.create_text_to_indexes(text_left, target_phrase, text_right,
+                                                        self.use_target_phrase_placeholders)
+
+        # add polarity
+        example.polarity = polarity
 
         # add reference information
-        data['example_id'] = example_id
+        example.example_id = example_id
 
-        return data
+        return example
 
     def __getitem__(self, index):
         return self.data[index]
