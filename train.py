@@ -1,10 +1,8 @@
-#
 # main entry point to start training of a single model for target-dependent sentiment analysis in news
-#
+
 # author: Felix Hamborg <felix.hamborg@uni-konstanz.de>
 # This file is based on https://github.com/songyouwei/ABSA-PyTorch/blob/master/train.py
 # original author: songyouwei <youwei0314@gmail.com>
-# Copyright (C) 2018-2019. All Rights Reserved.
 
 import argparse
 import os
@@ -23,7 +21,7 @@ from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
 from models.aen import CrossEntropyLoss_LSR, AEN_Base
-from models.spc import SPC_BERT, SPC_DISTILBERT
+from models.spc import SPC_Base
 from plotter_utils import create_save_plotted_confusion_matrix
 from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
 
@@ -51,20 +49,21 @@ class Instructor:
         if self.opt.crossval > 0:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
-                                         self.polarity_associations, self.opt.inputs_cols, self.opt.use_tp_placeholders,
+                                         self.polarity_associations, self.opt.input_getter,
+                                         self.opt.use_tp_placeholders,
                                          self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
+                                     self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
+                                      self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
+                                    self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.inputs_cols, self.opt.use_tp_placeholders, self.opt.devmode)
+                                     self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -198,7 +197,7 @@ class Instructor:
                                                      basepath=filepath_stats_base)
                 logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
 
-            if early_stopping.early_stop:
+            if early_stopping.early_stop and self.opt.use_early_stopping:
                 logger.info("early stopping after {} epochs without improvement, total epochs: {} of {}".format(
                     early_stopping.patience, epoch, self.opt.num_epoch))
                 break
@@ -405,14 +404,18 @@ def main():
                         help="True: loss weights according to class frequencies, False: each class has the same loss per example")
     parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
                         help="True: enable label smoothing regularization; False: disable")
-    parser.add_argument('--spc_reduction', type=str, default='mean_last_hidden_states')
+    parser.add_argument('--spc_lm_representation', type=str, default='mean_last')
+    parser.add_argument('--spc_lm_representation_distilbert', type=str, default=None)
     parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
                         help="replace target_phrases with a placeholder. default: off")
     parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input; target_text '
                                                                                    'or text_target')
-    parser.add_argument('--lm_representation', type=str, default='last', help='last or sum_last_four')
-
+    parser.add_argument('--aen_lm_representation', type=str, default='last')
+    parser.add_argument('--use_early_stopping', type=str, default=False)
     opt = parser.parse_args()
+
+    if opt.spc_lm_representation_distilbert:
+        print()
 
     if opt.seed is not None:
         logger.info("setting random seed: {}".format(opt.seed))
@@ -432,9 +435,9 @@ def main():
         'aen_distilbert': AEN_Base,
         'aen_distilroberta': AEN_Base,
         # SPC
-        'spc_bert': SPC_BERT,
-        'spc_distilbert': SPC_DISTILBERT,
-        'spc_roberta': SPC_DISTILBERT,
+        'spc_bert': SPC_Base,
+        'spc_distilbert': SPC_Base,
+        'spc_roberta': SPC_Base,
 
     }
     model_name_to_pretrained_model_name = {
@@ -451,32 +454,28 @@ def main():
         'aen_distilroberta': 'distilroberta-base',
     }
 
-    def get_spc_input(model_name, spc_input_order):
-        if model_name == 'spc_bert':
-            if spc_input_order == 'target_text':
-                return lambda r: [r.special_target_text, r.bert_segments_ids_target_text]
-            elif spc_input_order == 'text_target':
-                return lambda r: [r.special_text_target, r.bert_segments_ids_text_target]
-        if spc_input_order == 'target_text':
-            return lambda r: [r.special_target_text],
-        elif spc_input_order == 'text_target':
-            return lambda r: [r.special_text_target],
+    input_getter = None
+    if opt.model_name == 'spc_bert':
+        if opt.spc_input_order == 'target_text':
+            input_getter = lambda r: [r.special_target_text, r.bert_segments_ids_target_text]
+        elif opt.spc_input_order == 'text_target':
+            input_getter = lambda r: [r.special_text_target, r.bert_segments_ids_text_target]
+    elif opt.model_name in ['spc_distilbert', 'spc_roberta', 'spc_distilroberta']:
+        if opt.spc_input_order == 'target_text':
+            input_getter = lambda r: [r.special_target_text]
+        elif opt.spc_input_order == 'text_target':
+            input_getter = lambda r: [r.special_text_target]
+    elif opt.model_name == 'aen_glove':
+        input_getter = lambda r: [r.text_raw_indices, r.target_phrase_indexes]
+    elif opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_distilroberta']:
+        input_getter = lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes]
+    elif opt.model_name == 'ram':
+        input_getter = lambda r: [r.text_raw_indices, r.target_phrase_indices, r.text_left_indices]
+    else:
+        raise Exception("model_name unknown: {}".format(opt.model_name))
 
-    input_columns = {
-        # AEN
-        'aen_glove': lambda r: [r.text_raw_indices, r.target_phrase_indexes],
-        'aen_bert': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
-        'aen_distilbert': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
-        'aen_roberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
-        'aen_distilroberta': lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes],
-        # SPC
-        'spc_bert': get_spc_input(opt.model_name, opt.spc_input_order),
-        'spc_distilbert': get_spc_input(opt.model_name, opt.spc_input_order),
-        'spc_roberta': get_spc_input(opt.model_name, opt.spc_input_order),
-        'spc_distilroberta': get_spc_input(opt.model_name, opt.spc_input_order),
-        # todo
-        'ram': lambda r: [r.text_raw_indices, r.target_phrase_indices, r.text_left_indices],
-    }
+    opt.input_getter = input_getter
+
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,
         'xavier_normal_': torch.nn.init.xavier_normal,
@@ -511,7 +510,6 @@ def main():
     else:
         logger.debug("dataset_path defined: {}".format(opt.dataset_path))
 
-    opt.inputs_cols = input_columns[opt.model_name]
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
 

@@ -19,7 +19,6 @@ b) return model from best epoch (or from best fold???!?)
 3) return model that performs best on testdat
 """
 import os
-import pprint
 import subprocess
 from collections import Counter
 from datetime import datetime
@@ -37,9 +36,11 @@ class SetupController:
         self.logger = get_logger()
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
+        self.use_early_stopping = False
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'use_tp_placeholders', 'spc_reduction',
-                              'spc_input_order', 'lm_representation']
+                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'use_tp_placeholders',
+                              'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
+                              'spc_lm_representation_distilbert']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
@@ -57,12 +58,18 @@ class SetupController:
             'batch_size': ['16', '32', '64'],
             'lossweighting': ['True', 'False'],
             'devmode': ['True'],
-            'num_epoch': ['2', '3', '4', '10', '20', '100'],
+            'num_epoch': ['2', '3', '4', '20'],
             'lsr': ['True', 'False'],
             'use_tp_placeholders': ['True', 'False'],
-            'spc_reduction': ['pooler_output', 'mean_last_hidden_states'],
+            'spc_lm_representation_distilbert': [  # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
+                'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
+            'spc_lm_representation': ['pooler_output',
+                                      # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
+                                      'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
             'spc_input_order': ['target_text', 'text_target'],
-            'aen_lm_representation': ['last', 'sum_last_four', 'sum_last_two', 'sum_all']
+            'aen_lm_representation': ['last',
+                                      # 'sum_last_four', 'sum_last_two', 'sum_all',
+                                      'mean_last_four', 'mean_last_two', 'mean_all', ],
         }
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -72,10 +79,14 @@ class SetupController:
         # tuples) where all lists are AND connected.
         # If a condition is not satisfied, the corresponding parameter will still be pass
         conditions = {
-            'spc_reduction': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
-            'spc_input_order': [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
-            'aen_lm_representation': [('model_name', 'aen_bert'), ('model_name', 'aen_roberta'), ('model_name',
-                                                                                                  'aen_distilbert')],
+            'spc_lm_representation_distilbert':
+                [('model_name', 'distilbert')],
+            'spc_lm_representation':
+                [('model_name', 'spc_bert'), ('model_name', 'spc_roberta')],
+            'spc_input_order':
+                [('model_name', 'spc_bert'), ('model_name', 'spc_roberta'), ('model_name', 'spc_distilbert')],
+            'aen_lm_representation':
+                [('model_name', 'aen_bert'), ('model_name', 'aen_roberta'), ('model_name', 'aen_distilbert')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())
@@ -100,15 +111,16 @@ class SetupController:
             "{} arguments, totaling in {} combinations".format(len(args_names_ordered), combination_count))
 
         # apply conditions
+        self.logger.info("applying conditions...")
         self.named_combinations, count_duplicates = self._apply_conditions(combinations, args_names_ordered, conditions)
         self.logger.info("applied conditions. removed {} combinations. {} -> {}".format(count_duplicates,
                                                                                         combination_count,
                                                                                         len(self.named_combinations)))
         self.combination_count = len(self.named_combinations)
 
-        self.logger.info("combinations:")
-        pp = pprint.PrettyPrinter(indent=2)
-        self.logger.info("{}".format(pp.pformat(self.named_combinations)))
+        # self.logger.info("combinations:")
+        # pp = pprint.PrettyPrinter(indent=2)
+        # self.logger.info("{}".format(pp.pformat(self.named_combinations)))
 
         if self.use_cross_validation > 0:
             self.logger.info("using {}-fold cross validation".format(self.use_cross_validation))
@@ -122,32 +134,35 @@ class SetupController:
         seen_experiment_ids = set()
         count_duplicates = 0
 
-        for combination in combinations:
-            named_combination = {}
-            full_named_combination = self._args_combination_to_single_arg_values(combination, args_names_ordered)
+        with tqdm(total=len(combinations)) as pbar:
+            for combination in combinations:
+                named_combination = {}
+                full_named_combination = self._args_combination_to_single_arg_values(combination, args_names_ordered)
 
-            # for a parameter combination, pass only those parameters that are valid for that combination
-            for arg_index, arg_name in enumerate(args_names_ordered):
-                # iterate each parameter and validate - using the other parameter names and values - whether its
-                # conditions are met
-                if self._check_conditions(arg_name, full_named_combination, conditions, args_names_ordered):
-                    # if yes, pass it
-                    named_combination[arg_name] = combination[arg_index]
-                    self.logger.debug("using '{}' in combination {}".format(arg_name, combination))
+                # for a parameter combination, pass only those parameters that are valid for that combination
+                for arg_index, arg_name in enumerate(args_names_ordered):
+                    # iterate each parameter and validate - using the other parameter names and values - whether its
+                    # conditions are met
+                    if self._check_conditions(arg_name, full_named_combination, conditions):
+                        # if yes, pass it
+                        named_combination[arg_name] = combination[arg_index]
+                        self.logger.debug("using '{}' in combination {}".format(arg_name, combination))
+                    else:
+                        self.logger.debug("not using '{}' in combination {}".format(arg_name, combination))
+
+                # check if experiment_id of named combination was already seen
+                experiment_id = self._experiment_id_from_named_combination(named_combination)
+                if experiment_id not in seen_experiment_ids:
+                    seen_experiment_ids.add(experiment_id)
+                    named_combinations.append(named_combination)
                 else:
-                    self.logger.debug("not using '{}' in combination {}".format(arg_name, combination))
+                    count_duplicates += 1
 
-            # check if experiment_id of named combination was already seen
-            experiment_id = self._experiment_id_from_named_combination(named_combination)
-            if experiment_id not in seen_experiment_ids:
-                seen_experiment_ids.add(experiment_id)
-                named_combinations.append(named_combination)
-            else:
-                count_duplicates += 1
+                pbar.update(1)
 
         return named_combinations, count_duplicates
 
-    def _check_conditions(self, arg_name, full_named_combination, conditions, args_names_ordered):
+    def _check_conditions(self, arg_name, full_named_combination, conditions):
         """
         For a given parameter, checks whether its conditions are satisfied. If so, returns True, else False.
         :param arg_name:
@@ -199,8 +214,9 @@ class SetupController:
     def _experiment_id_from_named_combination(self, named_combination):
         return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
-    def execute_single_setup(self, named_combination):
-        experiment_id = self._experiment_id_from_named_combination(named_combination)
+    def execute_single_setup(self, named_combination, experiment_number):
+        # experiment_id = self._experiment_id_from_named_combination(named_combination)
+        experiment_id = experiment_number
         experiment_path = "./experiments/{}/{}/".format(self.experiment_base_id, experiment_id)
 
         self._prepare_experiment_env(experiment_path)
@@ -209,6 +225,7 @@ class SetupController:
         self._add_arg(args, 'dataset_name', 'poltsanews')
         self._add_arg(args, 'experiment_path', experiment_path)
         self._add_arg(args, 'crossval', self.use_cross_validation)
+        self._add_arg(args, 'use_early_stopping', self.use_early_stopping)
 
         cmd = self.basecmd + args
 
@@ -235,8 +252,8 @@ class SetupController:
         results = []
 
         with tqdm(total=self.combination_count) as pbar:
-            for named_combination in self.named_combinations:
-                result = self.execute_single_setup(named_combination)
+            for i, named_combination in enumerate(self.named_combinations):
+                result = self.execute_single_setup(named_combination, i)
                 results.append(result)
                 pbar.update(1)
 
