@@ -28,9 +28,10 @@ def convert(filepath):
 
 
 if __name__ == '__main__':
+    convert('controller_data/datasets/semeval14laptops/Laptops_Train.xml.seg')
     convert('controller_data/datasets/acl14twitter/test.raw')
     convert('controller_data/datasets/acl14twitter/train.raw')
     convert('controller_data/datasets/semeval14restaurants/Restaurants_Test_Gold.xml.seg')
     convert('controller_data/datasets/semeval14restaurants/Restaurants_Train.xml.seg')
     convert('controller_data/datasets/semeval14laptops/Laptops_Test_Gold.xml.seg')
-    convert('controller_data/datasets/semeval14restaurants/Restaurants_Train.xml.seg')
+    convert('controller_data/datasets/semeval14laptops/Laptops_Train.xml.seg')
