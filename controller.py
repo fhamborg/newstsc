@@ -20,11 +20,13 @@ b) return model from best epoch (or from best fold???!?)
 """
 import argparse
 import os
+import shelve
 import subprocess
 from collections import Counter
 from datetime import datetime
 from itertools import product
 
+from jsonlines import jsonlines
 from tabulate import tabulate
 from tqdm import tqdm
 
@@ -39,7 +41,9 @@ class SetupController:
         self.opt = options
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
-        args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
+        self.snem = 'recall_avg'
+
+        args_names_ordered = ['model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
                               'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
@@ -67,7 +71,6 @@ class SetupController:
         }
 
         assert len(args_names_ordered) == len(combinations.keys())
-        assert len(combinations['snem']) == 1
 
         self.experiment_base_id = datetime.today().strftime('%Y%m%d-%H%M%S')
         self.basecmd = ['python', 'train.py']
@@ -137,7 +140,7 @@ class SetupController:
                         self.logger.debug("not using '{}' in combination {}".format(arg_name, combination))
 
                 # check if experiment_id of named combination was already seen
-                experiment_id = self._experiment_id_from_named_combination(named_combination)
+                experiment_id = self._experiment_named_id_from_named_combination(named_combination)
                 if experiment_id not in seen_experiment_ids:
                     seen_experiment_ids.add(experiment_id)
                     named_combinations.append(named_combination)
@@ -197,7 +200,7 @@ class SetupController:
             args_names_values[arg_name] = args_combination[arg_index]
         return args_names_values
 
-    def _experiment_id_from_named_combination(self, named_combination):
+    def _experiment_named_id_from_named_combination(self, named_combination):
         return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
     def execute_single_setup(self, named_combination, experiment_number):
@@ -208,6 +211,7 @@ class SetupController:
         self._prepare_experiment_env(experiment_path)
 
         args = self._build_args(named_combination)
+        self._add_arg(args, 'snem', self.snem)
         self._add_arg(args, 'dataset_name', self.datasetname)
         self._add_arg(args, 'experiment_path', experiment_path)
         self._add_arg(args, 'crossval', self.use_cross_validation)
@@ -220,43 +224,66 @@ class SetupController:
                 os.path.join(experiment_path, 'stdlog.err'), "w") as file_stderr:
             completed_process = subprocess.run(cmd, stdout=file_stdout, stderr=file_stderr)
 
-        snem = self.get_experiment_result_detailed(experiment_path)
+        experiment_details = self.get_experiment_result_detailed(experiment_path)
 
         return {**named_combination,
-                **{'rc': completed_process.returncode, 'experiment_id': experiment_id, 'snem': snem}}
+                **{'rc': completed_process.returncode, 'experiment_id': experiment_id},
+                'details': experiment_details}
 
     def get_experiment_result_detailed(self, experiment_path):
-        # each experiments reports detailed information about its performance to the stdout, immediately before it exits
-        # thus, get the last line of the stdlog.out
-        lines = [line.rstrip('\n') for line in open(os.path.join(experiment_path, 'stdlog.out'))]
+        experiment_results_path = os.path.join(experiment_path, 'experiment_results.jsonl')
+        with jsonlines.open(experiment_results_path, 'r') as reader:
+            lines = []
+            for line in reader:
+                lines.append(line)
+            assert len(lines) == 1
 
-        snem_line = lines[-1]
-
-        return snem_line
+        return lines[0]
 
     def run(self):
-        results = []
+        results_path = "results_{}".format(self.datasetname)
+        if not self.opt.continue_run:
+            os.remove(results_path)
+
+        results = shelve.open(results_path)
+        self.logger.info("found {} previous results, continuing".format(len(results)))
 
         self.logger.info("starting {} experiments".format(self.combination_count))
 
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
-                result = self.execute_single_setup(named_combination, i)
-                results.append(result)
+                experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
+                if experiment_named_id in results:
+                    self.logger.info("skipping experiment: {}".format(experiment_named_id))
+                    self.logger.info("previous result: {}".format(results[experiment_named_id]))
+                else:
+                    result = self.execute_single_setup(named_combination, i)
+                    results[experiment_named_id] = result
+                    results.sync()
                 pbar.update(1)
 
+                if i >= 2:
+                    break
+
+        processed_results = dict(results)
+        results.close()
+
         experiments_rc_overview = Counter()
-        for result in results:
-            rc = result['rc']
+        for experiment_named_id, experiment_result in processed_results.items():
+            rc = experiment_result['rc']
             experiments_rc_overview[rc] += 1
 
             if rc != 0:
-                self.logger.warning("experiment did not return 0: {}".format(result['experiment_id']))
+                self.logger.warning("experiment did not return 0: {}".format(experiment_result['experiment_id']))
 
         # snem-based performance sort
-        results.sort(key=lambda x: x['snem'], reverse=True)
-        headers = results[0].keys()
-        rows = [x.values() for x in results]
+        sorted_results = list(dict(processed_results).values())
+        for result in sorted_results:
+            result['dev_snem'] = result['details']['dev_stats'][self.snem]
+            del result['details']
+        sorted_results.sort(key=lambda x: x['dev_snem'], reverse=True)
+        headers = list(sorted_results[0].keys())
+        rows = [x.values() for x in sorted_results]
 
         self.logger.info("all experiments finished. statistics:")
         self.logger.info("return codes: {}".format(experiments_rc_overview))
@@ -264,9 +291,21 @@ class SetupController:
         self.logger.info("\n" + tabulate(rows, headers))
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean pad_value expected.')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default=None, type=str)
+    parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
     opt = parser.parse_args()
 
     SetupController(opt).run()

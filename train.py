@@ -12,6 +12,7 @@ import time
 import numpy
 import torch
 import torch.nn as nn
+from jsonlines import jsonlines
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel, RobertaModel
 
@@ -152,6 +153,7 @@ class Instructor:
         global_step = 0
         selected_model_path = None
         selected_model_filename = None
+        selected_model_dev_stats = None
 
         # initialize the early_stopping object
         early_stopping = EarlyStopping()
@@ -193,7 +195,7 @@ class Instructor:
                     logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
             dev_stats = self._evaluate(dev_data_loader)
-            self.evaluator.log_statistics(dev_stats, "dev during training")
+            self.evaluator.print_stats(dev_stats, "dev during training")
 
             dev_snem = dev_stats[self.opt.snem]
 
@@ -202,6 +204,8 @@ class Instructor:
                 if epoch >= self.opt.num_epoch - 1:
                     # return the model that was trained through all epochs as the selected model
                     logger.info("all epochs finished, saving model to disk...")
+
+                    selected_model_dev_stats = dev_stats
 
                     selected_model_filename, selected_model_path = self._create_prepare_model_path(dev_snem, epoch,
                                                                                                    fold_number)
@@ -221,6 +225,8 @@ class Instructor:
                 # return the best model during any epoch
                 if early_stopping.flag_has_score_increased_since_last_check:
                     logger.info("model yields best performance so far, saving to disk...")
+
+                    selected_model_dev_stats = dev_stats
 
                     selected_model_filename, selected_model_path = self._create_prepare_model_path(dev_snem, epoch,
                                                                                                    fold_number)
@@ -243,7 +249,7 @@ class Instructor:
                     early_stopping.patience, epoch, self.opt.num_epoch))
                 break
 
-        return selected_model_path, selected_model_filename
+        return selected_model_path, selected_model_filename, selected_model_dev_stats
 
     def _evaluate(self, data_loader):
         t_labels_all, t_outputs_all = None, None
@@ -292,6 +298,8 @@ class Instructor:
         return inv_freqs
 
     def run_crossval(self):
+        raise Exception("run_crossval needs to get updated as to saving its experiment results")
+
         # Loss and Optimizer
         if self.opt.lossweighting:
             inv_class_freqs = self.get_normalized_inv_class_frequencies()
@@ -325,7 +333,9 @@ class Instructor:
             val_data_loader = DataLoader(dataset=valset, batch_size=self.opt.batch_size, shuffle=False)
 
             self._reset_params()
-            best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, val_data_loader,
+            best_model_path, best_model_filename = self._train(criterion, optimizer,
+                                                               train_data_loader,
+                                                               val_data_loader,
                                                                fid)
 
             # evaluate the model that performed best during training,
@@ -334,12 +344,12 @@ class Instructor:
             # append its results to the list of results, which will be aggregated after all folds are completed
             all_test_stats.append(test_stats)
 
-            self.evaluator.log_statistics(test_stats, "evaluation of fold {} on test-set".format(fid))
+            self.evaluator.print_stats(test_stats, "evaluation of fold {} on test-set".format(fid))
 
         logger.info("aggregating performance statistics from all {} folds".format(self.opt.crossval))
         mean_test_stats = self.evaluator.mean_from_all_statistics(all_test_stats)
-        self.evaluator.log_statistics(mean_test_stats,
-                                      "aggregated evaluation results of all folds on test-set".format(fid))
+        self.evaluator.print_stats(mean_test_stats,
+                                   "aggregated evaluation results of all folds on test-set".format(fid))
 
         logger.info("finished execution of this crossval run. exiting.")
 
@@ -370,13 +380,32 @@ class Instructor:
         self._reset_params()
         logger.info("starting training...")
         time_training_start = time.time()
-        best_model_path, best_model_filename = self._train(criterion, optimizer, train_data_loader, dev_data_loader)
+        best_model_path, best_model_filename, selected_model_dev_stats = self._train(criterion, optimizer,
+                                                                                     train_data_loader, dev_data_loader)
         time_training_elapsed_mins = (time.time() - time_training_start) // 60
         logger.info("training finished. duration={}mins".format(time_training_elapsed_mins))
 
-        self.post_training(best_model_path, best_model_filename, test_data_loader)
+        self.post_training(best_model_path, best_model_filename, test_data_loader, selected_model_dev_stats,
+                           time_training_elapsed_mins)
 
-    def post_training(self, selected_model_path, selected_model_filename, test_data_loader):
+    def get_serializable_stats(self, stats):
+        sstats = stats.copy()
+        sstats['recalls_of_classes'] = stats['recalls_of_classes'].tolist()
+        sstats['confusion_matrix'] = stats['confusion_matrix'].tolist()
+        return sstats
+
+    def get_serializable_opts(self):
+        opts = vars(self.opt)
+        sopts = opts.copy()
+        del sopts['optimizer']
+        del sopts['initializer']
+        del sopts['device']
+        del sopts['input_getter']
+        del sopts['model_class']
+        return sopts
+
+    def post_training(self, selected_model_path, selected_model_filename, test_data_loader, selected_model_dev_stats,
+                      time_training_elapsed_mins):
         logger.info("loading selected model from training: {}".format(selected_model_path))
         self.model.load_state_dict(torch.load(selected_model_path))
 
@@ -388,7 +417,18 @@ class Instructor:
         test_stats = self._evaluate(test_data_loader)
         test_snem = test_stats[self.opt.snem]
 
-        self.evaluator.log_statistics(test_stats, "evaluation on test-set")
+        self.evaluator.print_stats(test_stats, "evaluation on test-set")
+
+        # save dev and test results
+        experiment_results = {}
+        experiment_results['test_stats'] = self.get_serializable_stats(test_stats)
+        experiment_results['dev_stats'] = self.get_serializable_stats(selected_model_dev_stats)
+        experiment_results['options'] = self.get_serializable_opts()
+        experiment_results['time_training_elapsed_mins'] = time_training_elapsed_mins
+
+        experiment_results_path = os.path.join(self.opt.experiment_path, 'experiment_results.jsonl')
+        with jsonlines.open(experiment_results_path, 'w') as writer:
+            writer.write(experiment_results)
 
         # save confusion matrices
         test_confusion_matrix = test_stats['confusion_matrix']

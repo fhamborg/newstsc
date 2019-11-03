@@ -7,7 +7,6 @@ combinations = {
         # AEN
         'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
     ],
-    'snem': ['recall_avg'],
     'optimizer': ['adam'],
     'initializer': ['xavier_uniform_'],
     # TODO check this and other parameters, compare with available options in train.py

@@ -119,7 +119,8 @@ class DatasetPreparer:
         rows = []
         for set_name, cur_set in self.sets_info.items():
             if 'file' in cur_set:
-                row = [set_name, -1, -1, -1, -1, -1, cur_set['file']]
+                num_lines = sum(1 for line in open(self.get_filepath_by_name(cur_set['file'])))
+                row = [set_name, -1, -1, -1, -1, cur_set['file'], num_lines]
             else:
                 row = [set_name, cur_set['human-rel-weight'], len(cur_set['human-examples']),
                        cur_set['nonhum-rel-weight'], len(cur_set['nonhum-examples']), cur_set['examples-rel'],

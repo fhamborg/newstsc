@@ -64,7 +64,7 @@ class Evaluator:
                 'accuracy': accuracy, 'f1_posneg': f1_posneg, 'y_true_count': y_true_count,
                 'y_pred_count': y_pred_count}
 
-    def log_statistics(self, stats, description):
+    def print_stats(self, stats, description):
         self.logger.info(description)
         self.logger.info("{}: {})".format(self.snem_name, stats[self.snem_name]))
         self.logger.info("y_true distribution: {}".format(sorted(stats['y_true_count'].items())))
