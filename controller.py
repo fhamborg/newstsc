@@ -36,11 +36,11 @@ class SetupController:
         self.logger = get_logger()
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
-        self.use_early_stopping = False
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                              'lossweighting', 'devmode', 'num_epoch', 'lsr', 'use_tp_placeholders',
+                              'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
-                              'spc_lm_representation_distilbert']
+                              'spc_lm_representation_distilbert', 'finetune_glove',
+                              'eval_only_after_last_epoch', 'devmode']
         # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
         # parameters in train.py
         combinations = {
@@ -54,22 +54,25 @@ class SetupController:
             'optimizer': ['adam'],
             'initializer': ['xavier_uniform_'],
             # TODO check this and other parameters, compare with available options in train.py
-            'learning_rate': ['1e-5', '2e-5', '3e-5', '5e-5'],
-            'batch_size': ['16', '32', '64'],
+            'learning_rate': ['1e-5', '2e-5', '3e-5', '4e-5', '5e-5'],
+            'batch_size': ['16', '32', '48'],
             'lossweighting': ['True', 'False'],
             'devmode': ['True'],
-            'num_epoch': ['2', '3', '4', '20'],
+            'num_epoch': ['2', '3', '4'],
             'lsr': ['True', 'False'],
             'use_tp_placeholders': ['True', 'False'],
             'spc_lm_representation_distilbert': [  # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
                 'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
             'spc_lm_representation': ['pooler_output',
                                       # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
-                                      'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
+                                      'mean_last', 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
             'spc_input_order': ['target_text', 'text_target'],
             'aen_lm_representation': ['last',
                                       # 'sum_last_four', 'sum_last_two', 'sum_all',
-                                      'mean_last_four', 'mean_last_two', 'mean_all', ],
+                                      'mean_last_four'],  # 'mean_last_two', 'mean_all'],
+            # 'use_early_stopping': ['True'],  # due to condition below, will only be used if num_epoch==10
+            'finetune_glove': ['True', 'False'],
+            'eval_only_after_last_epoch': ['True'],
         }
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -87,6 +90,9 @@ class SetupController:
                 [('model_name', 'spc_bert'), ('model_name', 'spc_roberta'), ('model_name', 'spc_distilbert')],
             'aen_lm_representation':
                 [('model_name', 'aen_bert'), ('model_name', 'aen_roberta'), ('model_name', 'aen_distilbert')],
+            'use_early_stopping':
+                [('num_epoch', '10')],
+            'finetune_glove': [('model_name', 'aen_glove')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())
@@ -118,16 +124,17 @@ class SetupController:
                                                                                         len(self.named_combinations)))
         self.combination_count = len(self.named_combinations)
 
-        # self.logger.info("combinations:")
-        # pp = pprint.PrettyPrinter(indent=2)
-        # self.logger.info("{}".format(pp.pformat(self.named_combinations)))
-
         if self.use_cross_validation > 0:
             self.logger.info("using {}-fold cross validation".format(self.use_cross_validation))
             self.dataset_preparer = DatasetPreparer.poltsanews_crossval8010_allhuman(self.basepath_data)
         else:
             self.logger.info("not using cross validation".format(self.use_cross_validation))
-            self.dataset_preparer = DatasetPreparer.poltsanews_rel801010_allhuman(self.basepath_data)
+            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.poltsanews_rel801010_allhuman(
+            # self.basepath_data)
+            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14restaurants(self.basepath_data)
+            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14laptops(self.basepath_data)
+            self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.acl14twitter(
+                self.basepath_data)
 
     def _apply_conditions(self, combinations, args_names_ordered, conditions):
         named_combinations = []
@@ -222,10 +229,10 @@ class SetupController:
         self._prepare_experiment_env(experiment_path)
 
         args = self._build_args(named_combination)
-        self._add_arg(args, 'dataset_name', 'poltsanews')
+        self._add_arg(args, 'dataset_name', self.datasetname)
         self._add_arg(args, 'experiment_path', experiment_path)
         self._add_arg(args, 'crossval', self.use_cross_validation)
-        self._add_arg(args, 'use_early_stopping', self.use_early_stopping)
+        self._add_arg(args, 'absa_task_format', self.absa_task_format)
 
         cmd = self.basecmd + args
 

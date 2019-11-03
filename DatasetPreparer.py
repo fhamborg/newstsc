@@ -8,6 +8,7 @@ import math
 import os
 import random
 from collections import Counter
+from shutil import copyfile
 
 import jsonlines
 from tabulate import tabulate
@@ -16,11 +17,11 @@ from fxlogger import get_logger
 
 
 class DatasetPreparer:
-    def __init__(self, basepath_datasets):
+    def __init__(self, name, basepath_datasets, human, non_human):
         self.basepath_datasets = basepath_datasets
-        self.name = 'poltsanews'
-        self.human_created_filenames = ['human.jsonl']
-        self.non_human_created_filenames = ['train_20191021_233454.jsonl']
+        self.name = name
+        self.human_created_filenames = human
+        self.non_human_created_filenames = non_human
         self.human_created_filepaths = [self.get_filepath_by_name(x) for x in self.human_created_filenames]
         self.non_human_created_filepaths = [self.get_filepath_by_name(x) for x in self.non_human_created_filenames]
         self.data_types = ['human', 'nonhum']
@@ -117,30 +118,40 @@ class DatasetPreparer:
         header = ['set_name', 'human rel', 'human abs', 'non-hum rel', 'non-hum abs', 'rel', 'abs']
         rows = []
         for set_name, cur_set in self.sets_info.items():
-            row = [set_name, cur_set['human-rel-weight'], len(cur_set['human-examples']), cur_set['nonhum-rel-weight'],
-                   len(cur_set['nonhum-examples']), cur_set['examples-rel'], len(cur_set['examples'])]
+            if 'file' in cur_set:
+                row = [set_name, -1, -1, -1, -1, -1, cur_set['file']]
+            else:
+                row = [set_name, cur_set['human-rel-weight'], len(cur_set['human-examples']),
+                       cur_set['nonhum-rel-weight'], len(cur_set['nonhum-examples']), cur_set['examples-rel'],
+                       len(cur_set['examples'])]
             rows.append(row)
 
         self.logger.info('\n' + tabulate(rows, header))
 
-    def init_set(self, sets_info2):
-        self.sets_info = sets_info2
+    def init_set(self, sets_info):
+        self.sets_info = sets_info
 
         set_names = list(self.sets_info.keys())
 
         weights_human = Counter()
         weights_nonhum = Counter()
         nonnull_set_names = []
+        self.filecopy_sets = {}
+
         # sum weights and thereby filter datasets that are 0 in size
         for set_name in set_names:
             setinfo = self.sets_info[set_name]
-            weights_human[set_name] = setinfo['human-weight']
-            weights_nonhum[set_name] = setinfo['nonhum-weight']
 
-            if setinfo['human-weight'] + setinfo['nonhum-weight'] > 0:
-                nonnull_set_names.append(set_name)
+            if 'file' in setinfo:
+                self.filecopy_sets[set_name] = setinfo['file']
             else:
-                self.logger.info("discard {}, because would be empty".format(set_name))
+                weights_human[set_name] = setinfo['human-weight']
+                weights_nonhum[set_name] = setinfo['nonhum-weight']
+
+                if setinfo['human-weight'] + setinfo['nonhum-weight'] > 0:
+                    nonnull_set_names.append(set_name)
+                else:
+                    self.logger.info("discard {}, because would be empty".format(set_name))
         set_names = nonnull_set_names
 
         human_weight_sum = sum(weights_human.values())
@@ -170,17 +181,32 @@ class DatasetPreparer:
 
     def export(self, savepath):
         for set_name, cur_set in self.sets_info.items():
+            if 'file' not in cur_set:
+                set_savefolder = os.path.join(savepath, self.name)
+                os.makedirs(set_savefolder, exist_ok=True)
+                set_savepath = os.path.join(set_savefolder, set_name + '.jsonl')
+
+                with jsonlines.open(set_savepath, 'w') as writer:
+                    writer.write_all(cur_set['examples'])
+                self.logger.info('created set (abs={}) at {}'.format(len(cur_set['examples']), set_savepath))
+
+        for set_name, filename in self.filecopy_sets.items():
             set_savefolder = os.path.join(savepath, self.name)
             os.makedirs(set_savefolder, exist_ok=True)
             set_savepath = os.path.join(set_savefolder, set_name + '.jsonl')
+            set_sourcepath = self.get_filepath_by_name(filename)
 
-            with jsonlines.open(set_savepath, 'w') as writer:
-                writer.write_all(cur_set['examples'])
-            self.logger.info('created set (abs={}) at {}'.format(len(cur_set['examples']), set_savepath))
+            copyfile(set_sourcepath, set_savepath)
+            self.logger.info('copied set to {}'.format(set_savepath))
 
     @classmethod
     def poltsanews_rel801010_allhuman(cls, basepath):
-        dprep = cls(basepath)
+        name = 'poltsanews'
+        absa_task_format = False
+        human_created_filenames = ['human.jsonl']
+        non_human_created_filenames = ['train_20191021_233454.jsonl']
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
 
         sets_info = {
             'train':
@@ -192,11 +218,16 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep
+        return dprep, name, absa_task_format
 
     @classmethod
     def poltsanews_crossval8010_allhuman(cls, basepath):
-        dprep = cls(basepath)
+        name = 'poltsanews'
+        absa_task_format = False
+        human_created_filenames = ['human.jsonl']
+        non_human_created_filenames = ['train_20191021_233454.jsonl']
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
 
         sets_info = {
             'crossval':
@@ -207,7 +238,70 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep
+        return dprep, name, absa_task_format
+
+    @classmethod
+    def acl14twitter(cls, basepath):
+        name = 'acl14twitter'
+        absa_task_format = True
+        human_created_filenames = ['train.raw.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 80, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 10, 'nonhum-weight': 0},
+            'test':
+                {'file': 'test.raw.jsonl'},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, absa_task_format
+
+    @classmethod
+    def semeval14laptops(cls, basepath):
+        name = 'semeval14laptops'
+        absa_task_format = True
+        human_created_filenames = ['Laptops_Train.xml.seg.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 80, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 10, 'nonhum-weight': 0},
+            'test':
+                {'file': 'Laptops_Test_Gold.xml.seg.jsonl'},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, absa_task_format
+
+    @classmethod
+    def semeval14restaurants(cls, basepath):
+        name = 'semeval14laptops'
+        absa_task_format = True
+        human_created_filenames = ['Restaurants_Train.xml.seg.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 80, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 10, 'nonhum-weight': 0},
+            'test':
+                {'file': 'Restaurants_Test_Gold.xml.seg.jsonl'},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, absa_task_format
 
 
 if __name__ == '__main__':

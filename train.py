@@ -15,12 +15,13 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 from transformers import BertModel, DistilBertModel, RobertaModel
 
+from crossentropylosslsr import CrossEntropyLoss_LSR
 from dataset import FXDataset
 from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
-from models.aen import CrossEntropyLoss_LSR, AEN_Base
+from models.aen import AEN_Base
 from models.spc import SPC_Base
 from plotter_utils import create_save_plotted_confusion_matrix
 from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
@@ -49,21 +50,29 @@ class Instructor:
         if self.opt.crossval > 0:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
-                                         self.polarity_associations, self.opt.input_getter,
-                                         self.opt.use_tp_placeholders,
+                                         self.polarity_associations, self.sorted_expected_label_names,
+                                         self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.absa_task_format,
                                          self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
+                                     self.sorted_expected_label_names, self.opt.input_getter,
+                                     self.opt.use_tp_placeholders, self.opt.absa_task_format,
+                                     self.opt.devmode)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
+                                      self.sorted_expected_label_names, self.opt.input_getter,
+                                      self.opt.use_tp_placeholders, self.opt.absa_task_format,
+                                      self.opt.devmode)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
+                                    self.sorted_expected_label_names, self.opt.input_getter,
+                                    self.opt.use_tp_placeholders, self.opt.absa_task_format,
+                                    self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.devmode)
+                                     self.sorted_expected_label_names, self.opt.input_getter,
+                                     self.opt.use_tp_placeholders, self.opt.absa_task_format,
+                                     self.opt.devmode)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -126,17 +135,30 @@ class Instructor:
     def _reset_params(self):
         self.create_model(only_model=True)
 
+    def _create_prepare_model_path(self, snem, epoch, fold_number=None):
+        selected_model_filename = '{0}_{1}_val_{2}_{3}_epoch{4}'.format(self.opt.model_name, self.opt.dataset_name,
+                                                                        self.opt.snem, round(snem, 4), epoch)
+        if fold_number is not None:
+            selected_model_filename += '_cvf' + str(fold_number)
+
+        pathdir = os.path.join(self.opt.experiment_path, 'state_dict')
+
+        os.makedirs(pathdir, exist_ok=True)
+        selected_model_path = os.path.join(pathdir, selected_model_filename)
+
+        return selected_model_filename, selected_model_path
+
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader, fold_number=None):
         global_step = 0
-        best_model_path = None
-        best_model_filename = None
+        selected_model_path = None
+        selected_model_filename = None
 
         # initialize the early_stopping object
         early_stopping = EarlyStopping()
 
         for epoch in range(self.opt.num_epoch):
             logger.info('>' * 100)
-            logger.info('epoch: {}'.format(epoch))
+            logger.info('epoch: {} (num_epoch: {})'.format(epoch, self.opt.num_epoch))
             n_correct, n_total, loss_total = 0, 0, 0
 
             # switch model to training mode
@@ -176,38 +198,52 @@ class Instructor:
             dev_snem = dev_stats[self.opt.snem]
 
             early_stopping(dev_snem)
-            if early_stopping.flag_has_score_increased_since_last_check:
-                logger.info("model yields best performance so far, saving to disk...")
+            if self.opt.eval_only_after_last_epoch:
+                if epoch >= self.opt.num_epoch - 1:
+                    # return the model that was trained through all epochs as the selected model
+                    logger.info("all epochs finished, saving model to disk...")
 
-                best_model_filename = '{0}_{1}_val_{2}_{3}_epoch{4}'.format(self.opt.model_name, self.opt.dataset_name,
-                                                                            self.opt.snem, round(dev_snem, 4), epoch)
-                if fold_number is not None:
-                    best_model_filename += '_cvf' + str(fold_number)
+                    selected_model_filename, selected_model_path = self._create_prepare_model_path(dev_snem, epoch,
+                                                                                                   fold_number)
+                    torch.save(self.model.state_dict(), selected_model_path)
+                    logger.info('>> saved: {}'.format(selected_model_path))
 
-                pathdir = os.path.join(self.opt.experiment_path, 'state_dict')
+                    # save confusion matrices
+                    filepath_stats_base = os.path.join(self.opt.experiment_path, 'statistics', selected_model_filename)
+                    if not filepath_stats_base.endswith('/'):
+                        filepath_stats_base += '/'
+                    os.makedirs(filepath_stats_base, exist_ok=True)
+                    create_save_plotted_confusion_matrix(dev_stats['confusion_matrix'],
+                                                         expected_labels=self.sorted_expected_label_values,
+                                                         basepath=filepath_stats_base)
+                    logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
+            else:
+                # return the best model during any epoch
+                if early_stopping.flag_has_score_increased_since_last_check:
+                    logger.info("model yields best performance so far, saving to disk...")
 
-                os.makedirs(pathdir, exist_ok=True)
-                best_model_path = os.path.join(pathdir, best_model_filename)
+                    selected_model_filename, selected_model_path = self._create_prepare_model_path(dev_snem, epoch,
+                                                                                                   fold_number)
 
-                torch.save(self.model.state_dict(), best_model_path)
-                logger.info('>> saved: {}'.format(best_model_path))
+                    torch.save(self.model.state_dict(), selected_model_path)
+                    logger.info('>> saved: {}'.format(selected_model_path))
 
-                # save confusion matrices
-                filepath_stats_base = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
-                if not filepath_stats_base.endswith('/'):
-                    filepath_stats_base += '/'
-                os.makedirs(filepath_stats_base, exist_ok=True)
-                create_save_plotted_confusion_matrix(dev_stats['confusion_matrix'],
-                                                     expected_labels=self.sorted_expected_label_values,
-                                                     basepath=filepath_stats_base)
-                logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
+                    # save confusion matrices
+                    filepath_stats_base = os.path.join(self.opt.experiment_path, 'statistics', selected_model_filename)
+                    if not filepath_stats_base.endswith('/'):
+                        filepath_stats_base += '/'
+                    os.makedirs(filepath_stats_base, exist_ok=True)
+                    create_save_plotted_confusion_matrix(dev_stats['confusion_matrix'],
+                                                         expected_labels=self.sorted_expected_label_values,
+                                                         basepath=filepath_stats_base)
+                    logger.debug("created confusion matrices in path: {}".format(filepath_stats_base))
 
             if early_stopping.early_stop and self.opt.use_early_stopping:
                 logger.info("early stopping after {} epochs without improvement, total epochs: {} of {}".format(
                     early_stopping.patience, epoch, self.opt.num_epoch))
                 break
 
-        return best_model_path, best_model_filename
+        return selected_model_path, selected_model_filename
 
     def _evaluate(self, data_loader):
         t_labels_all, t_outputs_all = None, None
@@ -259,6 +295,7 @@ class Instructor:
         # Loss and Optimizer
         if self.opt.lossweighting:
             inv_class_freqs = self.get_normalized_inv_class_frequencies()
+            logger.info("weighting losses of classes: {}".format(inv_class_freqs))
             class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
         else:
             class_weights = None
@@ -313,6 +350,7 @@ class Instructor:
         # Loss and Optimizer
         if self.opt.lossweighting:
             inv_class_freqs = self.get_normalized_inv_class_frequencies()
+            logger.info("weighting losses of classes: {}".format(inv_class_freqs))
             class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
         else:
             class_weights = None
@@ -338,11 +376,11 @@ class Instructor:
 
         self.post_training(best_model_path, best_model_filename, test_data_loader)
 
-    def post_training(self, best_model_path, best_model_filename, test_data_loader):
-        logger.info("loading model that performed best during training: {}".format(best_model_path))
-        self.model.load_state_dict(torch.load(best_model_path))
+    def post_training(self, selected_model_path, selected_model_filename, test_data_loader):
+        logger.info("loading selected model from training: {}".format(selected_model_path))
+        self.model.load_state_dict(torch.load(selected_model_path))
 
-        logger.info("evaluating best model on test-set")
+        logger.info("evaluating selected model on test-set")
         # set model into evaluation mode (cf. https://pytorch.org/docs/stable/nn.html#torch.nn.Module.train)
         self.model.eval()
 
@@ -354,7 +392,7 @@ class Instructor:
 
         # save confusion matrices
         test_confusion_matrix = test_stats['confusion_matrix']
-        filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', best_model_filename)
+        filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', selected_model_filename)
         os.makedirs(filepath_stats_prefix, exist_ok=True)
         if not filepath_stats_prefix.endswith('/'):
             filepath_stats_prefix += '/'
@@ -421,8 +459,16 @@ def main():
     parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input; target_text '
                                                                                    'or text_target')
     parser.add_argument('--aen_lm_representation', type=str, default='last')
-    parser.add_argument('--use_early_stopping', type=str, default=False)
+    parser.add_argument('--use_early_stopping', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--finetune_glove', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--eval_only_after_last_epoch', type=str2bool, nargs='?', const=True, default=False,
+                        help="if False, evaluate the best model that was seen during any training epoch. if True, "
+                             "evaluate only the model that was trained through all num_epoch epochs.")
+    parser.add_argument('--absa_task_format', type=str2bool, nargs='?', const=True, default=False)
     opt = parser.parse_args()
+
+    if opt.eval_only_after_last_epoch:
+        assert not opt.use_early_stopping
 
     if opt.spc_lm_representation_distilbert:
         logger.info("spc_lm_representation_distilbert defined, overwriting spc_lm_representation")
