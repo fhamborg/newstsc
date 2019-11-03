@@ -188,7 +188,7 @@ class DatasetPreparer:
 
                 with jsonlines.open(set_savepath, 'w') as writer:
                     writer.write_all(cur_set['examples'])
-                self.logger.info('created set (abs={}) at {}'.format(len(cur_set['examples']), set_savepath))
+                self.logger.debug('created set (abs={}) at {}'.format(len(cur_set['examples']), set_savepath))
 
         for set_name, filename in self.filecopy_sets.items():
             set_savefolder = os.path.join(savepath, self.name)
@@ -197,7 +197,7 @@ class DatasetPreparer:
             set_sourcepath = self.get_filepath_by_name(filename)
 
             copyfile(set_sourcepath, set_savepath)
-            self.logger.info('copied set to {}'.format(set_savepath))
+            self.logger.debug('copied set to {}'.format(set_savepath))
 
     @classmethod
     def poltsanews_rel801010_allhuman(cls, basepath):
@@ -284,7 +284,7 @@ class DatasetPreparer:
 
     @classmethod
     def semeval14restaurants(cls, basepath):
-        name = 'semeval14laptops'
+        name = 'semeval14restaurants'
         absa_task_format = True
         human_created_filenames = ['Restaurants_Train.xml.seg.jsonl']
         non_human_created_filenames = []

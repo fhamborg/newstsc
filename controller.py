@@ -18,6 +18,7 @@ b) return model from best epoch (or from best fold???!?)
 2) retrievel all best performing models and test them on testdat
 3) return model that performs best on testdat
 """
+import argparse
 import os
 import subprocess
 from collections import Counter
@@ -28,12 +29,14 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
+from combinations_absadata_0 import combinations_absadata_0
 from fxlogger import get_logger
 
 
 class SetupController:
-    def __init__(self):
+    def __init__(self, options):
         self.logger = get_logger()
+        self.opt = options
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
         args_names_ordered = ['snem', 'model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
@@ -41,39 +44,7 @@ class SetupController:
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
                               'eval_only_after_last_epoch', 'devmode']
-        # keys in the dict must match parameter names accepted by train.py. values must match accepted values for such
-        # parameters in train.py
-        combinations = {
-            'model_name': [
-                # SPC
-                'spc_bert', 'spc_distilbert', 'spc_roberta',
-                # AEN
-                'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
-            ],
-            'snem': ['recall_avg'],
-            'optimizer': ['adam'],
-            'initializer': ['xavier_uniform_'],
-            # TODO check this and other parameters, compare with available options in train.py
-            'learning_rate': ['1e-5', '2e-5', '3e-5', '4e-5', '5e-5'],
-            'batch_size': ['16', '32', '48'],
-            'lossweighting': ['True', 'False'],
-            'devmode': ['True'],
-            'num_epoch': ['2', '3', '4'],
-            'lsr': ['True', 'False'],
-            'use_tp_placeholders': ['True', 'False'],
-            'spc_lm_representation_distilbert': [  # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
-                'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
-            'spc_lm_representation': ['pooler_output',
-                                      # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
-                                      'mean_last', 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
-            'spc_input_order': ['target_text', 'text_target'],
-            'aen_lm_representation': ['last',
-                                      # 'sum_last_four', 'sum_last_two', 'sum_all',
-                                      'mean_last_four'],  # 'mean_last_two', 'mean_all'],
-            # 'use_early_stopping': ['True'],  # due to condition below, will only be used if num_epoch==10
-            'finetune_glove': ['True', 'False'],
-            'eval_only_after_last_epoch': ['True'],
-        }
+        combinations = combinations_absadata_0
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
         # condition to be satisfied
@@ -129,12 +100,20 @@ class SetupController:
             self.dataset_preparer = DatasetPreparer.poltsanews_crossval8010_allhuman(self.basepath_data)
         else:
             self.logger.info("not using cross validation".format(self.use_cross_validation))
-            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.poltsanews_rel801010_allhuman(
-            # self.basepath_data)
-            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14restaurants(self.basepath_data)
-            # self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14laptops(self.basepath_data)
-            self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.acl14twitter(
-                self.basepath_data)
+            if self.opt.dataset == 'poltsanews_rel801010_allhuman':
+                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.poltsanews_rel801010_allhuman(
+                    self.basepath_data)
+            elif self.opt.dataset == 'semeval14restaurants':
+                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14restaurants(
+                    self.basepath_data)
+            elif self.opt.dataset == 'semeval14laptops':
+                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14laptops(
+                    self.basepath_data)
+            elif self.opt.dataset == 'acl14twitter':
+                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.acl14twitter(
+                    self.basepath_data)
+            else:
+                raise Exception("unknown dataset: {}".format(self.opt.dataset))
 
     def _apply_conditions(self, combinations, args_names_ordered, conditions):
         named_combinations = []
@@ -236,7 +215,7 @@ class SetupController:
 
         cmd = self.basecmd + args
 
-        self.logger.info("starting single setup: {}".format(" ".join(cmd)))
+        self.logger.debug("starting single setup: {}".format(" ".join(cmd)))
         with open(os.path.join(experiment_path, 'stdlog.out'), "w") as file_stdout, open(
                 os.path.join(experiment_path, 'stdlog.err'), "w") as file_stderr:
             completed_process = subprocess.run(cmd, stdout=file_stdout, stderr=file_stderr)
@@ -257,6 +236,8 @@ class SetupController:
 
     def run(self):
         results = []
+
+        self.logger.info("starting {} experiments".format(self.combination_count))
 
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
@@ -284,4 +265,8 @@ class SetupController:
 
 
 if __name__ == '__main__':
-    SetupController().run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', default=None, type=str)
+    opt = parser.parse_args()
+
+    SetupController(opt).run()

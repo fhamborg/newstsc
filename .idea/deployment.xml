@@ -9,7 +9,6 @@
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/experiments" />
-            <excludedPath local="true" path="$PROJECT_DIR$/embeddings/glove/data" />
           </excludedPaths>
         </serverdata>
       </paths>

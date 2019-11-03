@@ -13,7 +13,7 @@ class CrossEntropyLoss_LSR(nn.Module):
 
     def _toOneHot_smooth(self, label, batchsize, classes):
         base_prob = self.para_LSR * 1.0 / classes
-        one_hot_label = torch.zeros(batchsize, classes) + base_prob
+        one_hot_label = torch.zeros(batchsize, classes, device=self.device) + base_prob
 
         if self.weight is not None:
             one_hot_label = one_hot_label * self.weight
