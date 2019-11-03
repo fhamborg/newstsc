@@ -1,0 +1,1120 @@
+{"text_left": "the", "text_right": "is top notch as well .", "target_phrase": "bread", "polarity": "1"}
+{"text_left": "i have to say they have one of the fastest", "text_right": "in the city .", "target_phrase": "delivery times", "polarity": "1"}
+{"text_left": "", "text_right": "is always fresh and hot - ready to eat !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "did i mention that the", "text_right": "is outstanding ?", "target_phrase": "coffee", "polarity": "1"}
+{"text_left": "certainly not the best sushi in new york , however , it is always fresh , and the", "text_right": "is very clean , sterile .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "i trust the", "text_right": "at go sushi , it never disappoints .", "target_phrase": "people", "polarity": "1"}
+{"text_left": "straight-forward , no surprises , very decent", "text_right": ".", "target_phrase": "japanese food", "polarity": "1"}
+{"text_left": "best spicy tuna roll , great", "text_right": ".", "target_phrase": "asian salad", "polarity": "1"}
+{"text_left": "best", "text_right": ", great asian salad .", "target_phrase": "spicy tuna roll", "polarity": "1"}
+{"text_left": "try the", "text_right": "-lrb- not on menu -rrb- .", "target_phrase": "rose roll", "polarity": "1"}
+{"text_left": "try the rose roll -lrb- not on", "text_right": "-rrb- .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "i love the", "text_right": ", esp lychee martini , and the food is also very good .", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "i love the drinks , esp", "text_right": ", and the food is also very good .", "target_phrase": "lychee martini", "polarity": "1"}
+{"text_left": "i love the drinks , esp lychee martini , and the", "text_right": "is also very good .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "in fact , this was not a", "text_right": "and was barely eatable .", "target_phrase": "nicoise salad", "polarity": "-1"}
+{"text_left": "while there 's a decent", "text_right": ", it should n't take ten minutes to get your drinks and 45 for a dessert pizza .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "while there 's a decent menu , it should n't take ten minutes to get your", "text_right": "and 45 for a dessert pizza .", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "while there 's a decent menu , it should n't take ten minutes to get your drinks and 45 for a", "text_right": ".", "target_phrase": "dessert pizza", "polarity": "0"}
+{"text_left": "once we sailed , the top-notch", "text_right": "and live entertainment sold us on a unforgettable evening .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "once we sailed , the top-notch food and", "text_right": "sold us on a unforgettable evening .", "target_phrase": "live entertainment", "polarity": "1"}
+{"text_left": "our", "text_right": "was horrible ; so rude and disinterested .", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "the", "text_right": "'s - watered down .", "target_phrase": "sangria", "polarity": "-1"}
+{"text_left": "", "text_right": "- uneventful , small .", "target_phrase": "menu", "polarity": "-1"}
+{"text_left": "anytime and everytime i find myself in the neighborhood i will go to sushi rose for fresh", "text_right": "and great portions all at a reasonable price .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "anytime and everytime i find myself in the neighborhood i will go to sushi rose for fresh sushi and great", "text_right": "all at a reasonable price .", "target_phrase": "portions", "polarity": "1"}
+{"text_left": "anytime and everytime i find myself in the neighborhood i will go to sushi rose for fresh sushi and great portions all at a reasonable", "text_right": ".", "target_phrase": "price", "polarity": "1"}
+{"text_left": "great", "text_right": "but the service was dreadful !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great food but the", "text_right": "was dreadful !", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the", "text_right": "that came out were mediocre .", "target_phrase": "portions of the food", "polarity": "0"}
+{"text_left": "the two", "text_right": "looked like they had been sucking on lemons .", "target_phrase": "waitress's", "polarity": "-1"}
+{"text_left": "from the beginning , we were met by friendly", "text_right": ", and the convienent parking at chelsea piers made it easy for us to get to the boat .", "target_phrase": "staff memebers", "polarity": "1"}
+{"text_left": "from the beginning , we were met by friendly staff memebers , and the convienent", "text_right": "at chelsea piers made it easy for us to get to the boat .", "target_phrase": "parking", "polarity": "1"}
+{"text_left": "we enjoyed ourselves thoroughly and will be going back for the", "text_right": "...", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "", "text_right": "are almost incredible : my personal favorite is their tart of the day .", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "desserts are almost incredible : my personal favorite is their", "text_right": ".", "target_phrase": "tart of the day", "polarity": "1"}
+{"text_left": "the", "text_right": "was extremely tasty , creatively presented and the wine excellent .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was extremely tasty , creatively presented and the", "text_right": "excellent .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "the", "text_right": "was probably the best i have tasted .", "target_phrase": "lasagna", "polarity": "1"}
+{"text_left": "harumi sushi has the freshest and most delicious", "text_right": "in nyc .", "target_phrase": "array of sushi", "polarity": "1"}
+{"text_left": "i highly recommend it for not just its superb", "text_right": ", but also for its friendly owners and staff .", "target_phrase": "cuisine", "polarity": "1"}
+{"text_left": "i highly recommend it for not just its superb cuisine , but also for its friendly", "text_right": "and staff .", "target_phrase": "owners", "polarity": "1"}
+{"text_left": "i highly recommend it for not just its superb cuisine , but also for its friendly owners and", "text_right": ".", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "if you 're craving some serious", "text_right": "and desire a cozy ambiance , this is quite and exquisite choice .", "target_phrase": "indian food", "polarity": "1"}
+{"text_left": "if you 're craving some serious indian food and desire a cozy", "text_right": ", this is quite and exquisite choice .", "target_phrase": "ambiance", "polarity": "1"}
+{"text_left": "i definitely enjoyed the", "text_right": "as well .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "it was pleasantly uncrowded , the", "text_right": "was delightful , the garden adorable , the food -lrb- from appetizers to entrees -rrb- was delectable .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "it was pleasantly uncrowded , the service was delightful , the", "text_right": "adorable , the food -lrb- from appetizers to entrees -rrb- was delectable .", "target_phrase": "garden", "polarity": "1"}
+{"text_left": "it was pleasantly uncrowded , the service was delightful , the garden adorable , the", "text_right": "-lrb- from appetizers to entrees -rrb- was delectable .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "it was pleasantly uncrowded , the service was delightful , the garden adorable , the food -lrb- from", "text_right": "to entrees -rrb- was delectable .", "target_phrase": "appetizers", "polarity": "1"}
+{"text_left": "it was pleasantly uncrowded , the service was delightful , the garden adorable , the food -lrb- from appetizers to", "text_right": "-rrb- was delectable .", "target_phrase": "entrees", "polarity": "1"}
+{"text_left": "the", "text_right": "is surprisingly good , and the decor is nice .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is surprisingly good , and the", "text_right": "is nice .", "target_phrase": "decor", "polarity": "1"}
+{"text_left": "how pretentious and inappropriate for mj grill to claim that it provides power", "text_right": "and dinners !", "target_phrase": "lunch", "polarity": "-1"}
+{"text_left": "how pretentious and inappropriate for mj grill to claim that it provides power lunch and", "text_right": "!", "target_phrase": "dinners", "polarity": "-1"}
+{"text_left": "two wasted", "text_right": "-- what a crime !", "target_phrase": "steaks", "polarity": "-1"}
+{"text_left": "the", "text_right": "should be a bit more friendly .", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "i think the", "text_right": "is good .", "target_phrase": "meatball parm", "polarity": "1"}
+{"text_left": "if you want good tasting , well seasoned", "text_right": "eat at cabana and you ca n't go wrong .", "target_phrase": "latin food", "polarity": "1"}
+{"text_left": "definitely try the", "text_right": "- it was incredible .", "target_phrase": "taglierini with truffles", "polarity": "1"}
+{"text_left": "also , the", "text_right": "is very attentive and really personable .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the", "text_right": "literally melts in your mouth !", "target_phrase": "gnocchi", "polarity": "1"}
+{"text_left": "had a great experience at trio ...", "text_right": "was pleasant ; food was tasty and large in portion size - i would highly recommend the portobello/gorgonzola/sausage appetizer and the lobster risotto .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "had a great experience at trio ... staff was pleasant ;", "text_right": "was tasty and large in portion size - i would highly recommend the portobello/gorgonzola/sausage appetizer and the lobster risotto .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "had a great experience at trio ... staff was pleasant ; food was tasty and large in", "text_right": "- i would highly recommend the portobello/gorgonzola/sausage appetizer and the lobster risotto .", "target_phrase": "portion size", "polarity": "1"}
+{"text_left": "had a great experience at trio ... staff was pleasant ; food was tasty and large in portion size - i would highly recommend the", "text_right": "and the lobster risotto .", "target_phrase": "portobello/gorgonzola/sausage appetizer", "polarity": "1"}
+{"text_left": "had a great experience at trio ... staff was pleasant ; food was tasty and large in portion size - i would highly recommend the portobello/gorgonzola/sausage appetizer and the", "text_right": ".", "target_phrase": "lobster risotto", "polarity": "1"}
+{"text_left": "", "text_right": "include classics like lasagna , fettuccine alfredo and chicken parmigiana .", "target_phrase": "entrees", "polarity": "0"}
+{"text_left": "entrees include classics like", "text_right": ", fettuccine alfredo and chicken parmigiana .", "target_phrase": "lasagna", "polarity": "0"}
+{"text_left": "entrees include classics like lasagna ,", "text_right": "and chicken parmigiana .", "target_phrase": "fettuccine alfredo", "polarity": "0"}
+{"text_left": "entrees include classics like lasagna , fettuccine alfredo and", "text_right": ".", "target_phrase": "chicken parmigiana", "polarity": "0"}
+{"text_left": "the", "text_right": "is good , the teriyaki i recommend .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is good , the", "text_right": "i recommend .", "target_phrase": "teriyaki", "polarity": "1"}
+{"text_left": "", "text_right": "was very expensive for what you get .", "target_phrase": "meal", "polarity": "-1"}
+{"text_left": "try the", "text_right": "and the pizza with soy cheese !", "target_phrase": "peanut butter sorbet", "polarity": "1"}
+{"text_left": "try the peanut butter sorbet and the", "text_right": "!", "target_phrase": "pizza with soy cheese", "polarity": "1"}
+{"text_left": "good", "text_right": "at the right price , what more can you ask for .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "good food at the right", "text_right": ", what more can you ask for .", "target_phrase": "price", "polarity": "1"}
+{"text_left": "the", "text_right": "is top notch , the service is attentive , and the atmosphere is great .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is top notch , the", "text_right": "is attentive , and the atmosphere is great .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the food is top notch , the service is attentive , and the", "text_right": "is great .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "great", "text_right": ", great waitstaff , great atmosphere , and best of all great beer !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great food , great", "text_right": ", great atmosphere , and best of all great beer !", "target_phrase": "waitstaff", "polarity": "1"}
+{"text_left": "great food , great waitstaff , great", "text_right": ", and best of all great beer !", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "great food , great waitstaff , great atmosphere , and best of all great", "text_right": "!", "target_phrase": "beer", "polarity": "1"}
+{"text_left": "this is still one of my most favorite restaurants in the area the", "text_right": "is inexpensive but very good -lrb- kimono shrimp special was excellent -rrb- and has a great atmosphere .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "this is still one of my most favorite restaurants in the area the food is inexpensive but very good -lrb-", "text_right": "was excellent -rrb- and has a great atmosphere .", "target_phrase": "kimono shrimp special", "polarity": "1"}
+{"text_left": "this is still one of my most favorite restaurants in the area the food is inexpensive but very good -lrb- kimono shrimp special was excellent -rrb- and has a great", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "the", "text_right": "is interesting and quite reasonably priced .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "the menu is interesting and quite reasonably", "text_right": ".", "target_phrase": "priced", "polarity": "1"}
+{"text_left": "the", "text_right": "was delicious and clearly fresh ingredients were used .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was delicious and clearly fresh", "text_right": "were used .", "target_phrase": "ingredients", "polarity": "1"}
+{"text_left": "this made it obvious that the", "text_right": "was n't cooked fresh ; it was obviously made before hand and then reheated .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "", "text_right": "are excellent here ; you can make a great -lrb- and inexpensive -rrb- meal out of them .", "target_phrase": "appetizer", "polarity": "1"}
+{"text_left": "appetizer are excellent here ; you can make a great -lrb- and inexpensive -rrb-", "text_right": "out of them .", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "the", "text_right": "are a highlight .", "target_phrase": "spicy mussels", "polarity": "1"}
+{"text_left": "also get the", "text_right": "-- best we 've ever had .", "target_phrase": "onion rings", "polarity": "1"}
+{"text_left": "however , being foodies , we were utterly disappointed with the", "text_right": ".", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "huge", "text_right": ", great and attentive service , and pretty good prices .", "target_phrase": "portions", "polarity": "1"}
+{"text_left": "huge portions , great and attentive", "text_right": ", and pretty good prices .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "huge portions , great and attentive service , and pretty good", "text_right": ".", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "i was highly disappointed by their", "text_right": "and food .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "i was highly disappointed by their service and", "text_right": ".", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "i complained to the", "text_right": "and then to the manager , but the intensity of rudeness from them just went up .", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "i complained to the waiter and then to the", "text_right": ", but the intensity of rudeness from them just went up .", "target_phrase": "manager", "polarity": "-1"}
+{"text_left": "the", "text_right": "is great and the milkshakes are even better !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is great and the", "text_right": "are even better !", "target_phrase": "milkshakes", "polarity": "1"}
+{"text_left": "the", "text_right": "is amazing .", "target_phrase": "mushroom barley soup", "polarity": "1"}
+{"text_left": "i 'm glad i did as the", "text_right": "was very good and the staff was friendly , courteous and efficient .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i 'm glad i did as the food was very good and the", "text_right": "was friendly , courteous and efficient .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "their", "text_right": "here is also absolutely delicious .", "target_phrase": "duck", "polarity": "1"}
+{"text_left": "while it was large and a bit noisy , the", "text_right": "were fantastic , and the food was superb .", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "while it was large and a bit noisy , the drinks were fantastic , and the", "text_right": "was superb .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "one caveat : some of the", "text_right": "can be a trifle harsh .", "target_phrase": "curried casseroles", "polarity": "-1"}
+{"text_left": "the", "text_right": "was almost always excellent .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i was pleasently surprised at the", "text_right": ".", "target_phrase": "taste", "polarity": "1"}
+{"text_left": "a nice space , as long as it does n't get too crowded and a singleminded devotion to its chosen cuisine make mare a great choice for", "text_right": "lovers .", "target_phrase": "seafood", "polarity": "1"}
+{"text_left": "a nice space , as long as it does n't get too crowded and a singleminded devotion to its chosen", "text_right": "make mare a great choice for seafood lovers .", "target_phrase": "cuisine", "polarity": "1"}
+{"text_left": "i never had an", "text_right": "before so i gave it a shot .", "target_phrase": "orange donut", "polarity": "0"}
+{"text_left": "they really provide a relaxing , laid-back", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "this particular location certainly uses substandard", "text_right": ".", "target_phrase": "meats", "polarity": "-1"}
+{"text_left": "the", "text_right": "was less than accomodating .", "target_phrase": "management", "polarity": "-1"}
+{"text_left": "the", "text_right": "is also more laid-back and relaxed .", "target_phrase": "ambience", "polarity": "1"}
+{"text_left": "the", "text_right": "are great and all the sweets are homemade .", "target_phrase": "teas", "polarity": "1"}
+{"text_left": "the teas are great and all the", "text_right": "are homemade .", "target_phrase": "sweets", "polarity": "1"}
+{"text_left": "", "text_right": "and the service are the best part in there", "target_phrase": "mojitos", "polarity": "1"}
+{"text_left": "mojitos and the", "text_right": "are the best part in there", "target_phrase": "service", "polarity": "1"}
+{"text_left": "", "text_right": ", burgers and salads , like the lemon-dressed cobb , are classic successes .", "target_phrase": "sandwiches", "polarity": "1"}
+{"text_left": "sandwiches ,", "text_right": "and salads , like the lemon-dressed cobb , are classic successes .", "target_phrase": "burgers", "polarity": "1"}
+{"text_left": "sandwiches , burgers and", "text_right": ", like the lemon-dressed cobb , are classic successes .", "target_phrase": "salads", "polarity": "1"}
+{"text_left": "sandwiches , burgers and salads , like the", "text_right": ", are classic successes .", "target_phrase": "lemon-dressed cobb", "polarity": "1"}
+{"text_left": "the", "text_right": "is very intimate and romantic .", "target_phrase": "design", "polarity": "1"}
+{"text_left": "the", "text_right": "was wonderful and imaginative .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "is very sharp and they look good too .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the worst though was the", "text_right": ".", "target_phrase": "taste", "polarity": "-1"}
+{"text_left": "the", "text_right": "we tried was tasteless and burned and the mole sauce was way too sweet .", "target_phrase": "fajita", "polarity": "-1"}
+{"text_left": "the fajita we tried was tasteless and burned and the", "text_right": "was way too sweet .", "target_phrase": "mole sauce", "polarity": "-1"}
+{"text_left": "stay with the", "text_right": "and you 'll be fine .", "target_phrase": "roasted chickens", "polarity": "1"}
+{"text_left": "the", "text_right": "is warm , comfortable , artsy and sexy .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "the", "text_right": "is great -lrb- big selection , reasonable prices -rrb- and the drinks are really good .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is great -lrb- big", "text_right": ", reasonable prices -rrb- and the drinks are really good .", "target_phrase": "selection", "polarity": "1"}
+{"text_left": "the food is great -lrb- big selection , reasonable", "text_right": "-rrb- and the drinks are really good .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "the food is great -lrb- big selection , reasonable prices -rrb- and the", "text_right": "are really good .", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "the", "text_right": "melted in my mouth .", "target_phrase": "steak", "polarity": "1"}
+{"text_left": "the food did take a few extra minutes to come , but the cute", "text_right": "' jokes and friendliness made up for it .", "target_phrase": "waiters", "polarity": "1"}
+{"text_left": "the", "text_right": "did take a few extra minutes to come , but the cute waiters ' jokes and friendliness made up for it .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "most importantly , it is reasonably", "text_right": ".", "target_phrase": "priced", "polarity": "1"}
+{"text_left": "the", "text_right": "is excellent -lrb- i 'm not used to having much choice at restaurants -rrb- , and the atmosphere is great .", "target_phrase": "selection of food", "polarity": "1"}
+{"text_left": "the selection of food is excellent -lrb- i 'm not used to having much choice at restaurants -rrb- , and the", "text_right": "is great .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "only suggestion is that you skip the", "text_right": ", it was overpriced and fell short on taste .", "target_phrase": "dessert", "polarity": "-1"}
+{"text_left": "only suggestion is that you skip the dessert , it was overpriced and fell short on", "text_right": ".", "target_phrase": "taste", "polarity": "-1"}
+{"text_left": "", "text_right": "was decent , but not great .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i dont know what some people who rave about this", "text_right": "are talking about .", "target_phrase": "hot dog", "polarity": "-1"}
+{"text_left": "it is a hidden delight complete with a quaint", "text_right": "and good food .", "target_phrase": "bar", "polarity": "1"}
+{"text_left": "it is a hidden delight complete with a quaint bar and good", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "always look angry and even ignore their high-tipping regulars .", "target_phrase": "waiters", "polarity": "-1"}
+{"text_left": "the", "text_right": "is very nice , and a welcome escape from the rest of the si mall .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "yes , they 're a bit more expensive then typical , but then again , so is their", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i can say that the", "text_right": ", burgers and salads were all fresh , tasty and the mango margareta at $ 9 was well worth the money .", "target_phrase": "wraps", "polarity": "1"}
+{"text_left": "i can say that the wraps ,", "text_right": "and salads were all fresh , tasty and the mango margareta at $ 9 was well worth the money .", "target_phrase": "burgers", "polarity": "1"}
+{"text_left": "i can say that the wraps , burgers and", "text_right": "were all fresh , tasty and the mango margareta at $ 9 was well worth the money .", "target_phrase": "salads", "polarity": "1"}
+{"text_left": "i can say that the wraps , burgers and salads were all fresh , tasty and the", "text_right": "at $ 9 was well worth the money .", "target_phrase": "mango margareta", "polarity": "1"}
+{"text_left": "anywhere else , the", "text_right": "would be 3x as high !", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "the", "text_right": "we experienced was friendly and good .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "our", "text_right": "was friendly and it is a shame that he didnt have a supportive staff to work with .", "target_phrase": "waiter", "polarity": "1"}
+{"text_left": "our waiter was friendly and it is a shame that he didnt have a supportive", "text_right": "to work with .", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "the", "text_right": "i was seated at was uncomfortable .", "target_phrase": "folding chair", "polarity": "-1"}
+{"text_left": "", "text_right": "was among the best i have ever had in nyc .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "was amazing .", "target_phrase": "fettucino alfredo", "polarity": "1"}
+{"text_left": "the", "text_right": "was very good and i was pleasantly surprised to see so many vegan options .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was very good and i was pleasantly surprised to see so many", "text_right": ".", "target_phrase": "vegan options", "polarity": "1"}
+{"text_left": "i know real", "text_right": "and this was n't it .", "target_phrase": "indian food", "polarity": "-1"}
+{"text_left": "be sure to try the", "text_right": "... lamb chops , veal chops , rabbit , the potato gratin , on and on and on ...", "target_phrase": "smoked trout", "polarity": "1"}
+{"text_left": "be sure to try the smoked trout ...", "text_right": ", veal chops , rabbit , the potato gratin , on and on and on ...", "target_phrase": "lamb chops", "polarity": "1"}
+{"text_left": "be sure to try the smoked trout ... lamb chops ,", "text_right": ", rabbit , the potato gratin , on and on and on ...", "target_phrase": "veal chops", "polarity": "1"}
+{"text_left": "be sure to try the smoked trout ... lamb chops , veal chops ,", "text_right": ", the potato gratin , on and on and on ...", "target_phrase": "rabbit", "polarity": "1"}
+{"text_left": "be sure to try the smoked trout ... lamb chops , veal chops , rabbit , the", "text_right": ", on and on and on ...", "target_phrase": "potato gratin", "polarity": "1"}
+{"text_left": "even when the", "text_right": "is not in the house , the food and service are right on target .", "target_phrase": "chef", "polarity": "0"}
+{"text_left": "even when the chef is not in the house , the", "text_right": "and service are right on target .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "even when the chef is not in the house , the food and", "text_right": "are right on target .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "everything from the", "text_right": "to the mussels and even the hamburger were done well and very tasty .", "target_phrase": "eggs benedict", "polarity": "1"}
+{"text_left": "everything from the eggs benedict to the", "text_right": "and even the hamburger were done well and very tasty .", "target_phrase": "mussels", "polarity": "1"}
+{"text_left": "everything from the eggs benedict to the mussels and even the", "text_right": "were done well and very tasty .", "target_phrase": "hamburger", "polarity": "1"}
+{"text_left": "the", "text_right": "were very professional , courteous and attentive .", "target_phrase": "waiters", "polarity": "1"}
+{"text_left": "the", "text_right": "was rather over cooked and dried but the chicken was fine .", "target_phrase": "falafal", "polarity": "-1"}
+{"text_left": "the falafal was rather over cooked and dried but the", "text_right": "was fine .", "target_phrase": "chicken", "polarity": "1"}
+{"text_left": "i highly reccomend the", "text_right": ", it 's insanely good .", "target_phrase": "grand marnier shrimp", "polarity": "1"}
+{"text_left": "we been there and we really enjoy the", "text_right": ", was areally great food , and the service was really good .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we been there and we really enjoy the food , was areally great", "text_right": ", and the service was really good .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we been there and we really enjoy the food , was areally great food , and the", "text_right": "was really good .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "", "text_right": "include flan and sopaipillas .", "target_phrase": "desserts", "polarity": "0"}
+{"text_left": "desserts include", "text_right": "and sopaipillas .", "target_phrase": "flan", "polarity": "0"}
+{"text_left": "desserts include flan and", "text_right": ".", "target_phrase": "sopaipillas", "polarity": "0"}
+{"text_left": "i was starving and the small", "text_right": "were driving me crazy !", "target_phrase": "portions", "polarity": "-1"}
+{"text_left": "the", "text_right": "was loud and inconsiderate .", "target_phrase": "wait staff", "polarity": "-1"}
+{"text_left": "however , the", "text_right": "and service and dramatically lacking .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "however , the food and", "text_right": "and dramatically lacking .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the", "text_right": "is cut in blocks bigger than my cell phone .", "target_phrase": "sushi", "polarity": "-1"}
+{"text_left": "the", "text_right": "is great , my soup always arrives nice and hot .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the service is great , my", "text_right": "always arrives nice and hot .", "target_phrase": "soup", "polarity": "1"}
+{"text_left": "it had been awhile and i forgot just how delicious", "text_right": "can be .", "target_phrase": "crepes", "polarity": "1"}
+{"text_left": "montparnasse 's", "text_right": "-- especially the silken creme brulee and paper-thin apple tart -- are good enough on their own to make the restaurant worth the trip .", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "montparnasse 's desserts -- especially the silken", "text_right": "and paper-thin apple tart -- are good enough on their own to make the restaurant worth the trip .", "target_phrase": "creme brulee", "polarity": "1"}
+{"text_left": "montparnasse 's desserts -- especially the silken creme brulee and paper-thin", "text_right": "-- are good enough on their own to make the restaurant worth the trip .", "target_phrase": "apple tart", "polarity": "1"}
+{"text_left": "i had a delicious", "text_right": ".", "target_phrase": "shrimp creole", "polarity": "1"}
+{"text_left": "the", "text_right": "was real good .", "target_phrase": "chicken dinner", "polarity": "1"}
+{"text_left": "beware of the", "text_right": "not unless you want to call the fire department to douse the flames in your mouth .", "target_phrase": "chili signed food items", "polarity": "-1"}
+{"text_left": "the", "text_right": "is designed in a contemporary japanese style restaurant .", "target_phrase": "decor", "polarity": "0"}
+{"text_left": "but the", "text_right": "was delicious .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "try the ribs , sizzling beef and couple it with", "text_right": ".", "target_phrase": "coconut rice", "polarity": "1"}
+{"text_left": "try the", "text_right": ", sizzling beef and couple it with coconut rice .", "target_phrase": "ribs", "polarity": "1"}
+{"text_left": "try the ribs , sizzling", "text_right": "and couple it with coconut rice .", "target_phrase": "beef", "polarity": "1"}
+{"text_left": "the", "text_right": "is a personal fave .", "target_phrase": "avocado salad", "polarity": "1"}
+{"text_left": "and , the", "text_right": "are yummy !", "target_phrase": "honey bbq rib tips", "polarity": "1"}
+{"text_left": "the best", "text_right": "uptown !", "target_phrase": "chinese food", "polarity": "1"}
+{"text_left": "", "text_right": "is known for bending over backwards to make everyone happy .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "is very friendly .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "", "text_right": "are very friendly and the pasta is out of this world .", "target_phrase": "waiters", "polarity": "1"}
+{"text_left": "waiters are very friendly and the", "text_right": "is out of this world .", "target_phrase": "pasta", "polarity": "1"}
+{"text_left": "great", "text_right": "and great cocktail menu .", "target_phrase": "wine list", "polarity": "1"}
+{"text_left": "great wine list and great", "text_right": ".", "target_phrase": "cocktail menu", "polarity": "1"}
+{"text_left": "the", "text_right": "are delicious and the bbq rib was perfect .", "target_phrase": "crab cakes", "polarity": "1"}
+{"text_left": "the crab cakes are delicious and the", "text_right": "was perfect .", "target_phrase": "bbq rib", "polarity": "1"}
+{"text_left": "the", "text_right": "is wonderful , artfully done and simply delicious .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "tiny restaurant with very fast", "text_right": ".", "target_phrase": "service", "polarity": "1"}
+{"text_left": "my husband and i have been there at least 6 times and we 've always been given the highest", "text_right": "and often free desserts .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "my husband and i have been there at least 6 times and we 've always been given the highest service and often free", "text_right": ".", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "a beautiful", "text_right": ", perfect for drinks and/or appetizers .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "a beautiful atmosphere , perfect for", "text_right": "and/or appetizers .", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "a beautiful atmosphere , perfect for drinks and/or", "text_right": ".", "target_phrase": "appetizers", "polarity": "0"}
+{"text_left": "they make the best", "text_right": "in new jersey .", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "what a difference , the", "text_right": "was very comforting and the food was better than average , but what really standed out was such a dynamic and extensive beer list .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "what a difference , the service was very comforting and the", "text_right": "was better than average , but what really standed out was such a dynamic and extensive beer list .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "what a difference , the service was very comforting and the food was better than average , but what really standed out was such a dynamic and extensive", "text_right": ".", "target_phrase": "beer list", "polarity": "1"}
+{"text_left": "frankly , the", "text_right": "here is something i can make better at home .", "target_phrase": "chinese food", "polarity": "-1"}
+{"text_left": "there was only one", "text_right": "for the whole restaurant upstairs .", "target_phrase": "waiter", "polarity": "0"}
+{"text_left": "we started with the", "text_right": "and asparagus and also had the soft shell crab as well as the cheese plate .", "target_phrase": "scallops", "polarity": "0"}
+{"text_left": "we started with the scallops and", "text_right": "and also had the soft shell crab as well as the cheese plate .", "target_phrase": "asparagus", "polarity": "0"}
+{"text_left": "we started with the scallops and asparagus and also had the", "text_right": "as well as the cheese plate .", "target_phrase": "soft shell crab", "polarity": "0"}
+{"text_left": "we started with the scallops and asparagus and also had the soft shell crab as well as the", "text_right": ".", "target_phrase": "cheese plate", "polarity": "0"}
+{"text_left": "not to be overlooked , the", "text_right": "is excellent .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "this without question is one of the worst", "text_right": "i have ever had .", "target_phrase": "hotdogs", "polarity": "-1"}
+{"text_left": "the", "text_right": "is unbelievably friendly , and i dream about their saag gosht ... so good .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the staff is unbelievably friendly , and i dream about their", "text_right": "... so good .", "target_phrase": "saag gosht", "polarity": "1"}
+{"text_left": "i also recommend the", "text_right": ".", "target_phrase": "garlic knots", "polarity": "1"}
+{"text_left": "best", "text_right": "i have ever eaten .", "target_phrase": "indian food", "polarity": "1"}
+{"text_left": "this place has the best", "text_right": ".", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "the", "text_right": "which is sometimes a little too heavy for my taste .", "target_phrase": "music", "polarity": "-1"}
+{"text_left": "the", "text_right": "is excellent and always informative without an air .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "and staff go to great lengths to make you feel comfortable .", "target_phrase": "owner", "polarity": "1"}
+{"text_left": "the owner and", "text_right": "go to great lengths to make you feel comfortable .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the", "text_right": "is always fresh and yummy and the menu is pretty varied .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "the sushi is always fresh and yummy and the", "text_right": "is pretty varied .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "the", "text_right": "was great - sushi was good , but the cooked food amazed us .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was great -", "text_right": "was good , but the cooked food amazed us .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "the food was great - sushi was good , but the", "text_right": "amazed us .", "target_phrase": "cooked food", "polarity": "1"}
+{"text_left": "their", "text_right": "are fantastic .", "target_phrase": "dinner specials", "polarity": "1"}
+{"text_left": "great", "text_right": ", great drinks , nice dining atmosphere .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great food , great", "text_right": ", nice dining atmosphere .", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "great food , great drinks , nice", "text_right": ".", "target_phrase": "dining atmosphere", "polarity": "1"}
+{"text_left": "for the", "text_right": "you pay for the food here , you 'd expect it to be at least on par with other japanese restaurants .", "target_phrase": "price", "polarity": "-1"}
+{"text_left": "for the price you pay for the", "text_right": "here , you 'd expect it to be at least on par with other japanese restaurants .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "", "text_right": "was small and below average .", "target_phrase": "food portion", "polarity": "-1"}
+{"text_left": "sit back in one of those comfortable", "text_right": ".", "target_phrase": "chairs", "polarity": "1"}
+{"text_left": "my favs here are the", "text_right": "and the tostada de tinga ...", "target_phrase": "tacos pastor", "polarity": "1"}
+{"text_left": "my favs here are the tacos pastor and the", "text_right": "...", "target_phrase": "tostada de tinga", "polarity": "1"}
+{"text_left": "the", "text_right": "and the managers are really nice and the decor is very comfy and laid-back , all the while being trendy .", "target_phrase": "bartenders", "polarity": "1"}
+{"text_left": "the bartenders and the", "text_right": "are really nice and the decor is very comfy and laid-back , all the while being trendy .", "target_phrase": "managers", "polarity": "1"}
+{"text_left": "the bartenders and the managers are really nice and the", "text_right": "is very comfy and laid-back , all the while being trendy .", "target_phrase": "decor", "polarity": "1"}
+{"text_left": "for a savory take on the soup and sandwich meal , try the", "text_right": ".", "target_phrase": "hot and sour soup", "polarity": "1"}
+{"text_left": "for a savory take on the", "text_right": ", try the hot and sour soup .", "target_phrase": "soup and sandwich meal", "polarity": "1"}
+{"text_left": "this bar has it all - great", "text_right": ", cool atmosphere , excellent service and delicious food .", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "this bar has it all - great drinks , cool", "text_right": ", excellent service and delicious food .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "this bar has it all - great drinks , cool atmosphere , excellent", "text_right": "and delicious food .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "this bar has it all - great drinks , cool atmosphere , excellent service and delicious", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "also , the", "text_right": "is divine .", "target_phrase": "chick peas with shrimp (appetizer)", "polarity": "1"}
+{"text_left": "finally , i got sick of the bad", "text_right": ", obnoxious smirks , and snotty back talk .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "we ordered", "text_right": "which was perfectly cooked and tasted awesome .", "target_phrase": "lamb", "polarity": "1"}
+{"text_left": "i especially like their", "text_right": ".", "target_phrase": "soft shell crab sandwich with fries", "polarity": "1"}
+{"text_left": "if you 're looking for authentic", "text_right": ", look no further .", "target_phrase": "hong kong-style food", "polarity": "1"}
+{"text_left": "good", "text_right": "good wine that 's it .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "good food good", "text_right": "that 's it .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "the", "text_right": "was extremely friendly and pleasant .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "while their", "text_right": "is delicious , their sushi is out of this world .", "target_phrase": "kitchen food", "polarity": "1"}
+{"text_left": "while their kitchen food is delicious , their", "text_right": "is out of this world .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "everything is scrumptious , from the excellent", "text_right": "by cute waitresses , to the extremely lush atmosphere .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "everything is scrumptious , from the excellent service by cute", "text_right": ", to the extremely lush atmosphere .", "target_phrase": "waitresses", "polarity": "1"}
+{"text_left": "everything is scrumptious , from the excellent service by cute waitresses , to the extremely lush", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "it 's traditional , simple", "text_right": ".", "target_phrase": "italian food", "polarity": "1"}
+{"text_left": "the", "text_right": "is all-around good , with the rolls usually excellent and the sushi/sashimi not quite on the same level .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is all-around good , with the", "text_right": "usually excellent and the sushi/sashimi not quite on the same level .", "target_phrase": "rolls", "polarity": "1"}
+{"text_left": "the food is all-around good , with the rolls usually excellent and the", "text_right": "not quite on the same level .", "target_phrase": "sushi/sashimi", "polarity": "0"}
+{"text_left": "-lrb- the", "text_right": "is cut a little thinly .", "target_phrase": "sashimi", "polarity": "-1"}
+{"text_left": "could have had better for 1/3 the", "text_right": "in chinatown .", "target_phrase": "price", "polarity": "-1"}
+{"text_left": "in addition to great", "text_right": ", dotp has wonderful breakfast sandwiches that feature , in addition to great things like tator tots and english muffins , a delicious nj-based pork product know to us jersey girls and boys as taylor ham .", "target_phrase": "hot dogs", "polarity": "1"}
+{"text_left": "in addition to great hot dogs , dotp has wonderful", "text_right": "that feature , in addition to great things like tator tots and english muffins , a delicious nj-based pork product know to us jersey girls and boys as taylor ham .", "target_phrase": "breakfast sandwiches", "polarity": "1"}
+{"text_left": "in addition to great hot dogs , dotp has wonderful breakfast sandwiches that feature , in addition to great things like", "text_right": "and english muffins , a delicious nj-based pork product know to us jersey girls and boys as taylor ham .", "target_phrase": "tator tots", "polarity": "1"}
+{"text_left": "in addition to great hot dogs , dotp has wonderful breakfast sandwiches that feature , in addition to great things like tator tots and", "text_right": ", a delicious nj-based pork product know to us jersey girls and boys as taylor ham .", "target_phrase": "english muffins", "polarity": "1"}
+{"text_left": "in addition to great hot dogs , dotp has wonderful breakfast sandwiches that feature , in addition to great things like tator tots and english muffins , a delicious nj-based pork product know to us jersey girls and boys as", "text_right": ".", "target_phrase": "taylor ham", "polarity": "1"}
+{"text_left": "in addition to great hot dogs , dotp has wonderful breakfast sandwiches that feature , in addition to great things like tator tots and english muffins , a delicious nj-based", "text_right": "know to us jersey girls and boys as taylor ham .", "target_phrase": "pork product", "polarity": "1"}
+{"text_left": "well , it happened because of a graceless", "text_right": "and a rude bartender who had us waiting 20 minutes for drinks , and then tells us to chill out .", "target_phrase": "manager", "polarity": "-1"}
+{"text_left": "well , it happened because of a graceless manager and a rude", "text_right": "who had us waiting 20 minutes for drinks , and then tells us to chill out .", "target_phrase": "bartender", "polarity": "-1"}
+{"text_left": "well , it happened because of a graceless manager and a rude bartender who had us waiting 20 minutes for", "text_right": ", and then tells us to chill out .", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "well , it happened because of a graceless manager and a rude bartender who had us", "text_right": "20 minutes for drinks , and then tells us to chill out .", "target_phrase": "waiting", "polarity": "-1"}
+{"text_left": "not only is the", "text_right": "great , but forming conversation around a table is so easy beacuse the atmosphere can be both romantic and comfortable .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "not only is the service great , but forming conversation around a table is so easy beacuse the", "text_right": "can be both romantic and comfortable .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "when the dish arrived it was blazing with", "text_right": ", definitely not edible by a human .", "target_phrase": "green chillis", "polarity": "-1"}
+{"text_left": "when the", "text_right": "arrived it was blazing with green chillis , definitely not edible by a human .", "target_phrase": "dish", "polarity": "-1"}
+{"text_left": "the absolute worst", "text_right": "i 've ever experienced and the food was below average -lrb- when they actually gave people the meals they ordered -rrb- .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the absolute worst service i 've ever experienced and the", "text_right": "was below average -lrb- when they actually gave people the meals they ordered -rrb- .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the absolute worst service i 've ever experienced and the food was below average -lrb- when they actually gave people the", "text_right": "they ordered -rrb- .", "target_phrase": "meals", "polarity": "0"}
+{"text_left": "it 's about $ 7 for", "text_right": "and they have take-out or dine-in .", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "it 's about $ 7 for lunch and they have", "text_right": "or dine-in .", "target_phrase": "take-out", "polarity": "0"}
+{"text_left": "it 's about $ 7 for lunch and they have take-out or", "text_right": ".", "target_phrase": "dine-in", "polarity": "0"}
+{"text_left": "be sure to accompany your", "text_right": "with one of their fresh juice concoctions .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "be sure to accompany your food with one of their", "text_right": ".", "target_phrase": "fresh juice concoctions", "polarity": "1"}
+{"text_left": "the", "text_right": "is great and the prices are reasonable .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is great and the", "text_right": "are reasonable .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "the", "text_right": "is clean , and if you like soul food , then this is the place to be !", "target_phrase": "place", "polarity": "1"}
+{"text_left": "the place is clean , and if you like", "text_right": ", then this is the place to be !", "target_phrase": "soul food", "polarity": "1"}
+{"text_left": "i had", "text_right": "and a salad .", "target_phrase": "roast chicken", "polarity": "0"}
+{"text_left": "i had roast chicken and a", "text_right": ".", "target_phrase": "salad", "polarity": "0"}
+{"text_left": "they have a very good", "text_right": "and good tuna as well .", "target_phrase": "chicken with avocado", "polarity": "1"}
+{"text_left": "they have a very good chicken with avocado and good", "text_right": "as well .", "target_phrase": "tuna", "polarity": "1"}
+{"text_left": "but the", "text_right": "were terrible .", "target_phrase": "meals", "polarity": "-1"}
+{"text_left": "my", "text_right": "was completely dried out and on the cold side and the sauce was not very flavorful .", "target_phrase": "chicken", "polarity": "-1"}
+{"text_left": "my chicken was completely dried out and on the cold side and the", "text_right": "was not very flavorful .", "target_phrase": "sauce", "polarity": "-1"}
+{"text_left": "", "text_right": "- have you ever in your life heard of anything so ridiculously wonderful ?", "target_phrase": "malted milk ball gelato", "polarity": "1"}
+{"text_left": "way too much money for such a terrible", "text_right": ".", "target_phrase": "meal", "polarity": "-1"}
+{"text_left": "however , the", "text_right": "is absolutely horrible .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "a con was the slow", "text_right": ".", "target_phrase": "bar service", "polarity": "-1"}
+{"text_left": "", "text_right": "was also to die for !", "target_phrase": "dessert", "polarity": "1"}
+{"text_left": "btw , the", "text_right": "is very good .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "it 's eaten with", "text_right": "and shredded ginger .", "target_phrase": "black vinegar", "polarity": "0"}
+{"text_left": "it 's eaten with black vinegar and", "text_right": ".", "target_phrase": "shredded ginger", "polarity": "0"}
+{"text_left": "the unattractive", "text_right": "made me want to gag , the food was overpriced , there was the most awful disco pop duo performing-and my escargot looked like it might crawl off the plate .", "target_phrase": "lighting", "polarity": "-1"}
+{"text_left": "the unattractive lighting made me want to gag , the", "text_right": "was overpriced , there was the most awful disco pop duo performing-and my escargot looked like it might crawl off the plate .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the unattractive lighting made me want to gag , the food was overpriced , there was the most awful", "text_right": "performing-and my escargot looked like it might crawl off the plate .", "target_phrase": "disco pop duo", "polarity": "-1"}
+{"text_left": "the unattractive lighting made me want to gag , the food was overpriced , there was the most awful disco pop duo performing-and my", "text_right": "looked like it might crawl off the plate .", "target_phrase": "escargot", "polarity": "-1"}
+{"text_left": "it is a cozy", "text_right": "to go with a couple of friends .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "the", "text_right": "is always great , and the owner walks around to make sure you enjoy .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the service is always great , and the", "text_right": "walks around to make sure you enjoy .", "target_phrase": "owner", "polarity": "1"}
+{"text_left": "because the", "text_right": "need severe attitue adjustments .", "target_phrase": "waiters", "polarity": "-1"}
+{"text_left": "the", "text_right": "is delicious and highly recommended .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "when it came time to take the order the", "text_right": "gave us a hard time , walked away then came back with a paper and pen for us to write down what we wanted ... excuse me but is n't that his job ???", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "dieters stick to", "text_right": "or indulge in vegetarian platters .", "target_phrase": "salads", "polarity": "1"}
+{"text_left": "dieters stick to salads or indulge in", "text_right": ".", "target_phrase": "vegetarian platters", "polarity": "1"}
+{"text_left": "so for a filling and healthy", "text_right": "give it a go .", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "since i cook for a living , i 'm very fussy about the", "text_right": "i eat in restaurants .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "the", "text_right": "was outstanding .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "my friends and i stop here for", "text_right": "before hitting the kips bay movie theater .", "target_phrase": "pizza", "polarity": "0"}
+{"text_left": "we always enjoy the", "text_right": ".", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "the", "text_right": "is pretty good .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "yum , the", "text_right": "is great here .", "target_phrase": "chicken", "polarity": "1"}
+{"text_left": "the", "text_right": "here was great , a treat from beginning to end .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "and servers are personable and caring .", "target_phrase": "host (owner)", "polarity": "1"}
+{"text_left": "the host -lrb- owner -rrb- and", "text_right": "are personable and caring .", "target_phrase": "servers", "polarity": "1"}
+{"text_left": "it 's just everything ... the", "text_right": ", the atmosphere ... the incrediby kind and gracious hostess .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "it 's just everything ... the food , the", "text_right": "... the incrediby kind and gracious hostess .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "it 's just everything ... the food , the atmosphere ... the incrediby kind and gracious", "text_right": ".", "target_phrase": "hostess", "polarity": "1"}
+{"text_left": "the", "text_right": "is very good and the service is great .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is very good and the", "text_right": "is great .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "i usually get one the", "text_right": ".", "target_phrase": "vietnamese beef noodle soup", "polarity": "0"}
+{"text_left": "we were wondering why they were there to make our", "text_right": "miserable ?", "target_phrase": "dining experience", "polarity": "-1"}
+{"text_left": "this place has the best", "text_right": "in new york , hands down .", "target_phrase": "indian food", "polarity": "1"}
+{"text_left": "the", "text_right": "are very friendly and helpful and if you frequent they will remember you .", "target_phrase": "waiters", "polarity": "1"}
+{"text_left": "intimate but charming", "text_right": "with extremely friendly and attentive service .", "target_phrase": "interior", "polarity": "1"}
+{"text_left": "intimate but charming interior with extremely friendly and attentive", "text_right": ".", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "was as creative as the decor and both worked .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was as creative as the", "text_right": "and both worked .", "target_phrase": "decor", "polarity": "1"}
+{"text_left": "the", "text_right": "is great , with a good selection , and everything that i have tried is absolutely delicious .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "the menu is great , with a good", "text_right": ", and everything that i have tried is absolutely delicious .", "target_phrase": "selection", "polarity": "1"}
+{"text_left": "the", "text_right": "is zesty and flavorful and the crust is nice and crispy .", "target_phrase": "sauce", "polarity": "1"}
+{"text_left": "the sauce is zesty and flavorful and the", "text_right": "is nice and crispy .", "target_phrase": "crust", "polarity": "1"}
+{"text_left": "this place has the best", "text_right": "in the city .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "they have an excellent", "text_right": "-lrb- the rolls with crab are really great -rrb- .", "target_phrase": "selection", "polarity": "1"}
+{"text_left": "they have an excellent selection -lrb- the", "text_right": "are really great -rrb- .", "target_phrase": "rolls with crab", "polarity": "1"}
+{"text_left": "everyone who works there -lrb- the", "text_right": ", the bartender , the servers -rrb- is so helpful .", "target_phrase": "host", "polarity": "1"}
+{"text_left": "everyone who works there -lrb- the host , the", "text_right": ", the servers -rrb- is so helpful .", "target_phrase": "bartender", "polarity": "1"}
+{"text_left": "everyone who works there -lrb- the host , the bartender , the", "text_right": "-rrb- is so helpful .", "target_phrase": "servers", "polarity": "1"}
+{"text_left": "and the", "text_right": "is fantastic .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "favourites include :", "text_right": "and the lamb .", "target_phrase": "potato spinach gnocchi", "polarity": "1"}
+{"text_left": "favourites include : potato spinach gnocchi and the", "text_right": ".", "target_phrase": "lamb", "polarity": "1"}
+{"text_left": "unfortunately , we chose this spot for", "text_right": "as we had done a lot of walking and ended up at the south st seaport .", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "but regulars know that the", "text_right": "are the real star here .", "target_phrase": "sandwiches", "polarity": "1"}
+{"text_left": "the skillfully chosen portuguese cheese cart paired with quality", "text_right": "provides the perfect iberian ending .", "target_phrase": "port", "polarity": "1"}
+{"text_left": "the skillfully chosen", "text_right": "paired with quality port provides the perfect iberian ending .", "target_phrase": "portuguese cheese cart", "polarity": "1"}
+{"text_left": "my friend had a", "text_right": "and i had these wonderful blueberry pancakes .", "target_phrase": "burger", "polarity": "0"}
+{"text_left": "my friend had a burger and i had these wonderful", "text_right": ".", "target_phrase": "blueberry pancakes", "polarity": "1"}
+{"text_left": "we were so happy with our", "text_right": "and were even more thrilled when we saw the bill .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we were so happy with our food and were even more thrilled when we saw the", "text_right": ".", "target_phrase": "bill", "polarity": "1"}
+{"text_left": "all", "text_right": "are so fresh you 'd think they had their own vegetable garden and the crust is so perfect , that one actually thinks of how it was made .", "target_phrase": "toppings", "polarity": "1"}
+{"text_left": "all toppings are so fresh you 'd think they had their own vegetable garden and the", "text_right": "is so perfect , that one actually thinks of how it was made .", "target_phrase": "crust", "polarity": "1"}
+{"text_left": "we 've always gotten amazing", "text_right": "and we love the food .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "we 've always gotten amazing service and we love the", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "is solicitous and friendly and always seems glad to see us , and the food is wonderful , if not stunningly creative .", "target_phrase": "waitstaff", "polarity": "1"}
+{"text_left": "the waitstaff is solicitous and friendly and always seems glad to see us , and the", "text_right": "is wonderful , if not stunningly creative .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i 'm in love with the", "text_right": "!", "target_phrase": "lobster ravioli", "polarity": "1"}
+{"text_left": "we came across this restaurant by accident while at a dumbo art festival and thoroughly enjoyed our", "text_right": ".", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "", "text_right": "is excellent , no wait , and you get a lot for the price .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "service is excellent , no wait , and you get a lot for the", "text_right": ".", "target_phrase": "price", "polarity": "1"}
+{"text_left": "service is excellent , no", "text_right": ", and you get a lot for the price .", "target_phrase": "wait", "polarity": "1"}
+{"text_left": "i thought the", "text_right": "is n't cheap at all compared to chinatown .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "", "text_right": "is a better deal than overpriced cosi sandwiches .", "target_phrase": "coffee", "polarity": "1"}
+{"text_left": "coffee is a better deal than overpriced", "text_right": ".", "target_phrase": "cosi sandwiches", "polarity": "-1"}
+{"text_left": "we did n't know if we should order a", "text_right": "or leave ?", "target_phrase": "drink", "polarity": "0"}
+{"text_left": "-rrb- it 's not the best japanese restaurant in the east village , but it 's a pretty solid one for its modest", "text_right": ", and worth repeat visits .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "the", "text_right": "is so good and so popular that waiting can really be a nightmare .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is so good and so popular that", "text_right": "can really be a nightmare .", "target_phrase": "waiting", "polarity": "-1"}
+{"text_left": "first walking in the", "text_right": "seemed to have great ambience .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "first walking in the place seemed to have great", "text_right": ".", "target_phrase": "ambience", "polarity": "1"}
+{"text_left": "i went to kitchenette this weekend for", "text_right": ".", "target_phrase": "brunch", "polarity": "0"}
+{"text_left": "even for two very hungry people there is plenty of", "text_right": "left to be taken home -lrb- it reheats really well also -rrb- .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "then they somehow made a dry and burnt", "text_right": ", around a raw and cold inside .", "target_phrase": "crust", "polarity": "-1"}
+{"text_left": "it 's just good", "text_right": ", nothing more and that 's all we want !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "average", "text_right": "thats been courted by a lot of hype .", "target_phrase": "cake", "polarity": "-1"}
+{"text_left": "my wife and i recently visited the bistro for", "text_right": "and had a wonderful experience .", "target_phrase": "dinner", "polarity": "0"}
+{"text_left": "the", "text_right": "is perfect too nothing wrong in this italian/french restaurant", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the $ 72", "text_right": "had to be sent back because it was not cooked to order .", "target_phrase": "delmonico steak", "polarity": "-1"}
+{"text_left": "everytime i go there i ca n't pick anything to eat and not because the", "text_right": "is filled with great things to eat .", "target_phrase": "menu", "polarity": "-1"}
+{"text_left": "half a chicken with a mountain of", "text_right": "and beans for $ 6.25 .", "target_phrase": "rice", "polarity": "0"}
+{"text_left": "half a chicken with a mountain of rice and", "text_right": "for $ 6.25 .", "target_phrase": "beans", "polarity": "0"}
+{"text_left": "half a", "text_right": "with a mountain of rice and beans for $ 6.25 .", "target_phrase": "chicken", "polarity": "0"}
+{"text_left": "the", "text_right": "is really fast and friendly , and the value is great .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the service is really fast and friendly , and the", "text_right": "is great .", "target_phrase": "value", "polarity": "1"}
+{"text_left": "we were very impressed with the", "text_right": "and value .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we were very impressed with the food and", "text_right": ".", "target_phrase": "value", "polarity": "1"}
+{"text_left": "you must try the", "text_right": "!", "target_phrase": "garlic soup", "polarity": "1"}
+{"text_left": "casablanca servces delicious", "text_right": ", tabouleh , humus and other mediterranean delights , which are all very inexpensive .", "target_phrase": "falafel", "polarity": "1"}
+{"text_left": "casablanca servces delicious falafel ,", "text_right": ", humus and other mediterranean delights , which are all very inexpensive .", "target_phrase": "tabouleh", "polarity": "1"}
+{"text_left": "casablanca servces delicious falafel , tabouleh ,", "text_right": "and other mediterranean delights , which are all very inexpensive .", "target_phrase": "humus", "polarity": "1"}
+{"text_left": "casablanca servces delicious falafel , tabouleh , humus and other", "text_right": ", which are all very inexpensive .", "target_phrase": "mediterranean delights", "polarity": "1"}
+{"text_left": "the", "text_right": "are made fresh , crispy , and ready to serve .", "target_phrase": "pizza's", "polarity": "1"}
+{"text_left": "", "text_right": "is accomodating make sure you are satified .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "", "text_right": "waldy 's always measures up .", "target_phrase": "chef", "polarity": "1"}
+{"text_left": "reasonably priced with very fresh", "text_right": ".", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "reasonably", "text_right": "with very fresh sushi .", "target_phrase": "priced", "polarity": "1"}
+{"text_left": "go for the", "text_right": ".", "target_phrase": "seafood paella for two", "polarity": "1"}
+{"text_left": "all of the", "text_right": "are good and the sangria is very good .", "target_phrase": "apetizers", "polarity": "1"}
+{"text_left": "all of the apetizers are good and the", "text_right": "is very good .", "target_phrase": "sangria", "polarity": "1"}
+{"text_left": "the one positive thing i can say is that the", "text_right": "was prompt , we got seated right away and the server was very friendly .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the one positive thing i can say is that the service was prompt , we got seated right away and the", "text_right": "was very friendly .", "target_phrase": "server", "polarity": "1"}
+{"text_left": "the", "text_right": "greeted me warmly at the door and i was seated promptly and the food was excellent .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the staff greeted me warmly at the door and i was seated promptly and the", "text_right": "was excellent .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "", "text_right": "is usually pretty good .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "", "text_right": "and hostess was quite rude .", "target_phrase": "host", "polarity": "-1"}
+{"text_left": "host and", "text_right": "was quite rude .", "target_phrase": "hostess", "polarity": "-1"}
+{"text_left": "the", "text_right": "is very friendly , if your not rude or picky ... . . our meal at leon last weekend was great - .", "target_phrase": "wait staff", "polarity": "1"}
+{"text_left": "the wait staff is very friendly , if your not rude or picky ... . . our", "text_right": "at leon last weekend was great - .", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "i recommend any of their", "text_right": "... .", "target_phrase": "salmon dishes", "polarity": "1"}
+{"text_left": "the", "text_right": "was sweet and luscious .", "target_phrase": "foie gras", "polarity": "1"}
+{"text_left": "the", "text_right": ", which changes seasonally , shows both regional and international influences .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "but their", "text_right": "was yummy !", "target_phrase": "mac cheese", "polarity": "1"}
+{"text_left": "their", "text_right": "had something for everyone .", "target_phrase": "brunch menu", "polarity": "1"}
+{"text_left": "", "text_right": "had a nice voice + she made us all get up to dance to shake some cals to eat some more .", "target_phrase": "jazz singer", "polarity": "1"}
+{"text_left": "they have very quick", "text_right": "which is great when you do n't have much time .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "is average : breakfast food , soups , salads , sandwiches , etc. .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "the food is average :", "text_right": ", soups , salads , sandwiches , etc. .", "target_phrase": "breakfast food", "polarity": "0"}
+{"text_left": "the food is average : breakfast food ,", "text_right": ", salads , sandwiches , etc. .", "target_phrase": "soups", "polarity": "0"}
+{"text_left": "the food is average : breakfast food , soups ,", "text_right": ", sandwiches , etc. .", "target_phrase": "salads", "polarity": "0"}
+{"text_left": "the food is average : breakfast food , soups , salads ,", "text_right": ", etc. .", "target_phrase": "sandwiches", "polarity": "0"}
+{"text_left": "i was highly disappointed by the", "text_right": ".", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the", "text_right": "they serve has never seen an oven , the crabcakes are way over salted and do n't get me started on the very greasy mac and cheese .", "target_phrase": "banana pudding", "polarity": "-1"}
+{"text_left": "the banana pudding they serve has never seen an oven , the", "text_right": "are way over salted and do n't get me started on the very greasy mac and cheese .", "target_phrase": "crabcakes", "polarity": "-1"}
+{"text_left": "the banana pudding they serve has never seen an oven , the crabcakes are way over salted and do n't get me started on the very greasy", "text_right": ".", "target_phrase": "mac and cheese", "polarity": "-1"}
+{"text_left": "the", "text_right": "is arrogant , the prices are way high for brooklyn .", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "the staff is arrogant , the", "text_right": "are way high for brooklyn .", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "the", "text_right": "is prompt friendly .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "this is literally a hot spot when it comes to the", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "is very cool and chill ...", "target_phrase": "downstairs bar scene", "polarity": "1"}
+{"text_left": "the", "text_right": "was definitely good , but when all was said and done , i just could n't justify it for the price -lrb- including 2 drinks , $ 100/person -rrb- ...", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was definitely good , but when all was said and done , i just could n't justify it for the", "text_right": "-lrb- including 2 drinks , $ 100/person -rrb- ...", "target_phrase": "price", "polarity": "-1"}
+{"text_left": "the food was definitely good , but when all was said and done , i just could n't justify it for the price -lrb- including 2", "text_right": ", $ 100/person -rrb- ...", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "i 've come here for", "text_right": "as well as for a friend 's birthday and i always enjoy myself .", "target_phrase": "casual lunches", "polarity": "0"}
+{"text_left": "if you are a", "text_right": "fan you will not be disappointed .", "target_phrase": "tequila", "polarity": "1"}
+{"text_left": "great", "text_right": "too , something like 50 beers .", "target_phrase": "beer selection", "polarity": "1"}
+{"text_left": "great beer selection too , something like 50", "text_right": ".", "target_phrase": "beers", "polarity": "0"}
+{"text_left": "not to sound too negative but be wary of the", "text_right": ".", "target_phrase": "delivary", "polarity": "-1"}
+{"text_left": "i found the", "text_right": "to be just as good as its owner , da silvano , just much less expensive .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i found the food to be just as good as its", "text_right": ", da silvano , just much less expensive .", "target_phrase": "owner", "polarity": "1"}
+{"text_left": "they have", "text_right": "of all kinds -- i recommend the gnocchi -- yum !", "target_phrase": "homemade pastas", "polarity": "1"}
+{"text_left": "they have homemade pastas of all kinds -- i recommend the", "text_right": "-- yum !", "target_phrase": "gnocchi", "polarity": "1"}
+{"text_left": "my", "text_right": "was burnt , and infused totally in a burnt flavor .", "target_phrase": "vegetable risotto", "polarity": "-1"}
+{"text_left": "my vegetable risotto was burnt , and infused totally in a burnt", "text_right": ".", "target_phrase": "flavor", "polarity": "-1"}
+{"text_left": "the main draw of this place is the", "text_right": ".", "target_phrase": "price", "polarity": "1"}
+{"text_left": "how can hope to stay in business with", "text_right": "like this ?", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "but", "text_right": "here is never disappointing , even if the prices are a bit over the top .", "target_phrase": "dinner", "polarity": "1"}
+{"text_left": "but dinner here is never disappointing , even if the", "text_right": "are a bit over the top .", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "not only did they have amazing ,", "text_right": ", soup , pizza etc , but their homemade sorbets are out of this world !", "target_phrase": "sandwiches", "polarity": "1"}
+{"text_left": "not only did they have amazing , sandwiches ,", "text_right": ", pizza etc , but their homemade sorbets are out of this world !", "target_phrase": "soup", "polarity": "1"}
+{"text_left": "not only did they have amazing , sandwiches , soup ,", "text_right": "etc , but their homemade sorbets are out of this world !", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "not only did they have amazing , sandwiches , soup , pizza etc , but their", "text_right": "are out of this world !", "target_phrase": "homemade sorbets", "polarity": "1"}
+{"text_left": "the", "text_right": ", the unbelievable entree , and thee most amazing deserts .", "target_phrase": "homemade guacamole", "polarity": "1"}
+{"text_left": "the homemade guacamole , the unbelievable", "text_right": ", and thee most amazing deserts .", "target_phrase": "entree", "polarity": "1"}
+{"text_left": "the homemade guacamole , the unbelievable entree , and thee most amazing", "text_right": ".", "target_phrase": "deserts", "polarity": "1"}
+{"text_left": "the", "text_right": "is reasonably priced and fresh .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "the sushi is reasonably", "text_right": "and fresh .", "target_phrase": "priced", "polarity": "1"}
+{"text_left": "save room for", "text_right": "- they 're to die for .", "target_phrase": "deserts", "polarity": "1"}
+{"text_left": "best things to order are from the", "text_right": "-lrb- churrasco and ribs -rrb- .", "target_phrase": "grill", "polarity": "1"}
+{"text_left": "best things to order are from the grill -lrb-", "text_right": "and ribs -rrb- .", "target_phrase": "churrasco", "polarity": "1"}
+{"text_left": "best things to order are from the grill -lrb- churrasco and", "text_right": "-rrb- .", "target_phrase": "ribs", "polarity": "1"}
+{"text_left": "the", "text_right": "are great - cheap and served in a cozy setting .", "target_phrase": "traditional italian items", "polarity": "1"}
+{"text_left": "the traditional italian items are great - cheap and served in a cozy", "text_right": ".", "target_phrase": "setting", "polarity": "1"}
+{"text_left": "the traditional italian items are great - cheap and", "text_right": "in a cozy setting .", "target_phrase": "served", "polarity": "1"}
+{"text_left": "whether your choose the", "text_right": "or the hot white mocha you are sure to be extremely happy .", "target_phrase": "iced blended mocha", "polarity": "1"}
+{"text_left": "whether your choose the iced blended mocha or the", "text_right": "you are sure to be extremely happy .", "target_phrase": "hot white mocha", "polarity": "1"}
+{"text_left": "last tuesday for a", "text_right": "with a friend .", "target_phrase": "late lunch", "polarity": "0"}
+{"text_left": "another friend had to ask 3 times for", "text_right": ".", "target_phrase": "parmesan cheese", "polarity": "0"}
+{"text_left": "our", "text_right": "had apparently never tried any of the food , and there was no one to recommend any wine .", "target_phrase": "waitress", "polarity": "-1"}
+{"text_left": "our waitress had apparently never tried any of the", "text_right": ", and there was no one to recommend any wine .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "our waitress had apparently never tried any of the food , and there was no one to recommend any", "text_right": ".", "target_phrase": "wine", "polarity": "0"}
+{"text_left": "the", "text_right": "was a bit slow and the portions are a bit small so if you are hungry and in a rush , this is not the place for you .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the service was a bit slow and the", "text_right": "are a bit small so if you are hungry and in a rush , this is not the place for you .", "target_phrase": "portions", "polarity": "-1"}
+{"text_left": "the unfortunate lady next to us thought she had ordered a", "text_right": "-lrb- including asking for salad dressing -rrb- and was instead given a quesedilla .", "target_phrase": "salad", "polarity": "0"}
+{"text_left": "the unfortunate lady next to us thought she had ordered a salad -lrb- including asking for", "text_right": "-rrb- and was instead given a quesedilla .", "target_phrase": "salad dressing", "polarity": "0"}
+{"text_left": "the unfortunate lady next to us thought she had ordered a salad -lrb- including asking for salad dressing -rrb- and was instead given a", "text_right": ".", "target_phrase": "quesedilla", "polarity": "0"}
+{"text_left": "el nidos one of the best restaurants in new york which i 've ever been to , has a great variety of tasty , mouth watering", "text_right": ".", "target_phrase": "pizza's", "polarity": "1"}
+{"text_left": "the", "text_right": "was pretty poor all around , the food was well below average relative to the cost , and outside there is a crazy bum who harasses every customer who leaves the place .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the service was pretty poor all around , the", "text_right": "was well below average relative to the cost , and outside there is a crazy bum who harasses every customer who leaves the place .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the service was pretty poor all around , the food was well below average relative to the", "text_right": ", and outside there is a crazy bum who harasses every customer who leaves the place .", "target_phrase": "cost", "polarity": "-1"}
+{"text_left": "although i moved uptown i try to stop in as often as possible for the great cheap", "text_right": "and to pay the friendly staff a visit .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "although i moved uptown i try to stop in as often as possible for the great cheap food and to pay the friendly", "text_right": "a visit .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "i had to wait for my friend at the", "text_right": "for a few minutes", "target_phrase": "bar", "polarity": "0"}
+{"text_left": "", "text_right": "vincenzo , always there if you need him , is a real talent and a real roman .", "target_phrase": "chef", "polarity": "1"}
+{"text_left": "if you 're looking to taste some great", "text_right": "and want good service , definitely visit curry leaf .", "target_phrase": "indian food", "polarity": "1"}
+{"text_left": "if you 're looking to taste some great indian food and want good", "text_right": ", definitely visit curry leaf .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "you must try", "text_right": "or rabbit stew ; salads-all good ; and kompot is soo refreshing during the hot summer day -lrb- they make it the way my mom does , reminds me of home a lot -rrb- .", "target_phrase": "odessa stew", "polarity": "1"}
+{"text_left": "you must try odessa stew or", "text_right": "; salads-all good ; and kompot is soo refreshing during the hot summer day -lrb- they make it the way my mom does , reminds me of home a lot -rrb- .", "target_phrase": "rabbit stew", "polarity": "1"}
+{"text_left": "you must try odessa stew or rabbit stew ;", "text_right": "- all good ; and kompot is soo refreshing during the hot summer day -lrb- they make it the way my mom does , reminds me of home a lot -rrb- .", "target_phrase": "salads", "polarity": "1"}
+{"text_left": "you must try odessa stew or rabbit stew ; salads-all good ; and", "text_right": "is soo refreshing during the hot summer day -lrb- they make it the way my mom does , reminds me of home a lot -rrb- .", "target_phrase": "kompot", "polarity": "1"}
+{"text_left": "my daughter and i left feeling satisfied -lrb- not stuffed -rrb- and it felt good to know we had a healthy", "text_right": ".", "target_phrase": "lunch", "polarity": "1"}
+{"text_left": "when she complained , the", "text_right": "said , sorry .", "target_phrase": "waitress", "polarity": "0"}
+{"text_left": "the", "text_right": "was on par with your local grocery store .", "target_phrase": "quality of the meat", "polarity": "-1"}
+{"text_left": "they specialize in", "text_right": "and fresh juices .", "target_phrase": "smoothies", "polarity": "1"}
+{"text_left": "they specialize in smoothies and", "text_right": ".", "target_phrase": "fresh juices", "polarity": "1"}
+{"text_left": "i recommend the", "text_right": ", it was the best dish of the evening .", "target_phrase": "black roasted codfish", "polarity": "1"}
+{"text_left": "i recommend the black roasted codfish , it was the best", "text_right": "of the evening .", "target_phrase": "dish", "polarity": "1"}
+{"text_left": "the manager then told us we could order from whatever menu we wanted but by that time we were so annoyed with the", "text_right": "and the resturant that we let and went some place else .", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "the manager then told us we could order from whatever", "text_right": "we wanted but by that time we were so annoyed with the waiter and the resturant that we let and went some place else .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "the", "text_right": "then told us we could order from whatever menu we wanted but by that time we were so annoyed with the waiter and the resturant that we let and went some place else .", "target_phrase": "manager", "polarity": "0"}
+{"text_left": "in mi burrito , here was nothing but dark chicken that had that cooked last week and just warmed up in a microwave", "text_right": ".", "target_phrase": "taste", "polarity": "-1"}
+{"text_left": "in mi burrito , here was nothing but dark", "text_right": "that had that cooked last week and just warmed up in a microwave taste .", "target_phrase": "chicken", "polarity": "-1"}
+{"text_left": "during busy hrs , i recommend that you make a", "text_right": ".", "target_phrase": "reservation", "polarity": "0"}
+{"text_left": "i went to common stock for", "text_right": "and i was so impressed .", "target_phrase": "brunch", "polarity": "0"}
+{"text_left": "now called nikki sushi ,", "text_right": "is ok .", "target_phrase": "sushi", "polarity": "0"}
+{"text_left": "the", "text_right": "is also outstanding and is served quite quickly .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is also outstanding and is", "text_right": "quite quickly .", "target_phrase": "served", "polarity": "1"}
+{"text_left": "from the", "text_right": "to the mostarda on the cheese plate , the dishes at this restaurant are all handled with delicate care .", "target_phrase": "erbazzone emiliana", "polarity": "1"}
+{"text_left": "from the erbazzone emiliana to the", "text_right": ", the dishes at this restaurant are all handled with delicate care .", "target_phrase": "mostarda on the cheese plate", "polarity": "1"}
+{"text_left": "from the erbazzone emiliana to the mostarda on the cheese plate , the", "text_right": "at this restaurant are all handled with delicate care .", "target_phrase": "dishes", "polarity": "1"}
+{"text_left": "the", "text_right": "is delicious and the bar has a great vibe .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is delicious and the", "text_right": "has a great vibe .", "target_phrase": "bar", "polarity": "1"}
+{"text_left": "the food is delicious and the bar has a great", "text_right": ".", "target_phrase": "vibe", "polarity": "1"}
+{"text_left": "there 's", "text_right": "and music .", "target_phrase": "candlelight", "polarity": "0"}
+{"text_left": "there 's candlelight and", "text_right": ".", "target_phrase": "music", "polarity": "0"}
+{"text_left": "simple healthy unglamorous", "text_right": "cheap .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "it was such a fantastic", "text_right": ", that i returned again the same week .", "target_phrase": "dining experience", "polarity": "1"}
+{"text_left": "to be fair , the", "text_right": "still is good and the service is quick and attentative even though its usually very busy .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "to be fair , the food still is good and the", "text_right": "is quick and attentative even though its usually very busy .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "is absolutely adorable and the food is delicious .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "the place is absolutely adorable and the", "text_right": "is delicious .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i ordered the", "text_right": "and my husband got garlic shrimp .", "target_phrase": "chicken teriyaki", "polarity": "0"}
+{"text_left": "i ordered the chicken teriyaki and my husband got", "text_right": ".", "target_phrase": "garlic shrimp", "polarity": "0"}
+{"text_left": "i 've had better", "text_right": "at a mall food court .", "target_phrase": "japanese food", "polarity": "-1"}
+{"text_left": "the", "text_right": "are extremely friendly and even replaced my drink once when i dropped it outside .", "target_phrase": "staff members", "polarity": "1"}
+{"text_left": "the staff members are extremely friendly and even replaced my", "text_right": "once when i dropped it outside .", "target_phrase": "drink", "polarity": "0"}
+{"text_left": "cool", "text_right": "but such a let down .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "the", "text_right": "are big enough to appease most people , but i did n't like the fact they used artifical lobster meat .", "target_phrase": "sashimi portion", "polarity": "1"}
+{"text_left": "the sashimi portion are big enough to appease most people , but i did n't like the fact they used", "text_right": ".", "target_phrase": "artifical lobster meat", "polarity": "-1"}
+{"text_left": "they have", "text_right": "made with really fresh and yummy ingredients .", "target_phrase": "wheat crusted pizza", "polarity": "1"}
+{"text_left": "they have wheat crusted pizza made with really fresh and yummy", "text_right": ".", "target_phrase": "ingredients", "polarity": "1"}
+{"text_left": "had a lovely", "text_right": "in this dedicated seafood joint , food was well-prepared and - presented and the service was pleasant and prompt .", "target_phrase": "dinner", "polarity": "1"}
+{"text_left": "had a lovely dinner in this dedicated seafood joint ,", "text_right": "was well-prepared and - presented and the service was pleasant and prompt .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "had a lovely dinner in this dedicated seafood joint , food was well-prepared and - presented and the", "text_right": "was pleasant and prompt .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the icing made this", "text_right": ", it was fluffy , not ultra sweet , creamy and light .", "target_phrase": "cake", "polarity": "1"}
+{"text_left": "finally let into the store 5 at a time , to buy expensive slices from a harried", "text_right": ".", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "finally let into the store 5 at a time , to buy expensive", "text_right": "from a harried staff .", "target_phrase": "slices", "polarity": "-1"}
+{"text_left": "we ended up having to just leave because we were essentially being ignored by the", "text_right": "-- even though the rest of the restaurant was largely empty .", "target_phrase": "wait staff", "polarity": "-1"}
+{"text_left": "the", "text_right": "is extensive , well priced and covers alot of regions .", "target_phrase": "wine list", "polarity": "1"}
+{"text_left": "the wine list is extensive , well", "text_right": "and covers alot of regions .", "target_phrase": "priced", "polarity": "1"}
+{"text_left": "go here if you want fresh and tasty", "text_right": "of any type you can imagine .", "target_phrase": "salads", "polarity": "1"}
+{"text_left": "everything about this place is adorable - even the", "text_right": "!", "target_phrase": "bathroom", "polarity": "1"}
+{"text_left": "speedy", "text_right": ", great food , decent prices , and friendly service combine to ensure an enjoyable repast .", "target_phrase": "delivers", "polarity": "1"}
+{"text_left": "speedy delivers , great", "text_right": ", decent prices , and friendly service combine to ensure an enjoyable repast .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "speedy delivers , great food , decent", "text_right": ", and friendly service combine to ensure an enjoyable repast .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "speedy delivers , great food , decent prices , and friendly", "text_right": "combine to ensure an enjoyable repast .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "speedy delivers , great food , decent prices , and friendly service combine to ensure an enjoyable", "text_right": ".", "target_phrase": "repast", "polarity": "1"}
+{"text_left": "they have", "text_right": "on the sidewalk trying to pull you in which made us suspicious .", "target_phrase": "waiters", "polarity": "0"}
+{"text_left": "it was our only opportunity to visit and wanted an authentic", "text_right": ".", "target_phrase": "italian meal", "polarity": "0"}
+{"text_left": "it took 100 years for parisi to get around to making", "text_right": "-lrb- at least i do n't think they ever made it before this year -rrb- ... but it was worth the wait .", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "i asked for a simple medium rare", "text_right": ".", "target_phrase": "steak", "polarity": "0"}
+{"text_left": "generously garnished ,", "text_right": "are the most popular dish , but the jerusalem market-style falafel wraps and mediterranean salads -- layered with beets , goat cheese and walnuts -- are equally scrumptious .", "target_phrase": "organic grilled burgers", "polarity": "1"}
+{"text_left": "generously garnished , organic grilled burgers are the most popular", "text_right": ", but the jerusalem market-style falafel wraps and mediterranean salads -- layered with beets , goat cheese and walnuts -- are equally scrumptious .", "target_phrase": "dish", "polarity": "1"}
+{"text_left": "generously garnished , organic grilled burgers are the most popular dish , but the", "text_right": "and mediterranean salads -- layered with beets , goat cheese and walnuts -- are equally scrumptious .", "target_phrase": "jerusalem market-style falafel wraps", "polarity": "1"}
+{"text_left": "generously garnished , organic grilled burgers are the most popular dish , but the jerusalem market-style falafel wraps and", "text_right": "-- are equally scrumptious .", "target_phrase": "mediterranean salads--layered with beets, goat cheese and walnuts", "polarity": "1"}
+{"text_left": "probably my worst", "text_right": "in new york , and i 'm a former waiter so i know what i 'm talking about .", "target_phrase": "dining experience", "polarity": "-1"}
+{"text_left": "probably my worst dining experience in new york , and i 'm a former", "text_right": "so i know what i 'm talking about .", "target_phrase": "waiter", "polarity": "0"}
+{"text_left": "result -lrb- red velvet -rrb- : great", "text_right": ", soft and velvety , nice hint of cocoa .", "target_phrase": "texture", "polarity": "1"}
+{"text_left": "result -lrb- red velvet -rrb- : great texture , soft and velvety , nice", "text_right": ".", "target_phrase": "hint of cocoa", "polarity": "1"}
+{"text_left": "ask for the", "text_right": ".", "target_phrase": "round corner table next to the large window", "polarity": "1"}
+{"text_left": "their twist on pizza is heatlhy , but full of", "text_right": ".", "target_phrase": "flavor", "polarity": "1"}
+{"text_left": "their", "text_right": "is heatlhy , but full of flavor .", "target_phrase": "twist on pizza", "polarity": "1"}
+{"text_left": "the lack of", "text_right": "and the fact that there are a million swarming bodies -lrb- although everyone is polite and no one is pushing -rrb- is a slight turn off .", "target_phrase": "ac", "polarity": "-1"}
+{"text_left": "i love the little pie company as much as anyone else who has written reviews , but must discourage anyone from visiting the grand central location due to their rude", "text_right": "from two sales people .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "i love the little pie company as much as anyone else who has written reviews , but must discourage anyone from visiting the grand central location due to their rude service from two", "text_right": ".", "target_phrase": "sales people", "polarity": "-1"}
+{"text_left": "unfortunately , unless you live in the neighborhood , it 's not in a convenient", "text_right": "but is more like a hidden treasure .", "target_phrase": "location", "polarity": "-1"}
+{"text_left": "did n't seem like any effort was made to the", "text_right": ".", "target_phrase": "display and quality of the food", "polarity": "-1"}
+{"text_left": "the", "text_right": "-- though mostly deep-fried -- is simple and satisfying .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "glechik might be way too tiny for a restaurant by russian standards , but it is cozy and the", "text_right": "is simply great .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "was excellent - authentic italian cuisine made absolutely fresh .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was excellent - authentic", "text_right": "made absolutely fresh .", "target_phrase": "italian cuisine", "polarity": "1"}
+{"text_left": "at night the", "text_right": "changes turning into this hidden jewel that is waiting to be discovered .", "target_phrase": "atmoshere", "polarity": "1"}
+{"text_left": "the other times i 've gone it 's romantic date heaven , you can walk in get a", "text_right": ", be treated like a vip in a not-crowded place , with great food and service .", "target_phrase": "booth by the windows", "polarity": "0"}
+{"text_left": "the other times i 've gone it 's romantic date heaven , you can walk in get a booth by the windows , be treated like a vip in a not-crowded", "text_right": ", with great food and service .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "the other times i 've gone it 's romantic date heaven , you can walk in get a booth by the windows , be treated like a vip in a not-crowded place , with great", "text_right": "and service .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the other times i 've gone it 's romantic date heaven , you can walk in get a booth by the windows , be treated like a vip in a not-crowded place , with great food and", "text_right": ".", "target_phrase": "service", "polarity": "1"}
+{"text_left": "i would only go for the", "text_right": "which is way better than starbucks or the like .", "target_phrase": "coffee", "polarity": "1"}
+{"text_left": "somewhat disappointing", "text_right": "-lrb- only new vintages .", "target_phrase": "wine list", "polarity": "-1"}
+{"text_left": "somewhat disappointing wine list -lrb- only new", "text_right": ".", "target_phrase": "vintages", "polarity": "-1"}
+{"text_left": "if your looking for nasty high", "text_right": "food with a dash of ghetto scenery cheap bx a$ $ this is the place to be !!", "target_phrase": "priced", "polarity": "-1"}
+{"text_left": "if your looking for nasty high priced", "text_right": "with a dash of ghetto scenery cheap bx a$ $ this is the place to be !!", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "if your looking for nasty high priced food with a dash of ghetto", "text_right": "cheap bx a$ $ this is the place to be !!", "target_phrase": "scenery", "polarity": "-1"}
+{"text_left": "", "text_right": "is ok - at least better than big mac !", "target_phrase": "new hamburger with special sauce", "polarity": "1"}
+{"text_left": "new hamburger with special sauce is ok - at least better than", "text_right": "!", "target_phrase": "big mac", "polarity": "-1"}
+{"text_left": "perfectly al dente", "text_right": ", not drowned in sauce -- generous portions .", "target_phrase": "pasta", "polarity": "1"}
+{"text_left": "perfectly al dente pasta , not drowned in", "text_right": "-- generous portions .", "target_phrase": "sauce", "polarity": "0"}
+{"text_left": "perfectly al dente pasta , not drowned in sauce -- generous", "text_right": ".", "target_phrase": "portions", "polarity": "1"}
+{"text_left": "i can understand the", "text_right": "if it served better food , like some chinese restaurants in midtown/uptown area .", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "i can understand the prices if it served better", "text_right": ", like some chinese restaurants in midtown/uptown area .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "", "text_right": "was awful - mostly because staff were overwhelmed on a saturday night .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "service was awful - mostly because", "text_right": "were overwhelmed on a saturday night .", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "to the", "text_right": "; good job guys , this place is a keeper !", "target_phrase": "owners", "polarity": "1"}
+{"text_left": "and the", "text_right": "is simply lovely and friendly .", "target_phrase": "owner", "polarity": "1"}
+{"text_left": "this little", "text_right": "is wonderfully warm welcoming .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "perfect for a quick", "text_right": ".", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "has the warmth of a family local yet it is a great", "text_right": "to watch sporting events .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "the", "text_right": "was great , and they have a whole great deal for birthdays .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "is 100 % italian and the food is as authentic as it gets .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "the staff is 100 % italian and the", "text_right": "is as authentic as it gets .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "my only complaint might be the", "text_right": "- i 've never had a cookie predict bad luck for me before i visited kar .", "target_phrase": "fortune cookies", "polarity": "-1"}
+{"text_left": "my only complaint might be the fortune cookies - i 've never had a", "text_right": "predict bad luck for me before i visited kar .", "target_phrase": "cookie", "polarity": "-1"}
+{"text_left": "good for a quick", "text_right": ".", "target_phrase": "sushi lunch", "polarity": "1"}
+{"text_left": "have a", "text_right": "and sit in the back patio .", "target_phrase": "mojito", "polarity": "1"}
+{"text_left": "have a mojito and sit in the", "text_right": ".", "target_phrase": "back patio", "polarity": "1"}
+{"text_left": "the", "text_right": "was dreadfully slow -lrb- the place was only half full -rrb- and a smile would have been nice ...", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "i went this past saturday and had a excellent", "text_right": "of consisting of a braised lamb shank with mashed potatoes .", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "i went this past saturday and had a excellent meal of consisting of a", "text_right": ".", "target_phrase": "braised lamb shank with mashed potatoes", "polarity": "1"}
+{"text_left": "the", "text_right": "came by to pick up the soy sauce while we were eating our lunch !!!!!", "target_phrase": "waitress", "polarity": "-1"}
+{"text_left": "the waitress came by to pick up the", "text_right": "while we were eating our lunch !!!!!", "target_phrase": "soy sauce", "polarity": "0"}
+{"text_left": "the waitress came by to pick up the soy sauce while we were eating our", "text_right": "!!!!!", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "so we sat at the", "text_right": ", the bartender did n't seem like he wanted to be there .", "target_phrase": "bar", "polarity": "0"}
+{"text_left": "so we sat at the bar , the", "text_right": "did n't seem like he wanted to be there .", "target_phrase": "bartender", "polarity": "-1"}
+{"text_left": "i reccomend the", "text_right": ", the orange chicken/beef , and the fried rice .", "target_phrase": "fried pork dumplings", "polarity": "1"}
+{"text_left": "i reccomend the fried pork dumplings , the", "text_right": ", and the fried rice .", "target_phrase": "orange chicken/beef", "polarity": "1"}
+{"text_left": "i reccomend the fried pork dumplings , the orange chicken/beef , and the", "text_right": ".", "target_phrase": "fried rice", "polarity": "1"}
+{"text_left": "you will not be dissapointed by any of the choices in the", "text_right": ".", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "the", "text_right": "were terrific !", "target_phrase": "french fries -- with the kalmata dip", "polarity": "1"}
+{"text_left": "would you ever believe that when you complain about over an hour", "text_right": ", when they tell you it will be 20-30 minutes , the manager tells the bartender to spill the drinks you just paid for ?", "target_phrase": "wait", "polarity": "-1"}
+{"text_left": "would you ever believe that when you complain about over an hour wait , when they tell you it will be 20-30 minutes , the", "text_right": "tells the bartender to spill the drinks you just paid for ?", "target_phrase": "manager", "polarity": "-1"}
+{"text_left": "would you ever believe that when you complain about over an hour wait , when they tell you it will be 20-30 minutes , the manager tells the", "text_right": "to spill the drinks you just paid for ?", "target_phrase": "bartender", "polarity": "0"}
+{"text_left": "would you ever believe that when you complain about over an hour wait , when they tell you it will be 20-30 minutes , the manager tells the bartender to spill the", "text_right": "you just paid for ?", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "the", "text_right": "covers a wide variety without being imposeing .", "target_phrase": "boutique selection of wines", "polarity": "0"}
+{"text_left": "they also have a great", "text_right": "if your not in the mood for traditional mediterranean fare .", "target_phrase": "assortment of wraps", "polarity": "1"}
+{"text_left": "they also have a great assortment of wraps if your not in the mood for", "text_right": ".", "target_phrase": "traditional mediterranean fare", "polarity": "0"}
+{"text_left": "", "text_right": ", all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "fresh veggies", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of", "text_right": ", cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "middle eastern spreads", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads ,", "text_right": "and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "cheese", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and", "text_right": ", soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "falafel", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel ,", "text_right": ", fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "soup", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup ,", "text_right": ", rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "fish", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish ,", "text_right": ", root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "rice", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice ,", "text_right": ", a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "root vegetables", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a", "text_right": ", some spinach thing , lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "rice medley", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some", "text_right": ", lamb kebabs , cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "spinach thing", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing ,", "text_right": ", cheese baclava ... soooo much fooood , and all of it delicious .", "target_phrase": "lamb kebabs", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs ,", "text_right": "... soooo much fooood , and all of it delicious .", "target_phrase": "cheese baclava", "polarity": "1"}
+{"text_left": "fresh veggies , all sorts of middle eastern spreads , cheese and falafel , soup , fish , rice , root vegetables , a rice medley , some spinach thing , lamb kebabs , cheese baclava ... soooo much", "text_right": ", and all of it delicious .", "target_phrase": "fooood", "polarity": "1"}
+{"text_left": "disappointingly , their wonderful", "text_right": "has been taken off the bar menu .", "target_phrase": "saketini", "polarity": "1"}
+{"text_left": "disappointingly , their wonderful saketini has been taken off the", "text_right": ".", "target_phrase": "bar menu", "polarity": "-1"}
+{"text_left": "in short the black sheep distinguishes itself from the midtown pub herd with a", "text_right": "that 's a mix of sports-bar butch and ornate kitsch .", "target_phrase": "look", "polarity": "-1"}
+{"text_left": "i would definitely go back -- if only for some of those exotic", "text_right": "on the blackboard .", "target_phrase": "martinis", "polarity": "1"}
+{"text_left": "then she made a fuss about not being able to add 1 or 2", "text_right": "on either end of the table for additional people .", "target_phrase": "chairs", "polarity": "0"}
+{"text_left": "then she made a fuss about not being able to add 1 or 2 chairs on either end of the", "text_right": "for additional people .", "target_phrase": "table", "polarity": "0"}
+{"text_left": "the", "text_right": "is so cheap , but that does not reflect the service or the atmosphere .", "target_phrase": "happy hour", "polarity": "1"}
+{"text_left": "the happy hour is so cheap , but that does not reflect the", "text_right": "or the atmosphere .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the happy hour is so cheap , but that does not reflect the service or the", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "after waiting for almost an hour , the", "text_right": "brusquely told us he 'd forgotten to give the kitchen our order .", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "after waiting for almost an hour , the waiter brusquely told us he 'd forgotten to give the", "text_right": "our order .", "target_phrase": "kitchen", "polarity": "0"}
+{"text_left": "after", "text_right": "for almost an hour , the waiter brusquely told us he 'd forgotten to give the kitchen our order .", "target_phrase": "waiting", "polarity": "-1"}
+{"text_left": "with all the mundane or mediocre places on 8th avenue it is nice to have one that is a step above in", "text_right": "and atmosphere .", "target_phrase": "quaility", "polarity": "1"}
+{"text_left": "with all the mundane or mediocre places on 8th avenue it is nice to have one that is a step above in quaility and", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "a mix of students and area residents crowd into this narrow , barely there", "text_right": "for its quick , tasty treats at dirt-cheap prices .", "target_phrase": "space", "polarity": "-1"}
+{"text_left": "a mix of students and area residents crowd into this narrow , barely there space for its quick , tasty treats at dirt-cheap", "text_right": ".", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "a mix of students and area residents crowd into this narrow , barely there space for its quick , tasty", "text_right": "at dirt-cheap prices .", "target_phrase": "treats", "polarity": "1"}
+{"text_left": "give it a try ,", "text_right": "is typical french but varied .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "it gets crowded at lunchtime but there are lots of", "text_right": "in back and everyone who works there is so nice .", "target_phrase": "seats", "polarity": "1"}
+{"text_left": "but for the", "text_right": ", it was a great affordable spot to enjoy a fun night out with small group .", "target_phrase": "value", "polarity": "1"}
+{"text_left": "the negative reviews on city search are probably from jealous competing restaurants who realize they ca n't compete with temple 's entire positive attitude about the proper way to treat their customers and deliver top quality", "text_right": ".", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the negative reviews on city search are probably from jealous competing restaurants who realize they ca n't compete with temple 's entire positive", "text_right": "about the proper way to treat their customers and deliver top quality food .", "target_phrase": "attitude", "polarity": "1"}
+{"text_left": "we ordered a", "text_right": "and were finished eating and paying before the wine came .", "target_phrase": "glass of wine", "polarity": "0"}
+{"text_left": "it was good , but none of the", "text_right": "wow .", "target_phrase": "flavors", "polarity": "0"}
+{"text_left": "overall , this is a nice", "text_right": "to take a few friends to hang out at and the service is excellent .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "overall , this is a nice place to take a few friends to hang out at and the", "text_right": "is excellent .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "", "text_right": "is excellent quality for a good restaurant price .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "food is excellent quality for a good restaurant", "text_right": ".", "target_phrase": "price", "polarity": "1"}
+{"text_left": "for about eleven bucks you get a gigantic", "text_right": "-lrb- or tacos -rrb- , margarita , and dessert .", "target_phrase": "burrito", "polarity": "1"}
+{"text_left": "for about eleven bucks you get a gigantic burrito -lrb- or", "text_right": "-rrb- , margarita , and dessert .", "target_phrase": "tacos", "polarity": "1"}
+{"text_left": "for about eleven bucks you get a gigantic burrito -lrb- or tacos -rrb- ,", "text_right": ", and dessert .", "target_phrase": "margarita", "polarity": "0"}
+{"text_left": "for about eleven bucks you get a gigantic burrito -lrb- or tacos -rrb- , margarita , and", "text_right": ".", "target_phrase": "dessert", "polarity": "0"}
+{"text_left": "the", "text_right": "is traditional in feel .", "target_phrase": "space", "polarity": "0"}
+{"text_left": "the restaurant was completely empty , but she gave me a dirty look and asked , no", "text_right": "?", "target_phrase": "reservations", "polarity": "0"}
+{"text_left": "the", "text_right": "was mediocre to be kind - the interior is small and average - the owners are a tag-team of unpleasantries - so rude and snotty i actually let out a hearty guffaw whilst dining .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the food was mediocre to be kind - the", "text_right": "is small and average - the owners are a tag-team of unpleasantries - so rude and snotty i actually let out a hearty guffaw whilst dining .", "target_phrase": "interior", "polarity": "-1"}
+{"text_left": "the food was mediocre to be kind - the interior is small and average - the", "text_right": "are a tag-team of unpleasantries - so rude and snotty i actually let out a hearty guffaw whilst dining .", "target_phrase": "owners", "polarity": "-1"}
+{"text_left": "the food was mediocre to be kind - the interior is small and average - the owners are a tag-team of unpleasantries - so rude and snotty i actually let out a hearty guffaw whilst", "text_right": ".", "target_phrase": "dining", "polarity": "0"}
+{"text_left": "good", "text_right": ", great food , good value , and never have to wait in line !", "target_phrase": "service", "polarity": "1"}
+{"text_left": "good service , great", "text_right": ", good value , and never have to wait in line !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "good service , great food , good", "text_right": ", and never have to wait in line !", "target_phrase": "value", "polarity": "1"}
+{"text_left": "good service , great food , good value , and never have to", "text_right": "in line !", "target_phrase": "wait", "polarity": "1"}
+{"text_left": "offerings like hot cakes and the", "text_right": "are available for breakfast .", "target_phrase": "egg mcmuffin sandwich", "polarity": "0"}
+{"text_left": "offerings like", "text_right": "and the egg mcmuffin sandwich are available for breakfast .", "target_phrase": "hot cakes", "polarity": "0"}
+{"text_left": "offerings like hot cakes and the egg mcmuffin sandwich are available for", "text_right": ".", "target_phrase": "breakfast", "polarity": "0"}
+{"text_left": "i have been going to this restaurant for years , in the past the", "text_right": "was average and the food inconsistant .", "target_phrase": "service", "polarity": "0"}
+{"text_left": "i have been going to this restaurant for years , in the past the service was average and the", "text_right": "inconsistant .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the", "text_right": "was fascinating , but left room for conversation , and the bartender made superb drinks .", "target_phrase": "music", "polarity": "1"}
+{"text_left": "the music was fascinating , but left room for conversation , and the", "text_right": "made superb drinks .", "target_phrase": "bartender", "polarity": "1"}
+{"text_left": "the music was fascinating , but left room for conversation , and the bartender made superb", "text_right": ".", "target_phrase": "drinks", "polarity": "1"}
+{"text_left": "", "text_right": "and noodle dishes rarely exceed $ 5 and add on a refreshing ice drink for $ 2 and you 're set for the night !", "target_phrase": "rice dishes", "polarity": "1"}
+{"text_left": "rice dishes and", "text_right": "rarely exceed $ 5 and add on a refreshing ice drink for $ 2 and you 're set for the night !", "target_phrase": "noodle dishes", "polarity": "1"}
+{"text_left": "rice dishes and noodle dishes rarely exceed $ 5 and add on a refreshing", "text_right": "for $ 2 and you 're set for the night !", "target_phrase": "ice drink", "polarity": "1"}
+{"text_left": "", "text_right": "is billed as asian fusion - does n't meet the bill .", "target_phrase": "cuisine", "polarity": "-1"}
+{"text_left": "cuisine is billed as asian fusion - does n't meet the", "text_right": ".", "target_phrase": "bill", "polarity": "-1"}
+{"text_left": "cuisine is billed as", "text_right": "- does n't meet the bill .", "target_phrase": "asian fusion", "polarity": "0"}
+{"text_left": "cuisine is", "text_right": "as asian fusion - does n't meet the bill .", "target_phrase": "billed", "polarity": "-1"}
+{"text_left": "creative", "text_right": "like king crab salad with passion fruit vinaigrette and fettuccine with grilled seafood in a rosemary-orange sauce are unexpected elements on an otherwise predictable bistro menu .", "target_phrase": "dishes", "polarity": "1"}
+{"text_left": "creative dishes like", "text_right": "and fettuccine with grilled seafood in a rosemary-orange sauce are unexpected elements on an otherwise predictable bistro menu .", "target_phrase": "king crab salad with passion fruit vinaigrette", "polarity": "1"}
+{"text_left": "creative dishes like king crab salad with passion fruit vinaigrette and", "text_right": "are unexpected elements on an otherwise predictable bistro menu .", "target_phrase": "fettuccine with grilled seafood in a rosemary-orange sauce", "polarity": "1"}
+{"text_left": "creative dishes like king crab salad with passion fruit vinaigrette and fettuccine with grilled seafood in a rosemary-orange sauce are unexpected elements on an otherwise predictable", "text_right": ".", "target_phrase": "bistro menu", "polarity": "0"}
+{"text_left": "", "text_right": "denoted as `` roy 's classics '' -lrb- marked on the menu with asterisks -rrb- are tried-and-true recipes , such as macadamia-crusted mahi mahi , or subtly sweet honey-mustard beef short ribs .", "target_phrase": "dishes", "polarity": "1"}
+{"text_left": "dishes denoted as", "text_right": "-lrb- marked on the menu with asterisks -rrb- are tried-and-true recipes , such as macadamia-crusted mahi mahi , or subtly sweet honey-mustard beef short ribs .", "target_phrase": "\"roy's classics\"", "polarity": "1"}
+{"text_left": "dishes denoted as `` roy 's classics '' -lrb- marked on the", "text_right": "with asterisks -rrb- are tried-and-true recipes , such as macadamia-crusted mahi mahi , or subtly sweet honey-mustard beef short ribs .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "dishes denoted as `` roy 's classics '' -lrb- marked on the menu with asterisks -rrb- are tried-and-true", "text_right": ", such as macadamia-crusted mahi mahi , or subtly sweet honey-mustard beef short ribs .", "target_phrase": "recipes", "polarity": "1"}
+{"text_left": "dishes denoted as `` roy 's classics '' -lrb- marked on the menu with asterisks -rrb- are tried-and-true recipes , such as", "text_right": ", or subtly sweet honey-mustard beef short ribs .", "target_phrase": "macadamia-crusted mahi mahi", "polarity": "1"}
+{"text_left": "dishes denoted as `` roy 's classics '' -lrb- marked on the menu with asterisks -rrb- are tried-and-true recipes , such as macadamia-crusted mahi mahi , or subtly", "text_right": ".", "target_phrase": "sweet honey-mustard beef short ribs", "polarity": "1"}
+{"text_left": "the", "text_right": ", which are a freebie when you order $ 10 + , are delectable .", "target_phrase": "cold sesame noodles", "polarity": "1"}
+{"text_left": "i came to fresh expecting a great meal , and all i got was marginally so-so", "text_right": "served in a restaurant that was just so freezing we could n't enjoy eating .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "i came to fresh expecting a great", "text_right": ", and all i got was marginally so-so food served in a restaurant that was just so freezing we could n't enjoy eating .", "target_phrase": "meal", "polarity": "-1"}
+{"text_left": "i came to fresh expecting a great meal , and all i got was marginally so-so food", "text_right": "in a restaurant that was just so freezing we could n't enjoy eating .", "target_phrase": "served", "polarity": "0"}
+{"text_left": "the lone", "text_right": "at $ 8.95 was a heavy fennel flavored italian sausage like the ones that sell for $ 2.99 / lb at the store .", "target_phrase": "argentine chorizo appetizer", "polarity": "-1"}
+{"text_left": "the lone argentine chorizo appetizer at $ 8.95 was a heavy", "text_right": "like the ones that sell for $ 2.99 / lb at the store .", "target_phrase": "fennel flavored italian sausage", "polarity": "-1"}
+{"text_left": "i went to swiftys with some friends of the family and we had a very nice", "text_right": ", but nothing amazing .", "target_phrase": "dinner", "polarity": "1"}
+{"text_left": "best chinese on the upper east , prompt", "text_right": ", good value .", "target_phrase": "delivery", "polarity": "1"}
+{"text_left": "best chinese on the upper east , prompt delivery , good", "text_right": ".", "target_phrase": "value", "polarity": "1"}
+{"text_left": "most of the", "text_right": "are made with soy mayonaise which is actually pretty good .", "target_phrase": "sandwiches", "polarity": "1"}
+{"text_left": "most of the sandwiches are made with", "text_right": "which is actually pretty good .", "target_phrase": "soy mayonaise", "polarity": "1"}
+{"text_left": "i went in one day asking for a table for a group and was greeted by a very rude", "text_right": ".", "target_phrase": "hostess", "polarity": "-1"}
+{"text_left": "i went in one day asking for a", "text_right": "for a group and was greeted by a very rude hostess .", "target_phrase": "table", "polarity": "0"}
+{"text_left": "it 's worthwhile to take a cab to chelsea just for an awesome", "text_right": "at my chelsea .", "target_phrase": "dinner", "polarity": "1"}
+{"text_left": "not only is the", "text_right": "authentic , but the staff here are practically off-the-boat , they are young and hip and know what they are doing when it comes to food and wine .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "not only is the food authentic , but the", "text_right": "here are practically off-the-boat , they are young and hip and know what they are doing when it comes to food and wine .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "not only is the food authentic , but the staff here are practically off-the-boat , they are young and hip and know what they are doing when it comes to", "text_right": "and wine .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "not only is the food authentic , but the staff here are practically off-the-boat , they are young and hip and know what they are doing when it comes to food and", "text_right": ".", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "it has good", "text_right": ", nice tapas , an interesting selection of wines -lrb- primarily spanish -rrb- and a lowkey hip neighborhood clientele .", "target_phrase": "music", "polarity": "1"}
+{"text_left": "it has good music , nice", "text_right": ", an interesting selection of wines -lrb- primarily spanish -rrb- and a lowkey hip neighborhood clientele .", "target_phrase": "tapas", "polarity": "1"}
+{"text_left": "it has good music , nice tapas , an interesting", "text_right": "and a lowkey hip neighborhood clientele .", "target_phrase": "selection of wines (primarily spanish)", "polarity": "1"}
+{"text_left": "it has good music , nice tapas , an interesting selection of wines -lrb- primarily spanish -rrb- and a lowkey hip neighborhood", "text_right": ".", "target_phrase": "clientele", "polarity": "1"}
+{"text_left": "the", "text_right": "is great , i love their dumplings , cold sesame noodles , chicken and shrimp dishs .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food is great , i love their", "text_right": ", cold sesame noodles , chicken and shrimp dishs .", "target_phrase": "dumplings", "polarity": "1"}
+{"text_left": "the food is great , i love their dumplings ,", "text_right": ", chicken and shrimp dishs .", "target_phrase": "cold sesame noodles", "polarity": "1"}
+{"text_left": "the food is great , i love their dumplings , cold sesame noodles ,", "text_right": "and shrimp dishs .", "target_phrase": "chicken", "polarity": "1"}
+{"text_left": "the food is great , i love their dumplings , cold sesame noodles , chicken and", "text_right": ".", "target_phrase": "shrimp dishs", "polarity": "1"}
+{"text_left": "and the", "text_right": ", well the food will keep you coming back .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "and the food , well the", "text_right": "will keep you coming back .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "waiting three hours before getting our", "text_right": "was a treat as well .", "target_phrase": "entrees", "polarity": "0"}
+{"text_left": "", "text_right": "three hours before getting our entrees was a treat as well .", "target_phrase": "waiting", "polarity": "-1"}
+{"text_left": "it 's the conversations that make this a fun", "text_right": "to be .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "my gf 's", "text_right": "was very solid as well , although i have little base of reference .", "target_phrase": "duck confitte", "polarity": "1"}
+{"text_left": "the", "text_right": "was superb , our tapas delightful , and the quiet atmosphere perfect for good conversation .", "target_phrase": "wine list", "polarity": "1"}
+{"text_left": "the wine list was superb , our", "text_right": "delightful , and the quiet atmosphere perfect for good conversation .", "target_phrase": "tapas", "polarity": "1"}
+{"text_left": "the wine list was superb , our tapas delightful , and the quiet", "text_right": "perfect for good conversation .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "you can eat gourmet food at a fast food", "text_right": ".", "target_phrase": "price", "polarity": "1"}
+{"text_left": "you can eat gourmet", "text_right": "at a fast food price .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i 've eaten at all three locations and i always love , love the", "text_right": ", the service is always wonderful and the prices are really reasonable .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i 've eaten at all three locations and i always love , love the food , the", "text_right": "is always wonderful and the prices are really reasonable .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "i 've eaten at all three locations and i always love , love the food , the service is always wonderful and the", "text_right": "are really reasonable .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "not because i was pregnant , but the", "text_right": "here is always delicious .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "had a great", "text_right": "there this weekend before heading to the movies !", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "we had a birthday party here recently and the", "text_right": "and service was amazing .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we had a birthday party here recently and the food and", "text_right": "was amazing .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "offers a variety of great entrees , including fresh seafood and huge steaks , there 's also a couple of non-meat alternatives .", "target_phrase": "dinner menu", "polarity": "1"}
+{"text_left": "the dinner menu offers a variety of great", "text_right": ", including fresh seafood and huge steaks , there 's also a couple of non-meat alternatives .", "target_phrase": "entrees", "polarity": "1"}
+{"text_left": "the dinner menu offers a variety of great entrees , including fresh", "text_right": "and huge steaks , there 's also a couple of non-meat alternatives .", "target_phrase": "seafood", "polarity": "1"}
+{"text_left": "the dinner menu offers a variety of great entrees , including fresh seafood and huge", "text_right": ", there 's also a couple of non-meat alternatives .", "target_phrase": "steaks", "polarity": "1"}
+{"text_left": "the dinner menu offers a variety of great entrees , including fresh seafood and huge steaks , there 's also a couple of", "text_right": ".", "target_phrase": "non-meat alternatives", "polarity": "0"}
+{"text_left": "this place has the strangest", "text_right": "and the restaurants tries too hard to make fancy food .", "target_phrase": "menu", "polarity": "-1"}
+{"text_left": "this place has the strangest menu and the restaurants tries too hard to make fancy", "text_right": ".", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the", "text_right": "are ok , but the service is slow .", "target_phrase": "appetizers", "polarity": "0"}
+{"text_left": "the appetizers are ok , but the", "text_right": "is slow .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the", "text_right": "- not worth the price .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the food - not worth the", "text_right": ".", "target_phrase": "price", "polarity": "-1"}
+{"text_left": "what can you say about a place where the", "text_right": "brings out the wrong entree , then verbally assaults your 80 year old grandmother and gives her lip about sending it back -lrb- which she did politely , by the way -rrb- .", "target_phrase": "waitress", "polarity": "-1"}
+{"text_left": "what can you say about a place where the waitress brings out the wrong", "text_right": ", then verbally assaults your 80 year old grandmother and gives her lip about sending it back -lrb- which she did politely , by the way -rrb- .", "target_phrase": "entree", "polarity": "0"}
+{"text_left": "the", "text_right": "are not terrible .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "15 % gratuity automatically added to the", "text_right": ".", "target_phrase": "bill", "polarity": "-1"}
+{"text_left": "15 %", "text_right": "automatically added to the bill .", "target_phrase": "gratuity", "polarity": "-1"}
+{"text_left": "the", "text_right": "came with a generous portion of foie gras , but that 's about the only positive thing i can say about the meal .", "target_phrase": "halibut cheek appetizer", "polarity": "0"}
+{"text_left": "the halibut cheek appetizer came with a generous", "text_right": ", but that 's about the only positive thing i can say about the meal .", "target_phrase": "portion of foie gras", "polarity": "1"}
+{"text_left": "", "text_right": "is excellent and they also have empenadas and plaintains which are good for an afternoon snack .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "food is excellent and they also have", "text_right": "and plaintains which are good for an afternoon snack .", "target_phrase": "empenadas", "polarity": "1"}
+{"text_left": "food is excellent and they also have empenadas and", "text_right": "which are good for an afternoon snack .", "target_phrase": "plaintains", "polarity": "1"}
+{"text_left": "food is excellent and they also have empenadas and plaintains which are good for an", "text_right": ".", "target_phrase": "afternoon snack", "polarity": "1"}
+{"text_left": "both a number of the appetizer and", "text_right": "were amazing .", "target_phrase": "pasta specials", "polarity": "1"}
+{"text_left": "both a number of the", "text_right": "and pasta specials were amazing .", "target_phrase": "appetizer", "polarity": "1"}
+{"text_left": "all-time favorites include the", "text_right": ", chicken mcnuggets , filet-o-fish sandwich and mcdonald 's famous french fries ; lighter options like entree-sized salads are also available .", "target_phrase": "big mac", "polarity": "1"}
+{"text_left": "all-time favorites include the big mac ,", "text_right": ", filet-o-fish sandwich and mcdonald 's famous french fries ; lighter options like entree-sized salads are also available .", "target_phrase": "chicken mcnuggets", "polarity": "1"}
+{"text_left": "all-time favorites include the big mac , chicken mcnuggets ,", "text_right": "and mcdonald 's famous french fries ; lighter options like entree-sized salads are also available .", "target_phrase": "filet-o-fish sandwich", "polarity": "1"}
+{"text_left": "all-time favorites include the big mac , chicken mcnuggets , filet-o-fish sandwich and", "text_right": "; lighter options like entree-sized salads are also available .", "target_phrase": "mcdonald's famous french fries", "polarity": "1"}
+{"text_left": "all-time favorites include the big mac , chicken mcnuggets , filet-o-fish sandwich and mcdonald 's famous french fries ; lighter options like", "text_right": "are also available .", "target_phrase": "entree-sized salads", "polarity": "0"}
+{"text_left": "it 's a basic pizza joint , not much to look at , but the", "text_right": "is what i go for .", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "", "text_right": "are close , so you better be comfortable bumping elbows with other patrons .", "target_phrase": "tables", "polarity": "-1"}
+{"text_left": "was her monday for", "text_right": "- was working on a film in the area - and found this rare jewel .", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "not too much so , but enough that there 's a great", "text_right": ".", "target_phrase": "scene", "polarity": "1"}
+{"text_left": "dug the", "text_right": "too .", "target_phrase": "blue bar area", "polarity": "1"}
+{"text_left": "i got the opportunity to dine at your establishment again a few weeks ago , i was in your", "text_right": ".", "target_phrase": "upstrairs dining area", "polarity": "0"}
+{"text_left": "meat-phobes are in luck with the extraordinary", "text_right": ", made from a distinctive blend of chickpeas , carrots and other vegetables and spices .", "target_phrase": "veggie burger", "polarity": "1"}
+{"text_left": "meat-phobes are in luck with the extraordinary veggie burger , made from a distinctive blend of", "text_right": ", carrots and other vegetables and spices .", "target_phrase": "chickpeas", "polarity": "1"}
+{"text_left": "meat-phobes are in luck with the extraordinary veggie burger , made from a distinctive blend of chickpeas ,", "text_right": "and other vegetables and spices .", "target_phrase": "carrots", "polarity": "1"}
+{"text_left": "meat-phobes are in luck with the extraordinary veggie burger , made from a distinctive blend of chickpeas , carrots and other", "text_right": "and spices .", "target_phrase": "vegetables", "polarity": "1"}
+{"text_left": "meat-phobes are in luck with the extraordinary veggie burger , made from a distinctive blend of chickpeas , carrots and other vegetables and", "text_right": ".", "target_phrase": "spices", "polarity": "1"}
+{"text_left": "at peak times , the restaurant is overcrowded and", "text_right": "are uncomfortably close .", "target_phrase": "tables", "polarity": "-1"}
+{"text_left": "the", "text_right": "was on point - what else you would expect from a ritz ?", "target_phrase": "service", "polarity": "1"}
+{"text_left": "", "text_right": "feature seasonal picks , like sweet corn-foie gras brulee .", "target_phrase": "menus", "polarity": "0"}
+{"text_left": "menus feature seasonal picks , like", "text_right": ".", "target_phrase": "sweet corn-foie gras brulee", "polarity": "0"}
+{"text_left": "innovations are just as assured , from the simple", "text_right": "to the caviar-topped sturgeon , beautifully matched with a bright green spinach-vodka sauce .", "target_phrase": "carinthia cheese ravioli with wild mushrooms", "polarity": "1"}
+{"text_left": "innovations are just as assured , from the simple carinthia cheese ravioli with wild mushrooms to the", "text_right": ", beautifully matched with a bright green spinach-vodka sauce .", "target_phrase": "caviar-topped sturgeon", "polarity": "1"}
+{"text_left": "innovations are just as assured , from the simple carinthia cheese ravioli with wild mushrooms to the caviar-topped sturgeon , beautifully matched with a bright", "text_right": ".", "target_phrase": "green spinach-vodka sauce", "polarity": "1"}
+{"text_left": "and these are not small , wimpy fast food type", "text_right": "- these are real , full sized patties .", "target_phrase": "burgers", "polarity": "1"}
+{"text_left": "and these are not small , wimpy fast food type burgers - these are real , full sized", "text_right": ".", "target_phrase": "patties", "polarity": "1"}
+{"text_left": "there restaurant is very casual , but perfect for", "text_right": ", and their delivery service is always very fast .", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "there restaurant is very casual , but perfect for lunch , and their", "text_right": "is always very fast .", "target_phrase": "delivery service", "polarity": "1"}
+{"text_left": "chinatown definitely has better", "text_right": "with cheaper prices .", "target_phrase": "quality", "polarity": "1"}
+{"text_left": "chinatown definitely has better quality with cheaper", "text_right": ".", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "i had to flag down a third", "text_right": "for a fork ... so now it 's goodbye little rude pie company .", "target_phrase": "staff person", "polarity": "0"}
+{"text_left": "i had to flag down a third staff person for a", "text_right": "... so now it 's goodbye little rude pie company .", "target_phrase": "fork", "polarity": "0"}
+{"text_left": "go with the", "text_right": ", and stay away from the salmon .", "target_phrase": "specials", "polarity": "1"}
+{"text_left": "go with the specials , and stay away from the", "text_right": ".", "target_phrase": "salmon", "polarity": "-1"}
+{"text_left": "the", "text_right": "were pretty good .", "target_phrase": "pastas", "polarity": "1"}
+{"text_left": "", "text_right": "is a bore .", "target_phrase": "atmosphere", "polarity": "-1"}
+{"text_left": "the", "text_right": "is what initially got me in the door .", "target_phrase": "decor", "polarity": "1"}
+{"text_left": "the", "text_right": "was very attentive and polite .", "target_phrase": "wait staff", "polarity": "1"}
+{"text_left": "great restaurant , and even greater", "text_right": "!", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "are remarkably tasty and such a cozy and intimate place !", "target_phrase": "dishes", "polarity": "1"}
+{"text_left": "the dishes are remarkably tasty and such a cozy and intimate", "text_right": "!", "target_phrase": "place", "polarity": "1"}
+{"text_left": "save room for the", "text_right": "! ; - -rrb-", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "i love the simplicity and respect which was given to the", "text_right": ", as well the staff was freindly and knowledgable .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "i love the simplicity and respect which was given to the food , as well the", "text_right": "was freindly and knowledgable .", "target_phrase": "staff", "polarity": "1"}
+{"text_left": "", "text_right": "was good and so was the atmosphere .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "service was good and so was the", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "my date and i both ordered the", "text_right": "and both felt the fish was very average .", "target_phrase": "branzini", "polarity": "0"}
+{"text_left": "my date and i both ordered the branzini and both felt the", "text_right": "was very average .", "target_phrase": "fish", "polarity": "-1"}
+{"text_left": "the", "text_right": "was good , the service prompt , and the price very reasonable .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was good , the", "text_right": "prompt , and the price very reasonable .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the food was good , the service prompt , and the", "text_right": "very reasonable .", "target_phrase": "price", "polarity": "1"}
+{"text_left": "wonderful", "text_right": ", warm inviting ambiance , great service the food keeps me coming back !", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "wonderful menu , warm inviting", "text_right": ", great service the food keeps me coming back !", "target_phrase": "ambiance", "polarity": "1"}
+{"text_left": "wonderful menu , warm inviting ambiance , great", "text_right": "the food keeps me coming back !", "target_phrase": "service", "polarity": "1"}
+{"text_left": "wonderful menu , warm inviting ambiance , great service the", "text_right": "keeps me coming back !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great", "text_right": ", good wine and an excellent host .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great food , good", "text_right": "and an excellent host .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "great food , good wine and an excellent", "text_right": ".", "target_phrase": "host", "polarity": "1"}
+{"text_left": "", "text_right": "were excellent in addition to appetizers and main courses .", "target_phrase": "pizzas", "polarity": "1"}
+{"text_left": "pizzas were excellent in addition to", "text_right": "and main courses .", "target_phrase": "appetizers", "polarity": "1"}
+{"text_left": "pizzas were excellent in addition to appetizers and", "text_right": ".", "target_phrase": "main courses", "polarity": "1"}
+{"text_left": "definitely try the", "text_right": ", any pasta , or even the sliced steak entree .", "target_phrase": "calamari", "polarity": "1"}
+{"text_left": "definitely try the calamari , any", "text_right": ", or even the sliced steak entree .", "target_phrase": "pasta", "polarity": "1"}
+{"text_left": "definitely try the calamari , any pasta , or even the", "text_right": ".", "target_phrase": "sliced steak entree", "polarity": "1"}
+{"text_left": "the", "text_right": "was great .", "target_phrase": "caeser salad", "polarity": "1"}
+{"text_left": "the", "text_right": "was even better !", "target_phrase": "fried calamari", "polarity": "1"}
+{"text_left": "the", "text_right": "was good overall .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "was outstanding and the service was tops .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the food was outstanding and the", "text_right": "was tops .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "are very large and the service is fantastic !!", "target_phrase": "portions", "polarity": "1"}
+{"text_left": "the portions are very large and the", "text_right": "is fantastic !!", "target_phrase": "service", "polarity": "1"}
+{"text_left": "i recomend the", "text_right": ".", "target_phrase": "chicken milanese", "polarity": "1"}
+{"text_left": "excellent", "text_right": "at great prices , romantic , small but not overly crowed , excellent", "target_phrase": "tapas", "polarity": "1"}
+{"text_left": "excellent tapas at great", "text_right": ", romantic , small but not overly crowed , excellent", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "the", "text_right": "is heavenly - not too sweet , but full of flavor .", "target_phrase": "chocolate raspberry cake", "polarity": "1"}
+{"text_left": "the chocolate raspberry cake is heavenly - not too sweet , but full of", "text_right": ".", "target_phrase": "flavor", "polarity": "1"}
+{"text_left": "our", "text_right": "was helpful and charming , the food was perfect , and the wine was good , too .", "target_phrase": "waiter", "polarity": "1"}
+{"text_left": "our waiter was helpful and charming , the", "text_right": "was perfect , and the wine was good , too .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "our waiter was helpful and charming , the food was perfect , and the", "text_right": "was good , too .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "i have never had a bad", "text_right": "-lrb- or bad service -rrb- @ pigalle .", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "i have never had a bad meal -lrb- or bad", "text_right": "-rrb- @ pigalle .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "best", "text_right": "in the tri-state area .", "target_phrase": "hot dogs", "polarity": "1"}
+{"text_left": "the", "text_right": "was very attentive and very generous .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "we had tons of great", "text_right": ", wine , and desserts .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we had tons of great food ,", "text_right": ", and desserts .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "we had tons of great food , wine , and", "text_right": ".", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "really lovely", "text_right": "in the midst of buzzing midtown area .", "target_phrase": "dining experience", "polarity": "1"}
+{"text_left": "the", "text_right": "really is n't very good and the service is terrible .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "the food really is n't very good and the", "text_right": "is terrible .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "not only do they have the best", "text_right": "in town , they always try to accomodate our toddler .", "target_phrase": "escargot", "polarity": "1"}
+{"text_left": "between my guest and i , we sampled at least 80 % of the", "text_right": ", and they were all hits .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "the", "text_right": "and ambiance was really romantic .", "target_phrase": "deco", "polarity": "1"}
+{"text_left": "the deco and", "text_right": "was really romantic .", "target_phrase": "ambiance", "polarity": "1"}
+{"text_left": "just go in and sample the greatest", "text_right": "west of daniel .", "target_phrase": "french food", "polarity": "1"}
+{"text_left": "for someone who used to hate", "text_right": ", baluchi 's has changed my mid .", "target_phrase": "indian food", "polarity": "1"}
+{"text_left": "finally a", "text_right": "that i can eat , enjoy and not suffer from gastritis from 3 hours later .", "target_phrase": "curry", "polarity": "1"}
+{"text_left": "all are great -", "text_right": ", naan , paratha all fresh .", "target_phrase": "poori", "polarity": "1"}
+{"text_left": "all are great - poori ,", "text_right": ", paratha all fresh .", "target_phrase": "naan", "polarity": "1"}
+{"text_left": "all are great - poori , naan ,", "text_right": "all fresh .", "target_phrase": "paratha", "polarity": "1"}
+{"text_left": "try the", "text_right": ".", "target_phrase": "homemade breads", "polarity": "1"}
+{"text_left": "this place has beautiful", "text_right": ", and it 's delicious cheap .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "it also has lots of other", "text_right": "that are affordable and just as yummy .", "target_phrase": "korean dishes", "polarity": "1"}
+{"text_left": "i went for restaurant week and ordered off the", "text_right": "", "target_phrase": "prix fixe menu", "polarity": "0"}
+{"text_left": "not only was the", "text_right": "efficient and courteous , but also extremely helpful .", "target_phrase": "waiter", "polarity": "1"}
+{"text_left": "this", "text_right": "is classy , chic , the service is warm and hospitable , and the food is outstanding .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "this place is classy , chic , the", "text_right": "is warm and hospitable , and the food is outstanding .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "this place is classy , chic , the service is warm and hospitable , and the", "text_right": "is outstanding .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "great", "text_right": ", grilled cheeses and french fries .", "target_phrase": "burgers", "polarity": "1"}
+{"text_left": "great burgers ,", "text_right": "and french fries .", "target_phrase": "grilled cheeses", "polarity": "1"}
+{"text_left": "great burgers , grilled cheeses and", "text_right": ".", "target_phrase": "french fries", "polarity": "1"}
+{"text_left": "the", "text_right": "and calf 's liver are my favorites !", "target_phrase": "yellowfin tuna", "polarity": "1"}
+{"text_left": "the yellowfin tuna and", "text_right": "are my favorites !", "target_phrase": "calf's liver", "polarity": "1"}
+{"text_left": "", "text_right": "so fresh that it crunches in your mouth .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "but make sure you have enough room on your credit card as the", "text_right": "will leave a big dent in your wallet .", "target_phrase": "bill", "polarity": "-1"}
+{"text_left": "they bring a sauce cart up to your table and offer you up to 7 or 8 choices of sauces for your", "text_right": "-lrb- i tried them all -rrb- .", "target_phrase": "steak", "polarity": "0"}
+{"text_left": "they bring a sauce cart up to your table and offer you up to 7 or 8", "text_right": "for your steak -lrb- i tried them all -rrb- .", "target_phrase": "choices of sauces", "polarity": "1"}
+{"text_left": "they bring a", "text_right": "up to your table and offer you up to 7 or 8 choices of sauces for your steak -lrb- i tried them all -rrb- .", "target_phrase": "sauce cart", "polarity": "0"}
+{"text_left": "they bring a sauce cart up to your", "text_right": "and offer you up to 7 or 8 choices of sauces for your steak -lrb- i tried them all -rrb- .", "target_phrase": "table", "polarity": "0"}
+{"text_left": "not only was the", "text_right": "fresh , they also served other entrees allowed each guest something to choose from and we all left happy -lrb- try the duck !", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "not only was the sushi fresh , they also served other entrees allowed each guest something to choose from and we all left happy -lrb- try the", "text_right": "!", "target_phrase": "duck", "polarity": "1"}
+{"text_left": "not only was the sushi fresh , they also served other", "text_right": "allowed each guest something to choose from and we all left happy -lrb- try the duck !", "target_phrase": "entrees", "polarity": "0"}
+{"text_left": "good", "text_right": "but nothing surprising .", "target_phrase": "variety", "polarity": "1"}
+{"text_left": "after i paid for my purchase , i noticed they had not given me", "text_right": "so i could eat my pie .", "target_phrase": "utensils", "polarity": "0"}
+{"text_left": "after i paid for my purchase , i noticed they had not given me utensils so i could eat my", "text_right": ".", "target_phrase": "pie", "polarity": "0"}
+{"text_left": "likewise if you like really", "text_right": "or really big slices then nick and joe 's may not be your favorite .", "target_phrase": "thin crust", "polarity": "-1"}
+{"text_left": "likewise if you like really thin crust or really big", "text_right": "then nick and joe 's may not be your favorite .", "target_phrase": "slices", "polarity": "-1"}
+{"text_left": "no", "text_right": ", no egg , no anchovy dressing , no nicoise olives , no red onion .", "target_phrase": "green beans", "polarity": "0"}
+{"text_left": "no green beans , no", "text_right": ", no anchovy dressing , no nicoise olives , no red onion .", "target_phrase": "egg", "polarity": "0"}
+{"text_left": "no green beans , no egg , no", "text_right": ", no nicoise olives , no red onion .", "target_phrase": "anchovy dressing", "polarity": "0"}
+{"text_left": "no green beans , no egg , no anchovy dressing , no", "text_right": ", no red onion .", "target_phrase": "nicoise olives", "polarity": "0"}
+{"text_left": "no green beans , no egg , no anchovy dressing , no nicoise olives , no", "text_right": ".", "target_phrase": "red onion", "polarity": "0"}
+{"text_left": "build a", "text_right": "with side orders like amazin ' greens salads , buffalo chicken kickers and cinna stix .", "target_phrase": "meal", "polarity": "0"}
+{"text_left": "build a meal with side orders like", "text_right": ", buffalo chicken kickers and cinna stix .", "target_phrase": "amazin' greens salads", "polarity": "0"}
+{"text_left": "build a meal with side orders like amazin ' greens salads ,", "text_right": "and cinna stix .", "target_phrase": "buffalo chicken kickers", "polarity": "0"}
+{"text_left": "build a meal with side orders like amazin ' greens salads , buffalo chicken kickers and", "text_right": ".", "target_phrase": "cinna stix", "polarity": "0"}
+{"text_left": "build a meal with", "text_right": "like amazin ' greens salads , buffalo chicken kickers and cinna stix .", "target_phrase": "side orders", "polarity": "0"}
+{"text_left": "thick", "text_right": ", meaty chili and stuffed baked potatoes round out a menu that includes a cool , ultra-thick chocolate frosty .", "target_phrase": "fries", "polarity": "0"}
+{"text_left": "thick fries ,", "text_right": "and stuffed baked potatoes round out a menu that includes a cool , ultra-thick chocolate frosty .", "target_phrase": "meaty chili", "polarity": "0"}
+{"text_left": "thick fries , meaty chili and", "text_right": "round out a menu that includes a cool , ultra-thick chocolate frosty .", "target_phrase": "stuffed baked potatoes", "polarity": "0"}
+{"text_left": "thick fries , meaty chili and stuffed baked potatoes round out a", "text_right": "that includes a cool , ultra-thick chocolate frosty .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "thick fries , meaty chili and stuffed baked potatoes round out a menu that includes a cool , ultra-thick", "text_right": ".", "target_phrase": "chocolate frosty", "polarity": "1"}
+{"text_left": "i always find myself asking the", "text_right": "to make something bland and different than what is on the menu .", "target_phrase": "waiter", "polarity": "0"}
+{"text_left": "i always find myself asking the waiter to make something bland and different than what is on the", "text_right": ".", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "good cake but : it was not the best", "text_right": "i 've ever had , and definately not worth standing outside on the sidewalk being herded like cattle by indifferent and overworked employees .", "target_phrase": "cake", "polarity": "-1"}
+{"text_left": "good cake but : it was not the best cake i 've ever had , and definately not worth standing outside on the sidewalk being herded like cattle by indifferent and overworked", "text_right": ".", "target_phrase": "employees", "polarity": "-1"}
+{"text_left": "the closest that i got was the", "text_right": ", but they were out of it that day .", "target_phrase": "cherry marscapone", "polarity": "0"}
+{"text_left": "the homage to india is most evident in the delectable", "text_right": ", a fried pancake served with pungent curry dipping sauce , while the mango chicken offers a surprisingly sophisticated , fresh take on sweet-and-sour .", "target_phrase": "roti canai appetizer", "polarity": "1"}
+{"text_left": "the homage to india is most evident in the delectable roti canai appetizer , a fried pancake served with pungent curry dipping sauce , while the", "text_right": "offers a surprisingly sophisticated , fresh take on sweet-and-sour .", "target_phrase": "mango chicken", "polarity": "1"}
+{"text_left": "the homage to india is most evident in the delectable roti canai appetizer , a", "text_right": ", while the mango chicken offers a surprisingly sophisticated , fresh take on sweet-and-sour .", "target_phrase": "fried pancake served with pungent curry dipping sauce", "polarity": "1"}
+{"text_left": "it does n't look like much on the", "text_right": ", but the minute you walk inside , it 's a whole other atmosphere .", "target_phrase": "outside", "polarity": "-1"}
+{"text_left": "it does n't look like much on the outside , but the minute you walk inside , it 's a whole other", "text_right": ".", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "the", "text_right": "we sampled as a starter tasted somewhat thin .", "target_phrase": "ground chickpea soup", "polarity": "-1"}
+{"text_left": "the ground chickpea soup we sampled as a", "text_right": "tasted somewhat thin .", "target_phrase": "starter", "polarity": "0"}
+{"text_left": "we requested they re-slice the", "text_right": ", and it was returned to us in small cheese-like cubes .", "target_phrase": "sushi", "polarity": "-1"}
+{"text_left": "the", "text_right": ", however , is a peg or two below the quality of food -lrb- horrible bartenders -rrb- , and the clientele , for the most part , are rowdy , loud-mouthed commuters -lrb- this could explain the bad attitudes from the staff -rrb- getting loaded for an ac/dc concert or a knicks game .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the service , however , is a peg or two below the", "text_right": "-lrb- horrible bartenders -rrb- , and the clientele , for the most part , are rowdy , loud-mouthed commuters -lrb- this could explain the bad attitudes from the staff -rrb- getting loaded for an ac/dc concert or a knicks game .", "target_phrase": "quality of food", "polarity": "1"}
+{"text_left": "the service , however , is a peg or two below the quality of food -lrb- horrible", "text_right": "-rrb- , and the clientele , for the most part , are rowdy , loud-mouthed commuters -lrb- this could explain the bad attitudes from the staff -rrb- getting loaded for an ac/dc concert or a knicks game .", "target_phrase": "bartenders", "polarity": "-1"}
+{"text_left": "the service , however , is a peg or two below the quality of food -lrb- horrible bartenders -rrb- , and the", "text_right": ", for the most part , are rowdy , loud-mouthed commuters -lrb- this could explain the bad attitudes from the staff -rrb- getting loaded for an ac/dc concert or a knicks game .", "target_phrase": "clientele", "polarity": "-1"}
+{"text_left": "the service , however , is a peg or two below the quality of food -lrb- horrible bartenders -rrb- , and the clientele , for the most part , are rowdy , loud-mouthed commuters -lrb- this could explain the bad attitudes from the", "text_right": "-rrb- getting loaded for an ac/dc concert or a knicks game .", "target_phrase": "staff", "polarity": "-1"}
+{"text_left": "if you 're in the neighborhood , definitely stop by for a great", "text_right": ".", "target_phrase": "meal", "polarity": "1"}
+{"text_left": "unfortunately , with our show tickets , we did n't have time to sample any", "text_right": ".", "target_phrase": "desserts", "polarity": "0"}
+{"text_left": "make more", "text_right": "- perhaps a rooftop bar ?", "target_phrase": "tables", "polarity": "-1"}
+{"text_left": "make more tables - perhaps a", "text_right": "?", "target_phrase": "rooftop bar", "polarity": "0"}
+{"text_left": "the", "text_right": "was feeling like we was on the cairo , actually the street is part of that adventure .", "target_phrase": "decoration", "polarity": "1"}
+{"text_left": "although small , it has beautiful", "text_right": ", excellent food -lrb- the catfish is delicious - if ya do n't mind it a lil salty -rrb- and attentive service .", "target_phrase": "ambience", "polarity": "1"}
+{"text_left": "although small , it has beautiful ambience , excellent", "text_right": "-lrb- the catfish is delicious - if ya do n't mind it a lil salty -rrb- and attentive service .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "although small , it has beautiful ambience , excellent food -lrb- the", "text_right": "is delicious - if ya do n't mind it a lil salty -rrb- and attentive service .", "target_phrase": "catfish", "polarity": "1"}
+{"text_left": "although small , it has beautiful ambience , excellent food -lrb- the catfish is delicious - if ya do n't mind it a lil salty -rrb- and attentive", "text_right": ".", "target_phrase": "service", "polarity": "1"}
+{"text_left": "i did n't go there for", "text_right": "so i ca n't comment .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "stick to the items the place does best ,", "text_right": ", ribs , wings , cajun shrimp is good , not great .", "target_phrase": "brisket", "polarity": "1"}
+{"text_left": "stick to the items the place does best , brisket ,", "text_right": ", wings , cajun shrimp is good , not great .", "target_phrase": "ribs", "polarity": "1"}
+{"text_left": "stick to the items the place does best , brisket , ribs ,", "text_right": ", cajun shrimp is good , not great .", "target_phrase": "wings", "polarity": "1"}
+{"text_left": "stick to the items the place does best , brisket , ribs , wings ,", "text_right": "is good , not great .", "target_phrase": "cajun shrimp", "polarity": "0"}
+{"text_left": "hip boutiques and bars on ludlow add to the artsy , laid-back", "text_right": "at this israeli-style takeout and eat-in burger joint .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "young neighborhood trendies graze at the", "text_right": "during the day , while chic , art-house drinkers with heavy doses of the munchies pile in late at night .", "target_phrase": "counter", "polarity": "0"}
+{"text_left": "bring your date and a", "text_right": "!", "target_phrase": "bottle of wine", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative", "text_right": "includes modern , westernized japanese dishes such as foie gras unagi napolean , jap style hamburger steak , spicy cod roe spaghetti , black cod with miso base , and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized", "text_right": "such as foie gras unagi napolean , jap style hamburger steak , spicy cod roe spaghetti , black cod with miso base , and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "japanese dishes", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized japanese dishes such as", "text_right": ", jap style hamburger steak , spicy cod roe spaghetti , black cod with miso base , and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "foie gras unagi napolean", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized japanese dishes such as foie gras unagi napolean ,", "text_right": ", spicy cod roe spaghetti , black cod with miso base , and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "jap style hamburger steak", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized japanese dishes such as foie gras unagi napolean , jap style hamburger steak ,", "text_right": ", black cod with miso base , and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "spicy cod roe spaghetti", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized japanese dishes such as foie gras unagi napolean , jap style hamburger steak , spicy cod roe spaghetti ,", "text_right": ", and rack of lamb in black truffle sauce , to name a few .", "target_phrase": "black cod with miso base", "polarity": "0"}
+{"text_left": "my chelsea 's impressive and creative menu includes modern , westernized japanese dishes such as foie gras unagi napolean , jap style hamburger steak , spicy cod roe spaghetti , black cod with miso base , and", "text_right": ", to name a few .", "target_phrase": "rack of lamb in black truffle sauce", "polarity": "0"}
+{"text_left": "his", "text_right": "is excellent -lrb- and not expensive by nyc standards - no entrees over $ 30 , most appetizers $ 12 to 14 -rrb- .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "his food is excellent -lrb- and not expensive by nyc standards - no entrees over $ 30 , most", "text_right": "$ 12 to 14 -rrb- .", "target_phrase": "appetizers", "polarity": "1"}
+{"text_left": "his food is excellent -lrb- and not expensive by nyc standards - no", "text_right": "over $ 30 , most appetizers $ 12 to 14 -rrb- .", "target_phrase": "entrees", "polarity": "1"}
+{"text_left": "the", "text_right": "is consistant and good but how it got name best diner in manhattan is beyond me .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "the", "text_right": "was outstanding as well , lots of fresh veggies .", "target_phrase": "pasta primavera", "polarity": "1"}
+{"text_left": "the pasta primavera was outstanding as well , lots of", "text_right": ".", "target_phrase": "fresh veggies", "polarity": "1"}
+{"text_left": "do n't get me wrong -", "text_right": "was good , just not fantastic .", "target_phrase": "sushi", "polarity": "1"}
+{"text_left": "being puerto rican i know a thing or two about", "text_right": "and this place serves one of the best -lrb- i hope mom does n't read this ! -rrb- .", "target_phrase": "flan", "polarity": "1"}
+{"text_left": "been to the one in brooklyn for over 25 years , now i dont have to go over the bridge for the best", "text_right": "... hanx", "target_phrase": "pizza", "polarity": "1"}
+{"text_left": "had", "text_right": "here on a friday and the food was great .", "target_phrase": "dinner", "polarity": "0"}
+{"text_left": "had dinner here on a friday and the", "text_right": "was great .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "we recently spent new year 's eve at the restaurant , and had a great experience , from the", "text_right": "to the dessert menu .", "target_phrase": "wine", "polarity": "1"}
+{"text_left": "we recently spent new year 's eve at the restaurant , and had a great experience , from the wine to the", "text_right": ".", "target_phrase": "dessert menu", "polarity": "1"}
+{"text_left": "highly recommended ... as stated , i have n't dined * in * the restaurant but stopped by there to pick up takeout and it seems a very relaxing", "text_right": "; also , the bar looks nice .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "highly recommended ... as stated , i have n't dined * in * the restaurant but stopped by there to pick up takeout and it seems a very relaxing place ; also , the", "text_right": "looks nice .", "target_phrase": "bar", "polarity": "1"}
+{"text_left": "highly recommended ... as stated , i have n't dined * in * the restaurant but stopped by there to pick up", "text_right": "and it seems a very relaxing place ; also , the bar looks nice .", "target_phrase": "takeout", "polarity": "0"}
+{"text_left": "the", "text_right": "was fine , a little loud but still nice and romantic .", "target_phrase": "ambiance", "polarity": "1"}
+{"text_left": "but , the filet mignon was not very good at all", "text_right": "includes free appetizers -lrb- nice non-sushi selection -rrb- .", "target_phrase": "cocktail hour", "polarity": "1"}
+{"text_left": "but , the", "text_right": "was not very good at all cocktail hour includes free appetizers -lrb- nice non-sushi selection -rrb- .", "target_phrase": "filet mignon", "polarity": "-1"}
+{"text_left": "but , the filet mignon was not very good at all cocktail hour includes free appetizers -lrb- nice", "text_right": "-rrb- .", "target_phrase": "non-sushi selection", "polarity": "1"}
+{"text_left": "but , the filet mignon was not very good at all cocktail hour includes free", "text_right": "-lrb- nice non-sushi selection -rrb- .", "target_phrase": "appetizers", "polarity": "1"}
+{"text_left": "it took about 2 1/2 hours to be served our 2", "text_right": ".", "target_phrase": "courses", "polarity": "0"}
+{"text_left": "it took about 2 1/2 hours to be", "text_right": "our 2 courses .", "target_phrase": "served", "polarity": "-1"}
+{"text_left": "who said go when the", "text_right": "is quiet during the day ?", "target_phrase": "place", "polarity": "0"}
+{"text_left": "can be a bit busy around peak times because of the", "text_right": ".", "target_phrase": "size", "polarity": "-1"}
+{"text_left": "i was on jury duty , rode my bike up centre street on my lunch break and came across this great little place with awesome", "text_right": "and hibiscus lemonade .", "target_phrase": "chicken tacos", "polarity": "1"}
+{"text_left": "i was on jury duty , rode my bike up centre street on my lunch break and came across this great little place with awesome chicken tacos and", "text_right": ".", "target_phrase": "hibiscus lemonade", "polarity": "1"}
+{"text_left": "i was on jury duty , rode my bike up centre street on my lunch break and came across this great little", "text_right": "with awesome chicken tacos and hibiscus lemonade .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "good", "text_right": "to hang out during the day after shopping or to grab a simple soup or classic french dish over a glass of wine .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "good place to hang out during the day after shopping or to grab a simple", "text_right": "or classic french dish over a glass of wine .", "target_phrase": "soup", "polarity": "0"}
+{"text_left": "good place to hang out during the day after shopping or to grab a simple soup or classic", "text_right": "over a glass of wine .", "target_phrase": "french dish", "polarity": "0"}
+{"text_left": "good place to hang out during the day after shopping or to grab a simple soup or classic french dish over a", "text_right": ".", "target_phrase": "glass of wine", "polarity": "0"}
+{"text_left": "very nice touch that very much fits the", "text_right": ".", "target_phrase": "place", "polarity": "1"}
+{"text_left": "however , there is just something so great about being outdoors , in great landscaping , enjoying a", "text_right": "that makes going to this place worthwhile .", "target_phrase": "casual drink", "polarity": "1"}
+{"text_left": "however , there is just something so great about being", "text_right": ", in great landscaping , enjoying a casual drink that makes going to this place worthwhile .", "target_phrase": "outdoors", "polarity": "1"}
+{"text_left": "however , there is just something so great about being outdoors , in great landscaping , enjoying a casual drink that makes going to this", "text_right": "worthwhile .", "target_phrase": "place", "polarity": "1"}
+{"text_left": "we were seated promptly in close proximity to the", "text_right": ".", "target_phrase": "dance floor", "polarity": "0"}
+{"text_left": "if you are here as a", "text_right": ", hop in a cab and take the extra 10 minutes to go to the uptown location .", "target_phrase": "pre-show meal", "polarity": "0"}
+{"text_left": "the comments about", "text_right": "is correct -lrb- below -rrb- but the other dishes , including the lamb entree and many of the salads -lrb- avocado shrimp -rrb- were quite good .", "target_phrase": "fried foods", "polarity": "-1"}
+{"text_left": "the comments about fried foods is correct -lrb- below -rrb- but the other", "text_right": ", including the lamb entree and many of the salads -lrb- avocado shrimp -rrb- were quite good .", "target_phrase": "dishes", "polarity": "1"}
+{"text_left": "the comments about fried foods is correct -lrb- below -rrb- but the other dishes , including the", "text_right": "and many of the salads -lrb- avocado shrimp -rrb- were quite good .", "target_phrase": "lamb entree", "polarity": "1"}
+{"text_left": "the comments about fried foods is correct -lrb- below -rrb- but the other dishes , including the lamb entree and many of the", "text_right": "were quite good .", "target_phrase": "salads (avocado shrimp)", "polarity": "1"}
+{"text_left": "slow", "text_right": ", but when you 're hanging around with groups of 10 or 20 , who really notices ?", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the sauce is excellent -lrb- very fresh -rrb- with", "text_right": ".", "target_phrase": "dabs of real mozzarella", "polarity": "0"}
+{"text_left": "the", "text_right": "is excellent -lrb- very fresh -rrb- with dabs of real mozzarella .", "target_phrase": "sauce", "polarity": "1"}
+{"text_left": "do n't ever bother - the", "text_right": "were awful , but it was the people who work there that really made this the worst experience at dining .", "target_phrase": "drinks", "polarity": "-1"}
+{"text_left": "do n't ever bother - the drinks were awful , but it was the", "text_right": "who work there that really made this the worst experience at dining .", "target_phrase": "people", "polarity": "-1"}
+{"text_left": "do n't ever bother - the drinks were awful , but it was the people who work there that really made this the worst experience at", "text_right": ".", "target_phrase": "dining", "polarity": "-1"}
+{"text_left": "the", "text_right": "is a little plain , but it 's difficult to make such a small place exciting and i would not suggest that as a reason not to go .", "target_phrase": "room", "polarity": "-1"}
+{"text_left": "the room is a little plain , but it 's difficult to make such a small", "text_right": "exciting and i would not suggest that as a reason not to go .", "target_phrase": "place", "polarity": "-1"}
+{"text_left": "", "text_right": "even outside of restaurant week were great .", "target_phrase": "prices", "polarity": "1"}
+{"text_left": "a small , outdoor eating area makes for a private , comfortable", "text_right": "to study alone or meet up with friends .", "target_phrase": "space", "polarity": "1"}
+{"text_left": "a small ,", "text_right": "makes for a private , comfortable space to study alone or meet up with friends .", "target_phrase": "outdoor eating area", "polarity": "1"}
+{"text_left": "and all the", "text_right": "are cute too , which is always nice .", "target_phrase": "[female] servers", "polarity": "1"}
+{"text_left": "the best", "text_right": ", a chocolate and peanut butter tart , is n't particularly hawaiian , but it 's a small world when it comes to sweets .", "target_phrase": "dessert", "polarity": "1"}
+{"text_left": "the best dessert , a", "text_right": ", is n't particularly hawaiian , but it 's a small world when it comes to sweets .", "target_phrase": "chocolate and peanut butter tart", "polarity": "1"}
+{"text_left": "the best dessert , a chocolate and peanut butter tart , is n't particularly hawaiian , but it 's a small world when it comes to", "text_right": ".", "target_phrase": "sweets", "polarity": "0"}
+{"text_left": "for an", "text_right": ", their calamari is a winner .", "target_phrase": "appetizer", "polarity": "0"}
+{"text_left": "for an appetizer , their", "text_right": "is a winner .", "target_phrase": "calamari", "polarity": "1"}
+{"text_left": "satay is one of those favorite haunts on washington where the", "text_right": "and food is always on the money .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "satay is one of those favorite haunts on washington where the service and", "text_right": "is always on the money .", "target_phrase": "food", "polarity": "1"}
+{"text_left": "after", "text_right": "i heard music playing and discovered that there is a lounge downstairs .", "target_phrase": "dinner", "polarity": "0"}
+{"text_left": "after dinner i heard", "text_right": "playing and discovered that there is a lounge downstairs .", "target_phrase": "music", "polarity": "0"}
+{"text_left": "after dinner i heard music playing and discovered that there is a", "text_right": "downstairs .", "target_phrase": "lounge", "polarity": "0"}
+{"text_left": "the", "text_right": "is a gorgeous , bi-level space and the long bar perfect for a drink .", "target_phrase": "room", "polarity": "1"}
+{"text_left": "the room is a gorgeous ,", "text_right": "and the long bar perfect for a drink .", "target_phrase": "bi-level space", "polarity": "1"}
+{"text_left": "the room is a gorgeous , bi-level space and the", "text_right": "perfect for a drink .", "target_phrase": "long bar", "polarity": "1"}
+{"text_left": "the room is a gorgeous , bi-level space and the long bar perfect for a", "text_right": ".", "target_phrase": "drink", "polarity": "0"}
+{"text_left": "two complaints - their", "text_right": "stinks , it would be nice to get some mozzarella sticks on the menu .", "target_phrase": "appetizer selection", "polarity": "-1"}
+{"text_left": "two complaints - their appetizer selection stinks , it would be nice to get some", "text_right": "on the menu .", "target_phrase": "mozzarella sticks", "polarity": "0"}
+{"text_left": "two complaints - their appetizer selection stinks , it would be nice to get some mozzarella sticks on the", "text_right": ".", "target_phrase": "menu", "polarity": "-1"}
+{"text_left": "i was especially impressed during the bday party when the", "text_right": "went above and beyond in helping me decorate and bring out a bday cake as well as offering prompt and friendly service to a 15 person party .", "target_phrase": "waitstaff", "polarity": "1"}
+{"text_left": "i was especially impressed during the bday party when the waitstaff went above and beyond in helping me decorate and bring out a bday cake as well as offering prompt and friendly", "text_right": "to a 15 person party .", "target_phrase": "service", "polarity": "1"}
+{"text_left": "the", "text_right": "were nondescript combinations with fresh leaf salad .", "target_phrase": "chicken and falafel platters", "polarity": "0"}
+{"text_left": "the chicken and falafel platters were nondescript combinations with", "text_right": ".", "target_phrase": "fresh leaf salad", "polarity": "0"}
+{"text_left": "the", "text_right": "takes you to that place , the place many dream of .", "target_phrase": "atmosphere", "polarity": "1"}
+{"text_left": "several times and put up with the", "text_right": "' bad manners , knowing that their job is n't easy .", "target_phrase": "waiters", "polarity": "-1"}
+{"text_left": "the service is great -lrb- maybe even borderline nagging but at least you get attention -rrb- , the", "text_right": "are excellent and the coffee is so very good ...", "target_phrase": "desserts", "polarity": "1"}
+{"text_left": "the service is great -lrb- maybe even borderline nagging but at least you get attention -rrb- , the desserts are excellent and the", "text_right": "is so very good ...", "target_phrase": "coffee", "polarity": "1"}
+{"text_left": "they are", "text_right": "on focacchia bread and are to die for .", "target_phrase": "served", "polarity": "0"}
+{"text_left": "they are served on", "text_right": "and are to die for .", "target_phrase": "focacchia bread", "polarity": "0"}
+{"text_left": "while the", "text_right": "are a little big for me , the fresh juices are the best i have ever had !", "target_phrase": "smoothies", "polarity": "-1"}
+{"text_left": "while the smoothies are a little big for me , the", "text_right": "are the best i have ever had !", "target_phrase": "fresh juices", "polarity": "1"}
+{"text_left": "the food is just okay , and it 's almost not worth going unless you 're getting the", "text_right": ", which is the only dish that 's really good .", "target_phrase": "pialla", "polarity": "1"}
+{"text_left": "the food is just okay , and it 's almost not worth going unless you 're getting the pialla , which is the only", "text_right": "that 's really good .", "target_phrase": "dish", "polarity": "1"}
+{"text_left": "the guac is fresh , yet lacking flavor , we like to add our", "text_right": "into it .", "target_phrase": "fresh salsa", "polarity": "0"}
+{"text_left": "the guac is fresh , yet lacking", "text_right": ", we like to add our fresh salsa into it .", "target_phrase": "flavor", "polarity": "-1"}
+{"text_left": "the new menu has a few creative items , they were smart enough to keep some of the old favorites -lrb- but they raised the", "text_right": "-rrb- , the staff is friendly most of the time , but i must agree with the person that wrote about their favorite words : no , ca n't , sorry ... , boy , they wo n't bend the rules for anyone .", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "the", "text_right": "has a few creative items , they were smart enough to keep some of the old favorites -lrb- but they raised the prices -rrb- , the staff is friendly most of the time , but i must agree with the person that wrote about their favorite words : no , ca n't , sorry ... , boy , they wo n't bend the rules for anyone .", "target_phrase": "new menu", "polarity": "1"}
+{"text_left": "it ' only open for", "text_right": "but the food is so good !", "target_phrase": "lunch", "polarity": "0"}
+{"text_left": "it ' only open for lunch but the", "text_right": "is so good !", "target_phrase": "food", "polarity": "1"}
+{"text_left": "if you like", "text_right": "and/or greek food you will love this place though it is not limited to just these things .", "target_phrase": "seafood", "polarity": "1"}
+{"text_left": "if you like seafood and/or", "text_right": "you will love this place though it is not limited to just these things .", "target_phrase": "greek food", "polarity": "1"}
+{"text_left": "'' the", "text_right": "includes pub fare -- burgers , steaks and shepherds pie -- and even a portabella lasagna for those black sheep known as `` vegetarians .", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "'' the menu includes pub fare --", "text_right": ", steaks and shepherds pie -- and even a portabella lasagna for those black sheep known as `` vegetarians .", "target_phrase": "burgers", "polarity": "0"}
+{"text_left": "'' the menu includes pub fare -- burgers ,", "text_right": "and shepherds pie -- and even a portabella lasagna for those black sheep known as `` vegetarians .", "target_phrase": "steaks", "polarity": "0"}
+{"text_left": "'' the menu includes pub fare -- burgers , steaks and", "text_right": "-- and even a portabella lasagna for those black sheep known as `` vegetarians .", "target_phrase": "shepherds pie", "polarity": "0"}
+{"text_left": "'' the menu includes pub fare -- burgers , steaks and shepherds pie -- and even a", "text_right": "for those black sheep known as `` vegetarians .", "target_phrase": "portabella lasagna", "polarity": "0"}
+{"text_left": "'' the menu includes", "text_right": "-- burgers , steaks and shepherds pie -- and even a portabella lasagna for those black sheep known as `` vegetarians .", "target_phrase": "pub fare", "polarity": "0"}
+{"text_left": "how can they survive serving mediocre", "text_right": "at exorbitant prices ?!", "target_phrase": "food", "polarity": "0"}
+{"text_left": "how can they survive serving mediocre food at exorbitant", "text_right": "?!", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "the food was mediocre and the", "text_right": "was severely slow .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "the", "text_right": "was mediocre and the service was severely slow .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "i have eaten here on a different occasion - the", "text_right": "is mediocre for the prices .", "target_phrase": "food", "polarity": "0"}
+{"text_left": "i have eaten here on a different occasion - the food is mediocre for the", "text_right": ".", "target_phrase": "prices", "polarity": "-1"}
+{"text_left": "i 'm looking forward to going back soon and eventually trying most everything on the", "text_right": "!", "target_phrase": "menu", "polarity": "1"}
+{"text_left": "i just had my first visit to this place and ca n't wait to go back and slowly work my way through the", "text_right": ".", "target_phrase": "menu", "polarity": "0"}
+{"text_left": "i asked repeatedly what the status of the meal was and was pretty much grunted at by the unbelievably rude", "text_right": ".", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "i asked repeatedly what the status of the", "text_right": "was and was pretty much grunted at by the unbelievably rude waiter .", "target_phrase": "meal", "polarity": "0"}
+{"text_left": "i stopped by for some", "text_right": "today and had the vegan cranberry pancakes and some rice milk .", "target_phrase": "brunch", "polarity": "0"}
+{"text_left": "i stopped by for some brunch today and had the", "text_right": "and some rice milk .", "target_phrase": "vegan cranberry pancakes", "polarity": "0"}
+{"text_left": "i stopped by for some brunch today and had the vegan cranberry pancakes and some", "text_right": ".", "target_phrase": "rice milk", "polarity": "0"}
+{"text_left": "sweet irish", "text_right": "is always happy and able to bring a smile to my friends a my face .", "target_phrase": "bartender", "polarity": "1"}
+{"text_left": "its good to go there for drinks if you do n't want to get drunk because you 'll be lucky if you can get one drink an hour the", "text_right": "is so bad .", "target_phrase": "service", "polarity": "-1"}
+{"text_left": "its good to go there for drinks if you do n't want to get drunk because you 'll be lucky if you can get one", "text_right": "an hour the service is so bad .", "target_phrase": "drink", "polarity": "0"}
+{"text_left": "its good to go there for", "text_right": "if you do n't want to get drunk because you 'll be lucky if you can get one drink an hour the service is so bad .", "target_phrase": "drinks", "polarity": "0"}
+{"text_left": "anyway , the", "text_right": "was fake .", "target_phrase": "owner", "polarity": "-1"}
+{"text_left": "", "text_right": "is pleasant and entertaining .", "target_phrase": "owner", "polarity": "1"}
+{"text_left": "i have never in my life sent back", "text_right": "before , but i simply had to , and the waiter argued with me over this .", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "i have never in my life sent back food before , but i simply had to , and the", "text_right": "argued with me over this .", "target_phrase": "waiter", "polarity": "-1"}
+{"text_left": "although the restaurant itself is nice , i prefer not to go for the", "text_right": ".", "target_phrase": "food", "polarity": "-1"}
+{"text_left": "", "text_right": "-- taramasalata , eggplant salad , and greek yogurt -lrb- with cuccumber , dill , and garlic -rrb- taste excellent when on warm pitas .", "target_phrase": "creamy appetizers", "polarity": "1"}
+{"text_left": "creamy appetizers -- taramasalata , eggplant salad , and greek yogurt -lrb- with cuccumber , dill , and garlic -rrb- taste excellent when on", "text_right": ".", "target_phrase": "warm pitas", "polarity": "0"}
+{"text_left": "creamy appetizers --", "text_right": ", eggplant salad , and greek yogurt -lrb- with cuccumber , dill , and garlic -rrb- taste excellent when on warm pitas .", "target_phrase": "taramasalata", "polarity": "1"}
+{"text_left": "creamy appetizers -- taramasalata ,", "text_right": ", and greek yogurt -lrb- with cuccumber , dill , and garlic -rrb- taste excellent when on warm pitas .", "target_phrase": "eggplant salad", "polarity": "1"}
+{"text_left": "creamy appetizers -- taramasalata , eggplant salad , and", "text_right": "taste excellent when on warm pitas .", "target_phrase": "greek yogurt (with cuccumber, dill, and garlic)", "polarity": "1"}
