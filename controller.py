@@ -262,9 +262,6 @@ class SetupController:
                     results.sync()
                 pbar.update(1)
 
-                if i >= 2:
-                    break
-
         processed_results = dict(results)
         results.close()
 
