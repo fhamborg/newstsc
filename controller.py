@@ -19,9 +19,11 @@ b) return model from best epoch (or from best fold???!?)
 3) return model that performs best on testdat
 """
 import argparse
+import multiprocessing
 import os
 import shelve
 import subprocess
+import time
 from collections import Counter
 from datetime import datetime
 from itertools import product
@@ -33,6 +35,47 @@ from tqdm import tqdm
 from DatasetPreparer import DatasetPreparer
 from combinations_absadata_0 import combinations_absadata_0
 from fxlogger import get_logger
+
+completed_tasks = []
+
+
+def start_worker(experiment_id, named_combination, cmd, human_cmd, experiment_path):
+    logger = get_logger()
+
+    logger.debug("starting single setup: {}".format(human_cmd))
+    with open(os.path.join(experiment_path, 'stdlog.out'), "w") as file_stdout, open(
+            os.path.join(experiment_path, 'stdlog.err'), "w") as file_stderr:
+        completed_process = subprocess.run(cmd, stdout=file_stdout, stderr=file_stderr)
+
+    experiment_details = get_experiment_result_detailed(experiment_path)
+
+    return {**named_combination,
+            **{'rc': completed_process.returncode, 'experiment_id': experiment_id},
+            'details': experiment_details}
+
+
+def on_task_done(x):
+    # result_list is modified only by the main process, not the pool workers.
+    completed_tasks.append(x)
+
+
+def on_task_error(x):
+    # result_list is modified only by the main process, not the pool workers.
+    print(x)
+    completed_tasks.append(x)
+
+
+def get_experiment_result_detailed(experiment_path):
+    experiment_results_path = os.path.join(experiment_path, 'experiment_results.jsonl')
+    try:
+        with jsonlines.open(experiment_results_path, 'r') as reader:
+            lines = []
+            for line in reader:
+                lines.append(line)
+            assert len(lines) == 1
+        return lines[0]
+    except FileNotFoundError:
+        return None
 
 
 class SetupController:
@@ -204,8 +247,7 @@ class SetupController:
     def _experiment_named_id_from_named_combination(self, named_combination):
         return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
-    def execute_single_setup(self, named_combination, experiment_number):
-        experiment_id = experiment_number
+    def prepare_single_setup(self, named_combination, experiment_id):
         experiment_path = "{}/{}/".format(self.experiment_base_id, experiment_id)
         experiment_path = os.path.join(self.experiment_base_path, experiment_path)
 
@@ -224,48 +266,55 @@ class SetupController:
         with open(os.path.join(experiment_path, 'experiment_cmd.sh'), 'w') as writer:
             writer.write(human_cmd)
 
-        self.logger.debug("starting single setup: {}".format(human_cmd))
-        with open(os.path.join(experiment_path, 'stdlog.out'), "w") as file_stdout, open(
-                os.path.join(experiment_path, 'stdlog.err'), "w") as file_stderr:
-            completed_process = subprocess.run(cmd, stdout=file_stdout, stderr=file_stderr)
-
-        experiment_details = self.get_experiment_result_detailed(experiment_path)
-
-        return {**named_combination,
-                **{'rc': completed_process.returncode, 'experiment_id': experiment_id},
-                'details': experiment_details}
-
-    def get_experiment_result_detailed(self, experiment_path):
-        experiment_results_path = os.path.join(experiment_path, 'experiment_results.jsonl')
-        try:
-            with jsonlines.open(experiment_results_path, 'r') as reader:
-                lines = []
-                for line in reader:
-                    lines.append(line)
-                assert len(lines) == 1
-            return lines[0]
-        except FileNotFoundError:
-            return None
+        return cmd, human_cmd, experiment_path
 
     def run(self):
         results_path = "results_{}".format(self.datasetname)
         if not self.opt.continue_run:
+            self.logger.info("not continuing ")
             os.remove(results_path)
 
         results = shelve.open(results_path)
         self.logger.info("found {} previous results, continuing".format(len(results)))
 
+        self.logger.info("preparing experiment setups...")
+        experiment_numbers_tasks = []
+        with tqdm(total=self.combination_count) as pbar:
+            for i, named_combination in enumerate(self.named_combinations):
+                cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
+                experiment_numbers_tasks.append((i, named_combination, cmd, human_cmd, experiment_path))
+                pbar.update(1)
+            experiment_numbers_tasks = tuple(experiment_numbers_tasks)
+
         self.logger.info("starting {} experiments".format(self.combination_count))
+        self.logger.info("creating process pool with {} workers".format(self.opt.num_workers))
+
+        pool = multiprocessing.Pool(processes=self.opt.num_workers)
+        pool.starmap_async(start_worker, experiment_numbers_tasks, callback=on_task_done, error_callback=on_task_error)
+        # pool.close()
+        # pool.join()
+
+        self.logger.info("waiting for workers to complete all jobs...")
+        prev_count_done = 0
+        with tqdm(total=self.combination_count) as pbar:
+            while True:
+                time.sleep(1)
+                if len(completed_tasks) >= len(experiment_numbers_tasks):
+                    self.logger.info("finished all tasks")
+                    break
+
+                pbar.update(len(completed_tasks) - prev_count_done)
+                prev_count_done = len(completed_tasks)
 
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
-                experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
-                if experiment_named_id in results:
-                    self.logger.info("skipping experiment: {}".format(experiment_named_id))
-                    self.logger.info("previous result: {}".format(results[experiment_named_id]))
+                _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
+                if _experiment_named_id in results:
+                    self.logger.info("skipping experiment: {}".format(_experiment_named_id))
+                    self.logger.info("previous result: {}".format(results[_experiment_named_id]))
                 else:
                     result = self.execute_single_setup(named_combination, i)
-                    results[experiment_named_id] = result
+                    results[_experiment_named_id] = result
                     results.sync()
                 pbar.update(1)
 
@@ -314,6 +363,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', default=None, type=str)
     parser.add_argument('--experiments_path', default='./experiments', type=str)
     parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
+    parser.add_argument('--num_workers', type=int, default=1)
     opt = parser.parse_args()
 
     SetupController(opt).run()
