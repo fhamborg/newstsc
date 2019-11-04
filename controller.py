@@ -73,7 +73,7 @@ class SetupController:
 
         assert len(args_names_ordered) == len(combinations.keys())
 
-        self.experiment_base_id = datetime.today().strftime('%Y%m%d-%H%M%S')
+        self.experiment_base_id = self.opt.dataset + '_' + datetime.today().strftime('%Y%m%d-%H%M%S')
         self.basecmd = ['python', 'train.py']
         self.basepath = 'controller_data'
         self.basepath_data = os.path.join(self.basepath, 'datasets')
@@ -205,7 +205,6 @@ class SetupController:
         return "__".join(["{}={}".format(k, v) for (k, v) in named_combination.items()])
 
     def execute_single_setup(self, named_combination, experiment_number):
-        # experiment_id = self._experiment_id_from_named_combination(named_combination)
         experiment_id = experiment_number
         experiment_path = "{}/{}/".format(self.experiment_base_id, experiment_id)
         experiment_path = os.path.join(self.experiment_base_path, experiment_path)
@@ -238,13 +237,15 @@ class SetupController:
 
     def get_experiment_result_detailed(self, experiment_path):
         experiment_results_path = os.path.join(experiment_path, 'experiment_results.jsonl')
-        with jsonlines.open(experiment_results_path, 'r') as reader:
-            lines = []
-            for line in reader:
-                lines.append(line)
-            assert len(lines) == 1
-
-        return lines[0]
+        try:
+            with jsonlines.open(experiment_results_path, 'r') as reader:
+                lines = []
+                for line in reader:
+                    lines.append(line)
+                assert len(lines) == 1
+            return lines[0]
+        except FileNotFoundError:
+            return None
 
     def run(self):
         results_path = "results_{}".format(self.datasetname)
@@ -282,8 +283,11 @@ class SetupController:
         # snem-based performance sort
         sorted_results = list(dict(processed_results).values())
         for result in sorted_results:
-            result['dev_snem'] = result['details']['dev_stats'][self.snem]
-            del result['details']
+            if result['details']:
+                result['dev_snem'] = result['details']['dev_stats'][self.snem]
+                del result['details']
+            else:
+                result['dev_snem'] = -1.0
         sorted_results.sort(key=lambda x: x['dev_snem'], reverse=True)
         headers = list(sorted_results[0].keys())
         rows = [x.values() for x in sorted_results]
@@ -308,7 +312,7 @@ def str2bool(v):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default=None, type=str)
-    parser.add_argument('--experiments_path', default='.', type=str)
+    parser.add_argument('--experiments_path', default='./experiments', type=str)
     parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
     opt = parser.parse_args()
 
