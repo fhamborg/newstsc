@@ -42,6 +42,7 @@ class SetupController:
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
         self.snem = 'recall_avg'
+        self.experiment_base_path = self.opt.experiments_path
 
         args_names_ordered = ['model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
                               'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
@@ -206,7 +207,8 @@ class SetupController:
     def execute_single_setup(self, named_combination, experiment_number):
         # experiment_id = self._experiment_id_from_named_combination(named_combination)
         experiment_id = experiment_number
-        experiment_path = "./experiments/{}/{}/".format(self.experiment_base_id, experiment_id)
+        experiment_path = "{}/{}/".format(self.experiment_base_id, experiment_id)
+        experiment_path = os.path.join(self.experiment_base_path, experiment_path)
 
         self._prepare_experiment_env(experiment_path)
 
@@ -218,8 +220,12 @@ class SetupController:
         self._add_arg(args, 'absa_task_format', self.absa_task_format)
 
         cmd = self.basecmd + args
+        human_cmd = " ".join(cmd)
 
-        self.logger.debug("starting single setup: {}".format(" ".join(cmd)))
+        with open(os.path.join(experiment_path, 'experiment_cmd.sh'), 'w') as writer:
+            writer.write(human_cmd)
+
+        self.logger.debug("starting single setup: {}".format(human_cmd))
         with open(os.path.join(experiment_path, 'stdlog.out'), "w") as file_stdout, open(
                 os.path.join(experiment_path, 'stdlog.err'), "w") as file_stderr:
             completed_process = subprocess.run(cmd, stdout=file_stdout, stderr=file_stderr)
@@ -302,6 +308,7 @@ def str2bool(v):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default=None, type=str)
+    parser.add_argument('--experiments_path', default='.', type=str)
     parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
     opt = parser.parse_args()
 
