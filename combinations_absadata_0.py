@@ -11,7 +11,7 @@ combinations_absadata_0 = {
     'learning_rate': ['2e-5', '3e-5', '5e-5'],
     'batch_size': ['16', '32'],
     'lossweighting': ['True', 'False'],
-    'devmode': ['True'],
+    'devmode': ['False'],
     'num_epoch': ['3', '4'],
     'lsr': ['True', 'False'],
     'use_tp_placeholders': ['False'],
