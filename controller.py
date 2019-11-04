@@ -36,10 +36,10 @@ from DatasetPreparer import DatasetPreparer
 from combinations_absadata_0 import combinations_absadata_0
 from fxlogger import get_logger
 
-completed_tasks = []
+completed_tasks = None  # will be shelve (dict) later
 
 
-def start_worker(experiment_id, named_combination, cmd, human_cmd, experiment_path):
+def start_worker(experiment_id, experiment_named_id, named_combination, cmd, human_cmd, experiment_path):
     logger = get_logger()
 
     logger.debug("starting single setup: {}".format(human_cmd))
@@ -51,18 +51,20 @@ def start_worker(experiment_id, named_combination, cmd, human_cmd, experiment_pa
 
     return {**named_combination,
             **{'rc': completed_process.returncode, 'experiment_id': experiment_id},
-            'details': experiment_details}
+            'details': experiment_details, 'experiment_named_id': experiment_named_id}
 
 
 def on_task_done(x):
     # result_list is modified only by the main process, not the pool workers.
-    completed_tasks.append(x)
+    completed_tasks[x['experiment_named_id']] = x
+    completed_tasks.sync()
 
 
 def on_task_error(x):
     # result_list is modified only by the main process, not the pool workers.
     print(x)
-    completed_tasks.append(x)
+    completed_tasks[x['experiment_named_id']] = x
+    completed_tasks.sync()
 
 
 def get_experiment_result_detailed(experiment_path):
@@ -269,30 +271,38 @@ class SetupController:
         return cmd, human_cmd, experiment_path
 
     def run(self):
+        global completed_tasks
+
         results_path = "results_{}".format(self.datasetname)
         if not self.opt.continue_run:
             self.logger.info("not continuing ")
             os.remove(results_path)
 
-        results = shelve.open(results_path)
-        self.logger.info("found {} previous results, continuing".format(len(results)))
+        completed_tasks = shelve.open(results_path)
+        self.logger.info("found {} previous results, continuing".format(len(completed_tasks)))
 
         self.logger.info("preparing experiment setups...")
-        experiment_numbers_tasks = []
+        experiment_descs = []
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
-                cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
-                experiment_numbers_tasks.append((i, named_combination, cmd, human_cmd, experiment_path))
+                _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
+                if _experiment_named_id in completed_tasks:
+                    self.logger.info("skipping experiment: {}".format(_experiment_named_id))
+                    self.logger.debug("previous result: {}".format(completed_tasks[_experiment_named_id]))
+                else:
+                    cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
+                    experiment_descs.append((i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                             experiment_path))
                 pbar.update(1)
-            experiment_numbers_tasks = tuple(experiment_numbers_tasks)
+
+            experiment_numbers_tasks = tuple(experiment_descs)
 
         self.logger.info("starting {} experiments".format(self.combination_count))
         self.logger.info("creating process pool with {} workers".format(self.opt.num_workers))
 
         pool = multiprocessing.Pool(processes=self.opt.num_workers)
-        pool.starmap_async(start_worker, experiment_numbers_tasks, callback=on_task_done, error_callback=on_task_error)
-        # pool.close()
-        # pool.join()
+        for desc in experiment_descs:
+            pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
 
         self.logger.info("waiting for workers to complete all jobs...")
         prev_count_done = 0
@@ -306,20 +316,8 @@ class SetupController:
                 pbar.update(len(completed_tasks) - prev_count_done)
                 prev_count_done = len(completed_tasks)
 
-        with tqdm(total=self.combination_count) as pbar:
-            for i, named_combination in enumerate(self.named_combinations):
-                _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
-                if _experiment_named_id in results:
-                    self.logger.info("skipping experiment: {}".format(_experiment_named_id))
-                    self.logger.info("previous result: {}".format(results[_experiment_named_id]))
-                else:
-                    result = self.execute_single_setup(named_combination, i)
-                    results[_experiment_named_id] = result
-                    results.sync()
-                pbar.update(1)
-
-        processed_results = dict(results)
-        results.close()
+        processed_results = dict(completed_tasks)
+        completed_tasks.close()
 
         experiments_rc_overview = Counter()
         for experiment_named_id, experiment_result in processed_results.items():
