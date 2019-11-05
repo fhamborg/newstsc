@@ -275,27 +275,46 @@ class SetupController:
 
         results_path = "results_{}".format(self.datasetname)
         if not self.opt.continue_run:
-            self.logger.info("not continuing ")
+            self.logger.info("not continuing")
             os.remove(results_path)
+        else:
+            self.logger.info("continuing previous run(s)")
 
         completed_tasks = shelve.open(results_path)
-        self.logger.info("found {} previous results, continuing".format(len(completed_tasks)))
+        self.logger.info("found {} previous results".format(len(completed_tasks)))
 
         self.logger.info("preparing experiment setups...")
         experiment_descs = []
+        previous_tasks = Counter()
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
                 _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
                 if _experiment_named_id in completed_tasks:
-                    self.logger.info("skipping experiment: {}".format(_experiment_named_id))
-                    self.logger.debug("previous result: {}".format(completed_tasks[_experiment_named_id]))
+                    task_desc = completed_tasks[_experiment_named_id]
+
+                    if self.opt.rerun_non_rc0 and task_desc['rc'] != 0:
+                        self.logger.debug(
+                            "task {} was already executed, but with rc={}. rerunning.".format(_experiment_named_id,
+                                                                                              task_desc['rc']))
+                        cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
+                        experiment_descs.append((i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                                 experiment_path))
+                        previous_tasks['rcnon0'] += 1
+                        del completed_tasks[_experiment_named_id]
+                    else:
+                        # rerun tasks where the rc != 0 (always rerun tasks that have not been executed at all, yet)
+                        self.logger.debug("skipping experiment: {}".format(_experiment_named_id))
+                        self.logger.debug("previous result: {}".format(completed_tasks[_experiment_named_id]))
+                        previous_tasks['rc0'] += 1
                 else:
                     cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
                     experiment_descs.append((i, _experiment_named_id, named_combination, cmd, human_cmd,
                                              experiment_path))
+                    previous_tasks['new'] += 1
                 pbar.update(1)
 
-            experiment_numbers_tasks = tuple(experiment_descs)
+        self.logger.info("summary (rc0 is increased also for non-0 tasks, if rerun_non_rc0 is not set)")
+        self.logger.info("{}".format(previous_tasks))
 
         self.logger.info("starting {} experiments".format(self.combination_count))
         self.logger.info("creating process pool with {} workers".format(self.opt.num_workers))
@@ -305,11 +324,11 @@ class SetupController:
             pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
 
         self.logger.info("waiting for workers to complete all jobs...")
-        prev_count_done = 0
-        with tqdm(total=self.combination_count) as pbar:
+        prev_count_done = len(completed_tasks)
+        with tqdm(total=self.combination_count, initial=prev_count_done) as pbar:
             while True:
                 time.sleep(1)
-                if len(completed_tasks) >= len(experiment_numbers_tasks):
+                if len(completed_tasks) >= self.combination_count:
                     self.logger.info("finished all tasks")
                     break
 
@@ -361,6 +380,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', default=None, type=str)
     parser.add_argument('--experiments_path', default='./experiments', type=str)
     parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
+    parser.add_argument("--rerun_non_rc0", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--num_workers', type=int, default=1)
     opt = parser.parse_args()
 
