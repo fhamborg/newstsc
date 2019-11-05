@@ -10,7 +10,7 @@ conda activate cope-tsa
 conda install --yes pandas tqdm scikit-learn
 conda install --yes pytorch torchvision cudatoolkit=9.2 -c pytorch # w/o cuda: conda install --yes pytorch torchvision -c pytorch
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate
-conda install --yes -c anaconda requests gensim
+conda install --yes -c anaconda requests gensim openpyxl
 conda install --yes  -c conda-forge transformers
 ```
 
