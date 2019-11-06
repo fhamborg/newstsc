@@ -132,7 +132,7 @@ class Instructor:
 
     def _reset_params(self):
         for child in self.model.children():
-            if not issubclass(child.__class__, PreTrainedModel): # if type(child) != BertModel:  # skip bert params
+            if not issubclass(child.__class__, PreTrainedModel):  # if type(child) != BertModel:  # skip bert params
                 for p in child.parameters():
                     if p.requires_grad:
                         if len(p.shape) > 1:
@@ -545,14 +545,16 @@ def main():
     }
 
     if opt.spc_input_order == 'target_text':
-        input_columns_spc_bert = ['special_target_text', 'bert_segments_ids_target_text']
+        input_columns_spc = ['special_target_text', 'segments_ids_target_text']
     else:
-        input_columns_spc_bert = ['special_text_target', 'bert_segments_ids_text_target']
+        input_columns_spc = ['special_text_target', 'segments_ids_text_target']
 
     input_columns = {
         'ram': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
         # SPC
-        'spc_bert': input_columns_spc_bert,
+        'spc_bert': input_columns_spc,
+        'spc_distilbert': input_columns_spc,
+        'spc_roberta': input_columns_spc,
         # AEN
         'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],

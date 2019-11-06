@@ -54,18 +54,22 @@ class FXTokenizer(ABC):
         target_phrase_in_text = torch.tensor(
             [left_context_len.item(), (left_context_len + target_phrase_len - 1).item()])
 
+        special_text = self.text_to_sequence(
+            self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
+        special_text_len = np.sum(special_text != 0)
+        special_target = self.text_to_sequence(
+            self.with_special_tokens(target_phrase))
+        special_target_len = np.sum(special_target != 0)
         special_text_target = self.text_to_sequence(
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right, target_phrase))
         special_target_text = self.text_to_sequence(
             self.with_special_tokens(target_phrase, text_left + " " + target_phrase + " " + text_right))
 
-        bert_segments_ids_text_target = np.asarray([0] * (np.sum(text_raw_indices != 0) + 2) + [1] * (
-                target_phrase_len + 1))
-        bert_segments_ids_text_target = self.pad_and_truncate(bert_segments_ids_text_target, self.max_seq_len)
+        segments_ids_text_target = np.asarray([0] * special_text_len + [1] * special_target_len)
+        segments_ids_text_target = self.pad_and_truncate(segments_ids_text_target, self.max_seq_len)
 
-        bert_segments_ids_target_text = np.asarray(
-            [0] * (target_phrase_len + 1) + [1] * (np.sum(text_raw_indices != 0) + 2))
-        bert_segments_ids_target_text = self.pad_and_truncate(bert_segments_ids_target_text, self.max_seq_len)
+        segments_ids_target_text = np.asarray([0] * special_target_len + [1] * special_text_len)
+        segments_ids_target_text = self.pad_and_truncate(segments_ids_target_text, self.max_seq_len)
 
         text_raw_with_special_indices = self.text_to_sequence(
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
@@ -74,8 +78,8 @@ class FXTokenizer(ABC):
         indexes = {
             'special_text_target': special_text_target,
             'special_target_text': special_target_text,
-            'bert_segments_ids_text_target': bert_segments_ids_text_target,
-            'bert_segments_ids_target_text': bert_segments_ids_target_text,
+            'segments_ids_text_target': segments_ids_text_target,
+            'segments_ids_target_text': segments_ids_target_text,
             'text_raw_with_special_indices': text_raw_with_special_indices,
             'target_phrase_with_special_indexes': target_phrase_with_special_indexes,
             'text_raw_indices': text_raw_indices,
