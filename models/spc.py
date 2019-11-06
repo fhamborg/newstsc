@@ -17,12 +17,12 @@ class SPC_Base(nn.Module):
 
     def apply_lm(self, inputs):
         if self.name == 'spc_bert':
-            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1],
-                                                                         token_type_ids=inputs[2])
+            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0], #attention_mask=inputs[1],
+                                                                         token_type_ids=inputs[1])
         elif self.name == 'spc_roberta':
-            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1])
+            last_hidden, pooler_output, all_hidden = self.language_model(input_ids=inputs[0])#            # attention_mask=inputs[1])
         elif self.name == 'spc_distilbert':
-            last_hidden, all_hidden = self.language_model(input_ids=inputs[0], attention_mask=inputs[1])
+            last_hidden, all_hidden = self.language_model(input_ids=inputs[0])# attention_mask=inputs[1])
             pooler_output = None
         else:
             raise Exception("unknown model name: {}", format(self.name))

@@ -5,6 +5,7 @@
 # original author: songyouwei <youwei0314@gmail.com>
 
 import argparse
+import math
 import os
 import random
 import time
@@ -14,7 +15,7 @@ import torch
 import torch.nn as nn
 from jsonlines import jsonlines
 from torch.utils.data import DataLoader, random_split, ConcatDataset
-from transformers import BertModel, DistilBertModel, RobertaModel
+from transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
 
 from crossentropylosslsr import CrossEntropyLoss_LSR
 from dataset import FXDataset
@@ -52,28 +53,24 @@ class Instructor:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
                                          self.polarity_associations, self.sorted_expected_label_names,
-                                         self.opt.input_getter, self.opt.use_tp_placeholders, self.opt.absa_task_format,
+                                         self.opt.use_tp_placeholders, self.opt.absa_task_format,
                                          self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.sorted_expected_label_names, self.opt.input_getter,
-                                     self.opt.use_tp_placeholders, self.opt.absa_task_format,
-                                     self.opt.devmode)
+                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
+                                     self.opt.absa_task_format, self.opt.devmode)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.sorted_expected_label_names, self.opt.input_getter,
-                                      self.opt.use_tp_placeholders, self.opt.absa_task_format,
-                                      self.opt.devmode)
+                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
+                                      self.opt.absa_task_format, self.opt.devmode)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.sorted_expected_label_names, self.opt.input_getter,
-                                    self.opt.use_tp_placeholders, self.opt.absa_task_format,
-                                    self.opt.devmode)
+                                    self.sorted_expected_label_names, self.opt.use_tp_placeholders,
+                                    self.opt.absa_task_format, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.sorted_expected_label_names, self.opt.input_getter,
-                                     self.opt.use_tp_placeholders, self.opt.absa_task_format,
-                                     self.opt.devmode)
+                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
+                                     self.opt.absa_task_format, self.opt.devmode)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -134,7 +131,15 @@ class Instructor:
             raise Exception("model_name unknown: {}".format(self.opt.model_name))
 
     def _reset_params(self):
-        self.create_model(only_model=True)
+        for child in self.model.children():
+            if not issubclass(child.__class__, PreTrainedModel): # if type(child) != BertModel:  # skip bert params
+                for p in child.parameters():
+                    if p.requires_grad:
+                        if len(p.shape) > 1:
+                            self.opt.initializer(p)
+                        else:
+                            stdv = 1. / math.sqrt(p.shape[0])
+                            torch.nn.init.uniform_(p, a=-stdv, b=stdv)
 
     def _create_prepare_model_path(self, snem, epoch, fold_number=None):
         selected_model_filename = '{0}_{1}_val_{2}_{3}_epoch{4}'.format(self.opt.model_name, self.opt.dataset_name,
@@ -171,15 +176,9 @@ class Instructor:
                 global_step += 1
                 # clear gradient accumulators
                 optimizer.zero_grad()
-                inputs = []
-                for _input_pair in sample_batched['inputs']:
-                    assert len(_input_pair) == 2
-                    _indexes = _input_pair[0]
-                    inputs.append(_indexes.to(self.opt.device))
-                    _attention_mask = _input_pair[1]
-                    inputs.append(_attention_mask.to(self.opt.device))
-
+                inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
                 targets = sample_batched['polarity'].to(self.opt.device)
+
                 outputs = self.model(inputs)
 
                 loss = criterion(outputs, targets)
@@ -259,15 +258,9 @@ class Instructor:
 
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
-                t_inputs = []
-                for t_input_pair in t_sample_batched['inputs']:
-                    assert len(t_input_pair) == 2
-                    _indexes = t_input_pair[0]
-                    t_inputs.append(_indexes.to(self.opt.device))
-                    _attention_mask = t_input_pair[1]
-                    t_inputs.append(_attention_mask.to(self.opt.device))
-
+                t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
+
                 t_outputs = self.model(t_inputs)
 
                 if t_labels_all is None:
@@ -298,7 +291,8 @@ class Instructor:
         return inv_freqs
 
     def run_crossval(self):
-        raise Exception("run_crossval needs to get updated as to saving its experiment results")
+        raise Exception("run_crossval needs to get updated as to saving its experiment results, and because the new "
+                        "reset_params does not - as before - load the model newly, but only resets params as in ABSA")
 
         # Loss and Optimizer
         if self.opt.lossweighting:
@@ -400,7 +394,6 @@ class Instructor:
         del sopts['optimizer']
         del sopts['initializer']
         del sopts['device']
-        del sopts['input_getter']
         del sopts['model_class']
         return sopts
 
@@ -551,27 +544,21 @@ def main():
         'aen_distilroberta': 'distilroberta-base',
     }
 
-    input_getter = None
-    if opt.model_name == 'spc_bert':
-        if opt.spc_input_order == 'target_text':
-            input_getter = lambda r: [r.special_target_text, r.bert_segments_ids_target_text]
-        elif opt.spc_input_order == 'text_target':
-            input_getter = lambda r: [r.special_text_target, r.bert_segments_ids_text_target]
-    elif opt.model_name in ['spc_distilbert', 'spc_roberta', 'spc_distilroberta']:
-        if opt.spc_input_order == 'target_text':
-            input_getter = lambda r: [r.special_target_text]
-        elif opt.spc_input_order == 'text_target':
-            input_getter = lambda r: [r.special_text_target]
-    elif opt.model_name == 'aen_glove':
-        input_getter = lambda r: [r.text_raw_indices, r.target_phrase_indexes]
-    elif opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_distilroberta']:
-        input_getter = lambda r: [r.text_raw_with_special_indices, r.target_phrase_with_special_indexes]
-    elif opt.model_name == 'ram':
-        input_getter = lambda r: [r.text_raw_indices, r.target_phrase_indices, r.text_left_indices]
+    if opt.spc_input_order == 'target_text':
+        input_columns_spc_bert = ['special_target_text', 'bert_segments_ids_target_text']
     else:
-        raise Exception("model_name unknown: {}".format(opt.model_name))
+        input_columns_spc_bert = ['special_text_target', 'bert_segments_ids_text_target']
 
-    opt.input_getter = input_getter
+    input_columns = {
+        'ram': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
+        # SPC
+        'spc_bert': input_columns_spc_bert,
+        # AEN
+        'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+    }
+    opt.input_columns = input_columns[opt.model_name]
 
     initializers = {
         'xavier_uniform_': torch.nn.init.xavier_uniform_,

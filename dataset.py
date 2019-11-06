@@ -11,7 +11,7 @@ logger = get_logger()
 
 
 class FXDataset(Dataset):
-    def __init__(self, filepath, tokenizer, named_polarity_to_class_number, sorted_expected_label_names, column_getter,
+    def __init__(self, filepath, tokenizer, named_polarity_to_class_number, sorted_expected_label_names,
                  use_tp_placeholders, absa_task_format=False, devmode=False):
         self.polarity_associations = named_polarity_to_class_number
         self.sorted_expected_label_names = sorted_expected_label_names
@@ -36,18 +36,10 @@ class FXDataset(Dataset):
         with tqdm(total=len(tasks)) as pbar:
             for task in tasks:
                 item, label = self.task_to_dataset_item(task)
-                example = self.get_relevant_data_from_dataset_item(item, column_getter)
                 self.label_counter[label] += 1
-                self.data.append(example)
+                self.data.append(item)
                 pbar.update(1)
         logger.info("label distribution: {}".format(self.label_counter))
-
-    def get_relevant_data_from_dataset_item(self, item, column_getter):
-        data = {}
-        data['inputs'] = column_getter(item)
-        data['polarity'] = item.polarity
-        data['example_id'] = item.example_id
-        return data
 
     def task_to_dataset_item(self, task):
         if not self.absa_task_format:
@@ -75,10 +67,10 @@ class FXDataset(Dataset):
                                                         self.use_target_phrase_placeholders)
 
         # add polarity
-        example.polarity = polarity
+        example['polarity'] = polarity
 
         # add reference information
-        example.example_id = example_id
+        example['example_id'] = example_id
 
         return example, label
 

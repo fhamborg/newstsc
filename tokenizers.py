@@ -71,23 +71,23 @@ class FXTokenizer(ABC):
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
         target_phrase_with_special_indexes = self.text_to_sequence(self.with_special_tokens(target_phrase))
 
-        r = ExampleRepresentation()
-        r.special_text_target = special_text_target  # formerly: text_with_special_indexes
-        r.special_target_text = special_target_text
-        r.bert_segments_ids_text_target = bert_segments_ids_text_target
-        r.bert_segments_ids_target_text = bert_segments_ids_target_text
-        r.text_raw_with_special_indices = text_raw_with_special_indices
-        r.target_phrase_with_special_indexes = target_phrase_with_special_indexes
-        r.text_raw_indices = text_raw_indices
-        r.text_raw_without_aspect_indices = text_raw_without_target_phrase_indices
-        r.text_left_indices = text_left_indices
-        r.text_left_with_aspect_indices = text_left_with_target_phrase_indices
-        r.text_right_indices = text_right_indices
-        r.text_right_with_aspect_indices = text_right_with_target_phrase_indices
-        r.target_phrase_indexes = target_phrase_indexes
-        r.target_phrase_in_text = target_phrase_in_text
-
-        return r
+        indexes = {
+            'special_text_target': special_text_target,
+            'special_target_text': special_target_text,
+            'bert_segments_ids_text_target': bert_segments_ids_text_target,
+            'bert_segments_ids_target_text': bert_segments_ids_target_text,
+            'text_raw_with_special_indices': text_raw_with_special_indices,
+            'target_phrase_with_special_indexes': target_phrase_with_special_indexes,
+            'text_raw_indices': text_raw_indices,
+            'text_raw_without_target_phrase_indices': text_raw_without_target_phrase_indices,
+            'text_left_indices': text_left_indices,
+            'text_left_with_target_phrase_indices': text_left_with_target_phrase_indices,
+            'text_right_indices': text_right_indices,
+            'text_right_with_target_phrase_indices': text_right_with_target_phrase_indices,
+            'target_phrase_indexes': target_phrase_indexes,
+            'target_phrase_in_text': target_phrase_in_text,
+        }
+        return indexes
 
     @abstractmethod
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
@@ -98,7 +98,7 @@ class FXTokenizer(ABC):
         pass
 
     def pad_and_truncate(self, sequence, maxlen, dtype='int64', padding='post', truncating='post', pad_value=0,
-                         count_truncated=False, masked_value=0, unmasked_value=1):
+                         count_truncated=False, masked_value=0, unmasked_value=1, get_attention_mask=False):
         x = (np.ones(maxlen) * pad_value).astype(dtype)
         attention_mask = (np.ones(maxlen) * unmasked_value).astype(dtype)
 
@@ -125,7 +125,10 @@ class FXTokenizer(ABC):
             x[-len_trunc:] = trunc
             attention_mask[:len(no_attention)] = no_attention
 
-        return x, attention_mask
+        if get_attention_mask:
+            return x, attention_mask
+        else:
+            return x
 
 
 class Tokenizer4Distilbert(FXTokenizer):
