@@ -6,6 +6,8 @@ combinations = {
         'spc_bert', 'spc_distilbert', 'spc_roberta',
         # AEN
         'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
+        # LCF
+        'lcf_bert',
     ],
     'optimizer': ['adam'],
     'initializer': ['xavier_uniform_'],
@@ -29,4 +31,6 @@ combinations = {
     # 'use_early_stopping': ['True'],  # due to condition below, will only be used if num_epoch==10
     'finetune_glove': ['True', 'False'],
     'eval_only_after_last_epoch': ['True'],
+    'local_context_focus': ['cdm', 'cdw'],  # ['cdw', 'cdm']
+    'SRD': ['3'],
 }

@@ -14,8 +14,8 @@ import numpy
 import torch
 import torch.nn as nn
 from jsonlines import jsonlines
+from pytorch_transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
 from torch.utils.data import DataLoader, random_split, ConcatDataset
-from transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
 
 from crossentropylosslsr import CrossEntropyLoss_LSR
 from dataset import FXDataset
@@ -24,6 +24,7 @@ from evaluator import Evaluator
 from fxlogger import get_logger
 from models import RAM
 from models.aen import AEN_Base
+from models.lcf import LCF_BERT
 from models.spc import SPC_Base
 from plotter_utils import create_save_plotted_confusion_matrix
 from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
@@ -95,9 +96,9 @@ class Instructor:
         logger.info("creating model {}".format(self.opt.model_name))
 
         if self.opt.model_name in ['aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_distilroberta', 'spc_distilbert',
-                                   'spc_bert', 'spc_roberta']:
+                                   'spc_bert', 'spc_roberta', 'lcf_bert']:
             if not only_model:
-                if self.opt.model_name in ['aen_bert', 'spc_bert']:
+                if self.opt.model_name in ['aen_bert', 'spc_bert', 'lcf_bert']:
                     self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
                 elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
                     self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
@@ -106,7 +107,7 @@ class Instructor:
                 elif self.opt.model_name in ['aen_distilroberta', 'spc_distiloberta']:
                     self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
 
-            if self.opt.model_name in ['aen_bert', 'spc_bert']:
+            if self.opt.model_name in ['aen_bert', 'spc_bert', 'lcf_bert']:
                 pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name, output_hidden_states=True)
             elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
                 pretrained_model = DistilBertModel.from_pretrained(self.opt.pretrained_model_name,
@@ -474,6 +475,9 @@ def main():
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
     parser.add_argument('--seed', default=1337, type=int, help='set seed for reproducibility')
+    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
+    parser.add_argument('--SRD', default=3, type=int, help='semantic-relative-distance, see the paper of LCF-BERT '
+                                                           'model')
     parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
     parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
                         help="devmode, default off, enable by using True")
@@ -498,6 +502,7 @@ def main():
                         help="if False, evaluate the best model that was seen during any training epoch. if True, "
                              "evaluate only the model that was trained through all num_epoch epochs.")
     parser.add_argument('--absa_task_format', type=str2bool, nargs='?', const=True, default=False)
+
     opt = parser.parse_args()
 
     if opt.eval_only_after_last_epoch:
@@ -528,12 +533,14 @@ def main():
         'spc_bert': SPC_Base,
         'spc_distilbert': SPC_Base,
         'spc_roberta': SPC_Base,
-
+        # LCF
+        'lcf_bert': LCF_BERT,
     }
     model_name_to_pretrained_model_name = {
         # bert
         'aen_bert': 'bert-base-uncased',
         'spc_bert': 'bert-base-uncased',
+        'lcf_bert': 'bert-base-uncased',
         # distilbert
         'aen_distilbert': 'distilbert-base-uncased',
         'spc_distilbert': 'distilbert-base-uncased',
@@ -550,7 +557,6 @@ def main():
         input_columns_spc = ['special_text_target', 'segments_ids_text_target']
 
     input_columns = {
-        'ram': ['text_raw_indices', 'aspect_indices', 'text_left_indices'],
         # SPC
         'spc_bert': input_columns_spc,
         'spc_distilbert': input_columns_spc,
@@ -559,6 +565,10 @@ def main():
         'aen_bert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_distilbert': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
         'aen_roberta': ['text_raw_with_special_indices', 'target_phrase_with_special_indexes'],
+        'aen_glove': ['text_raw_indices', 'target_phrase_indexes'],
+        # LCF
+        'lcf_bert': ['special_text_target', 'segments_ids_text_target', 'text_raw_with_special_indices',
+                     'target_phrase_with_special_indexes'],
     }
     opt.input_columns = input_columns[opt.model_name]
 

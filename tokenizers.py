@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import torch
 from gensim.models import KeyedVectors
-from transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
+from pytorch_transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
 
 from embeddings.glove import gensim_path, pickle_path
 from fxlogger import get_logger

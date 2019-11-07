@@ -93,7 +93,7 @@ class SetupController:
                               'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
-                              'eval_only_after_last_epoch', 'devmode']
+                              'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD']
         combinations = combinations_absadata_0
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -114,6 +114,8 @@ class SetupController:
             'use_early_stopping':
                 [('num_epoch', '10')],
             'finetune_glove': [('model_name', 'aen_glove')],
+            'local_context_focus': [('model_name', 'lcf_bert')],
+            'SRD': [('model_name', 'lcf_bert')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())

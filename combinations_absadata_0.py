@@ -4,6 +4,8 @@ combinations_absadata_0 = {
         'spc_bert', 'spc_distilbert', 'spc_roberta',
         # AEN
         'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
+        # LCF
+        'lcf_bert',
     ],
     'optimizer': ['adam'],
     'initializer': ['xavier_uniform_'],
@@ -18,13 +20,15 @@ combinations_absadata_0 = {
     'spc_lm_representation_distilbert': [  # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
         'mean_last'],  # , 'mean_last_four', 'mean_last_two', 'mean_all'],
     'spc_lm_representation': ['pooler_output'],
-                              # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
+    # 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all',
     # 'mean_last'],  # 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
     'spc_input_order': ['text_target'],  # 'target_text',
     'aen_lm_representation': ['last'],
-                              # 'sum_last_four', 'sum_last_two', 'sum_all',
-    #],  # 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
+    # 'sum_last_four', 'sum_last_two', 'sum_all',
+    # ],  # 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
     # 'use_early_stopping': ['True'],  # due to condition below, will only be used if num_epoch==10
-    'finetune_glove': ['False'],
+    'finetune_glove': ['False', 'True'],
     'eval_only_after_last_epoch': ['True'],
+    'local_context_focus': ['cdm', 'cdw'],  # ['cdw', 'cdm']
+    'SRD': ['3'],
 }

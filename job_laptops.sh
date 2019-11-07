@@ -12,7 +12,7 @@
 
 module load cuda/9.0
 module load anaconda
-conda activate cope-tsa
+conda activate ctsa
 
 echo "starting job"
 python controller.py --dataset semeval14laptops --experiments_path /data/scc/fhamborg/experiments --continue_run True --num_workers 2
