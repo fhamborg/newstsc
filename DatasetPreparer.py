@@ -114,17 +114,25 @@ class DatasetPreparer:
         for set_name, cur_set in self.sets_info.items():
             cur_set['examples-rel'] = len(cur_set['examples']) / total_examples_count
 
+    def _get_label_counts(self, tasks):
+        label_counts = Counter()
+        for task in tasks:
+            label_counts[task['label']] += 1
+        return dict(label_counts)
+
     def print_set_info(self):
-        header = ['set_name', 'human rel', 'human abs', 'non-hum rel', 'non-hum abs', 'rel', 'abs']
+        header = ['set_name', 'human rel', 'human abs', 'non-hum rel', 'non-hum abs', 'rel', 'abs', 'pos', 'neu', 'neg']
         rows = []
         for set_name, cur_set in self.sets_info.items():
             if 'file' in cur_set:
                 num_lines = sum(1 for line in open(self.get_filepath_by_name(cur_set['file'])))
-                row = [set_name, -1, -1, -1, -1, cur_set['file'], num_lines]
+                row = [set_name, -1, -1, -1, -1, cur_set['file'], num_lines, -1, -1, -1]
             else:
+                label_counts = self._get_label_counts([*(cur_set['human-examples']), *(cur_set['nonhum-examples'])])
                 row = [set_name, cur_set['human-rel-weight'], len(cur_set['human-examples']),
                        cur_set['nonhum-rel-weight'], len(cur_set['nonhum-examples']), cur_set['examples-rel'],
-                       len(cur_set['examples'])]
+                       len(cur_set['examples']), label_counts['positive'], label_counts['neutral'],
+                       label_counts['negative']]
             rows.append(row)
 
         self.logger.info('\n' + tabulate(rows, header))
@@ -304,6 +312,27 @@ class DatasetPreparer:
         dprep.init_set(sets_info)
         return dprep, name, absa_task_format
 
+    @classmethod
+    def sentinews(cls, basepath):
+        name = 'sentinews'
+        absa_task_format = False
+        human_created_filenames = ['alltasks.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 2000, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 300, 'nonhum-weight': 0},
+            'test':
+                {'human-weight': 700, 'nonhum-weight': 0},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, absa_task_format
+
 
 if __name__ == '__main__':
-    DatasetPreparer.poltsanews_rel801010("something")
+    DatasetPreparer.sentinews("controller_data/datasets")

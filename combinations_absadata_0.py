@@ -1,9 +1,9 @@
 combinations_absadata_0 = {
     'model_name': [
         # SPC
-        'spc_bert', 'spc_distilbert', 'spc_roberta',
+        # 'spc_bert',  # 'spc_distilbert', 'spc_roberta',
         # AEN
-        'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
+        #'aen_bert',  # 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
         # LCF
         'lcf_bert',
     ],
@@ -31,4 +31,6 @@ combinations_absadata_0 = {
     'eval_only_after_last_epoch': ['True'],
     'local_context_focus': ['cdm', 'cdw'],  # ['cdw', 'cdm']
     'SRD': ['3'],
+    'pretrained_model_name': ['laptops_and_restaurants_2mio_ep15', 'laptops_1mio_ep30', 'default',
+                              'restaurants_10mio_ep3'],
 }

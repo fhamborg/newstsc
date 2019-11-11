@@ -93,7 +93,8 @@ class SetupController:
                               'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
-                              'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD']
+                              'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
+                              'pretrained_model_name']
         combinations = combinations_absadata_0
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
@@ -113,9 +114,14 @@ class SetupController:
                 [('model_name', 'aen_bert'), ('model_name', 'aen_roberta'), ('model_name', 'aen_distilbert')],
             'use_early_stopping':
                 [('num_epoch', '10')],
-            'finetune_glove': [('model_name', 'aen_glove')],
-            'local_context_focus': [('model_name', 'lcf_bert')],
-            'SRD': [('model_name', 'lcf_bert')],
+            'finetune_glove':
+                [('model_name', 'aen_glove')],
+            'local_context_focus':
+                [('model_name', 'lcf_bert')],
+            'SRD':
+                [('model_name', 'lcf_bert')],
+            'pretrained_model_name':
+                [('model_name', 'lcf_bert'), ('model_name', 'aen_bert'), ('model_name', 'spc_bert')],
         }
 
         assert len(args_names_ordered) == len(combinations.keys())
@@ -162,6 +168,9 @@ class SetupController:
                     self.basepath_data)
             elif self.opt.dataset == 'acl14twitter':
                 self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.acl14twitter(
+                    self.basepath_data)
+            elif self.opt.dataset == 'sentinews':
+                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.sentinews(
                     self.basepath_data)
             else:
                 raise Exception("unknown dataset: {}".format(self.opt.dataset))
@@ -275,7 +284,11 @@ class SetupController:
     def run(self):
         global completed_tasks
 
-        results_path = "results_{}".format(self.datasetname)
+        if not self.opt.results_path:
+            results_path = "results_{}".format(self.datasetname)
+        else:
+            results_path = self.opt.results_path
+
         if not self.opt.continue_run:
             self.logger.info("not continuing")
             os.remove(results_path)
@@ -361,9 +374,9 @@ class SetupController:
         rows = [x.values() for x in sorted_results]
 
         self.logger.info("all experiments finished. statistics:")
+        self.logger.debug("snem-based performances:")
+        self.logger.debug("\n" + tabulate(rows, headers))
         self.logger.info("return codes: {}".format(experiments_rc_overview))
-        self.logger.info("snem-based performances:")
-        self.logger.info("\n" + tabulate(rows, headers))
 
 
 def str2bool(v):
@@ -384,6 +397,7 @@ if __name__ == '__main__':
     parser.add_argument("--continue_run", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument("--rerun_non_rc0", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--num_workers', type=int, default=1)
+    parser.add_argument('--results_path', type=str, default=None)
     opt = parser.parse_args()
 
     SetupController(opt).run()

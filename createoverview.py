@@ -47,8 +47,11 @@ def main(opt):
 
             flattened_result = {**without_keys(result, ['details']), **dev_stats,
                                 **test_stats}
-            scalared_flattened_result = non_scalar_to_str(flattened_result)
-            flattened_results[named_id] = scalared_flattened_result
+        else:
+            flattened_result = {**without_keys(result, ['details'])}
+
+        scalared_flattened_result = non_scalar_to_str(flattened_result)
+        flattened_results[named_id] = scalared_flattened_result
 
     df = pd.DataFrame(data=flattened_results.values())
     df.to_excel(opt.results_path + ".xlsx")
