@@ -281,13 +281,13 @@ class Instructor:
 
     def get_normalized_inv_class_frequencies(self):
         inv_freqs = []
-
         for label_name in self.sorted_expected_label_names:
             inv_freq_of_class = 1.0 / self.testset.label_counter[label_name]
             inv_freqs.append(inv_freq_of_class)
 
+        sum_of_inv_freqs = sum(inv_freqs)
         for i in range(len(inv_freqs)):
-            inv_freqs[i] = inv_freqs[i] / sum(inv_freqs)
+            inv_freqs[i] = inv_freqs[i] / sum_of_inv_freqs
 
         return inv_freqs
 
@@ -470,7 +470,7 @@ def main():
     parser.add_argument('--embed_dim', default=300, type=int)
     parser.add_argument('--hidden_dim', default=300, type=int)
     parser.add_argument('--bert_dim', default=768, type=int)
-    parser.add_argument('--max_seq_len', default=80, type=int)
+    parser.add_argument('--max_seq_len', default=100, type=int)
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
@@ -502,6 +502,8 @@ def main():
                         help="if False, evaluate the best model that was seen during any training epoch. if True, "
                              "evaluate only the model that was trained through all num_epoch epochs.")
     parser.add_argument('--absa_task_format', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--pretrained_model_name', type=str, default=None,
+                        help='has to be placed in folder pretrained_models')
 
     opt = parser.parse_args()
 
@@ -587,10 +589,14 @@ def main():
         'sgd': torch.optim.SGD,
     }
     opt.model_class = model_classes[opt.model_name]
-    if opt.model_name in ['ram', 'aen_glove']:
-        pass
+
+    if not opt.pretrained_model_name or opt.pretrained_model_name == 'default':
+        if opt.model_name in ['ram', 'aen_glove']:
+            pass
+        else:
+            opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
     else:
-        opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
+        opt.pretrained_model_name = 'pretrained_models/' + opt.pretrained_model_name
 
     if not opt.experiment_path:
         opt.experiment_path = '.'
@@ -609,8 +615,24 @@ def main():
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
 
+    logger.warning("scc196 dependent logic is active for 7 jobs")
+    logger.warning("scc196 dependent logic is active for 7 jobs")
+    logger.warning("scc196 dependent logic is active for 7 jobs")
+    logger.warning("scc196 depend"
+                   "ent logic is active for 7 jobs")
+
     if torch.cuda.is_available():
-        opt.device = torch.device('cuda')
+        # special logic for scc196
+        num_cuda_devices = torch.cuda.device_count()
+
+        # use the devices that is the experiment id
+        # /data/scc/fhamborg/exp2/semeval14laptops_20191109-135937/0/
+        exp_number = int(opt.experiment_path.split('/')[-2])
+
+        cuda_dev_number = exp_number % num_cuda_devices
+
+        logger.warning("scc196 dependent logic is active for 7 jobs")
+        opt.device = torch.device('cuda:' + str(cuda_dev_number))
         logger.info("GPGPU enabled. CUDA dev index: {}".format(opt.device.index))
     else:
         opt.device = torch.device('cpu')
