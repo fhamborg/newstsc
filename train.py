@@ -470,7 +470,7 @@ def main():
     parser.add_argument('--embed_dim', default=300, type=int)
     parser.add_argument('--hidden_dim', default=300, type=int)
     parser.add_argument('--bert_dim', default=768, type=int)
-    parser.add_argument('--max_seq_len', default=100, type=int)
+    parser.add_argument('--max_seq_len', default=150, type=int)
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')

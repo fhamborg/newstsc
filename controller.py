@@ -342,13 +342,18 @@ class SetupController:
         prev_count_done = len(completed_tasks)
         with tqdm(total=self.combination_count, initial=prev_count_done) as pbar:
             while True:
-                time.sleep(1)
+                time.sleep(10)
                 if len(completed_tasks) >= self.combination_count:
                     self.logger.info("finished all tasks")
                     break
 
-                pbar.update(len(completed_tasks) - prev_count_done)
-                prev_count_done = len(completed_tasks)
+                update_inc = len(completed_tasks) - prev_count_done
+                if update_inc > 0:
+                    pbar.update(update_inc)
+                    prev_count_done = len(completed_tasks)
+
+                    best_dev_snem = self._get_best_dev_snem()
+                    pbar.set_postfix_str(f"dev-snem: {best_dev_snem:.4f}")
 
         processed_results = dict(completed_tasks)
         completed_tasks.close()
@@ -377,6 +382,12 @@ class SetupController:
         self.logger.debug("snem-based performances:")
         self.logger.debug("\n" + tabulate(rows, headers))
         self.logger.info("return codes: {}".format(experiments_rc_overview))
+
+    def _get_best_dev_snem(self):
+        best_dev_snem = 0.0
+        for task in completed_tasks:
+            best_dev_snem = max(best_dev_snem, task)
+        return best_dev_snem
 
 
 def str2bool(v):

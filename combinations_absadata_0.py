@@ -1,9 +1,9 @@
 combinations_absadata_0 = {
     'model_name': [
         # SPC
-        # 'spc_bert',  # 'spc_distilbert', 'spc_roberta',
+        'spc_bert',  # 'spc_distilbert', 'spc_roberta',
         # AEN
-        #'aen_bert',  # 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
+        'aen_bert',  # 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
         # LCF
         'lcf_bert',
     ],
