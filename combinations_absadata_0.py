@@ -12,7 +12,7 @@ combinations_absadata_0 = {
     # TODO check this and other parameters, compare with available options in train.py
     'learning_rate': ['2e-5', '3e-5', '5e-5'],
     'batch_size': ['16', '32'],
-    'lossweighting': ['True', 'False'],
+    'balancing': ['oversampling', ],  # ['None', 'lossweighting', 'oversampling'],
     'devmode': ['False'],
     'num_epoch': ['3', '4'],
     'lsr': ['True', 'False'],
@@ -31,6 +31,6 @@ combinations_absadata_0 = {
     'eval_only_after_last_epoch': ['True'],
     'local_context_focus': ['cdm', 'cdw'],  # ['cdw', 'cdm']
     'SRD': ['3'],
-    'pretrained_model_name': ['laptops_and_restaurants_2mio_ep15', 'laptops_1mio_ep30', 'default',
+    'pretrained_model_name': ['default', 'laptops_and_restaurants_2mio_ep15', 'laptops_1mio_ep30',
                               'restaurants_10mio_ep3'],
 }

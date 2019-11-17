@@ -1,6 +1,10 @@
+import random
 from collections import Counter
 
 import jsonlines
+import numpy as np
+import torch
+from imblearn.over_sampling import RandomOverSampler
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
@@ -8,6 +12,36 @@ from fxlogger import get_logger
 
 # get logger
 logger = get_logger()
+
+
+class RandomOversampler(torch.utils.data.sampler.Sampler):
+    def __init__(self, dataset: Dataset, random_seed=None):
+        x = []
+        y = []
+        for ind, example in enumerate(dataset):
+            x.append(ind)
+            y.append(example['polarity'])
+
+        x_arr = np.asarray(x).reshape((len(x), 1))
+        y_arr = np.asarray(y).ravel()
+
+        ros = RandomOverSampler(random_state=random_seed)
+        x_sampled, y_sampled = ros.fit_resample(x_arr, y_arr)
+        self.sampled_indexes = x_sampled.ravel().tolist()
+        sampled_labels = y_sampled.tolist()
+
+        assert len(self.sampled_indexes) == len(sampled_labels)
+
+        random.shuffle(self.sampled_indexes)
+
+        get_logger().info(
+            f"upsampled to {len(self.sampled_indexes)} samples. label distribution: {Counter(sampled_labels)}")
+
+    def __len__(self):
+        return len(self.sampled_indexes)
+
+    def __iter__(self):
+        return iter(self.sampled_indexes)
 
 
 class FXDataset(Dataset):

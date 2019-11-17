@@ -14,7 +14,7 @@ combinations = {
     # TODO check this and other parameters, compare with available options in train.py
     'learning_rate': ['1e-5', '2e-5', '3e-5', '4e-5', '5e-5'],
     'batch_size': ['16', '32', '48'],
-    'lossweighting': ['True', 'False'],
+    'balancing': ['None', 'lossweighting', 'oversampling'],
     'devmode': ['True'],
     'num_epoch': ['2', '3', '4'],
     'lsr': ['True', 'False'],

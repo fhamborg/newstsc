@@ -18,7 +18,7 @@ from pytorch_transformers import BertModel, DistilBertModel, RobertaModel, PreTr
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 
 from crossentropylosslsr import CrossEntropyLoss_LSR
-from dataset import FXDataset
+from dataset import FXDataset, RandomOversampler
 from earlystopping import EarlyStopping
 from evaluator import Evaluator
 from fxlogger import get_logger
@@ -54,8 +54,7 @@ class Instructor:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
                                          self.polarity_associations, self.sorted_expected_label_names,
-                                         self.opt.use_tp_placeholders, self.opt.absa_task_format,
-                                         self.opt.devmode)
+                                         self.opt.use_tp_placeholders, self.opt.absa_task_format, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
                                      self.opt.absa_task_format, self.opt.devmode)
@@ -293,7 +292,8 @@ class Instructor:
 
     def run_crossval(self):
         raise Exception("run_crossval needs to get updated as to saving its experiment results, and because the new "
-                        "reset_params does not - as before - load the model newly, but only resets params as in ABSA")
+                        "reset_params does not - as before - load the model newly, but only resets params as in ABSA. "
+                        "also lossweighting has been adapted")
 
         # Loss and Optimizer
         if self.opt.lossweighting:
@@ -352,26 +352,35 @@ class Instructor:
         print(mean_test_stats[self.opt.snem])
 
     def run(self):
-        # Loss and Optimizer
-        if self.opt.lossweighting:
+        # balancing modes
+        class_weights = None
+        sampler_train = None
+        if self.opt.balancing == 'lossweighting':
             inv_class_freqs = self.get_normalized_inv_class_frequencies()
             logger.info("weighting losses of classes: {}".format(inv_class_freqs))
             class_weights = torch.tensor(inv_class_freqs).to(self.opt.device)
-        else:
-            class_weights = None
+        elif self.opt.balancing == 'oversampling':
+            sampler_train = RandomOversampler(self.trainset, self.opt.seed)
 
+        # loss
         if self.opt.lsr:
             criterion = CrossEntropyLoss_LSR(self.opt.device, para_LSR=0.2, weight=class_weights)
         else:
             criterion = nn.CrossEntropyLoss(weight=class_weights)
 
+        # optimizer
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
         optimizer = self.opt.optimizer(_params, lr=self.opt.learning_rate, weight_decay=self.opt.l2reg)
 
-        train_data_loader = DataLoader(dataset=self.trainset, batch_size=self.opt.batch_size, shuffle=True)
+        # data loaders
+        if sampler_train:
+            train_data_loader = DataLoader(dataset=self.trainset, batch_size=self.opt.batch_size, sampler=sampler_train)
+        else:
+            train_data_loader = DataLoader(dataset=self.trainset, batch_size=self.opt.batch_size, shuffle=True)
         dev_data_loader = DataLoader(dataset=self.devset, batch_size=self.opt.batch_size, shuffle=False)
         test_data_loader = DataLoader(dataset=self.testset, batch_size=self.opt.batch_size, shuffle=False)
 
+        # start training
         self._reset_params()
         logger.info("starting training...")
         time_training_start = time.time()
@@ -485,8 +494,7 @@ def main():
                         help='if defined, all data will be read from / saved to a folder in the experiments folder')
     parser.add_argument('--crossval', default=0, type=int,
                         help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
-    parser.add_argument('--lossweighting', type=str2bool, nargs='?', const=True, default=False,
-                        help="True: loss weights according to class frequencies, False: each class has the same loss per example")
+    parser.add_argument('--balancing', type=str, default=None)
     parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
                         help="True: enable label smoothing regularization; False: disable")
     parser.add_argument('--spc_lm_representation', type=str, default='mean_last')
@@ -509,6 +517,9 @@ def main():
 
     if opt.eval_only_after_last_epoch:
         assert not opt.use_early_stopping
+
+    if not opt.balancing or opt.balancing == 'None':
+        opt.balancing = None
 
     if opt.spc_lm_representation_distilbert:
         logger.info("spc_lm_representation_distilbert defined, overwriting spc_lm_representation")

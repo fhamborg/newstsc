@@ -90,7 +90,7 @@ class SetupController:
         self.experiment_base_path = self.opt.experiments_path
 
         args_names_ordered = ['model_name', 'optimizer', 'initializer', 'learning_rate', 'batch_size',
-                              'lossweighting', 'num_epoch', 'lsr', 'use_tp_placeholders',
+                              'balancing', 'num_epoch', 'lsr', 'use_tp_placeholders',
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
@@ -384,9 +384,10 @@ class SetupController:
         self.logger.info("return codes: {}".format(experiments_rc_overview))
 
     def _get_best_dev_snem(self):
-        best_dev_snem = 0.0
+        best_dev_snem = -1.0
         for task in completed_tasks:
-            best_dev_snem = max(best_dev_snem, task)
+            if task.get('details') and task['details'].get('dev_stats'):
+                best_dev_snem = max(best_dev_snem, task['details']['dev_stats'][self.snem])
         return best_dev_snem
 
 
