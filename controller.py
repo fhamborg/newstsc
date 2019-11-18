@@ -37,6 +37,7 @@ from combinations_absadata_0 import combinations_absadata_0
 from fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
+completed_tasks_in_this_run_count = 0
 
 
 def start_worker(experiment_id, experiment_named_id, named_combination, cmd, human_cmd, experiment_path):
@@ -58,6 +59,8 @@ def on_task_done(x):
     # result_list is modified only by the main process, not the pool workers.
     completed_tasks[x['experiment_named_id']] = x
     completed_tasks.sync()
+    global completed_tasks_in_this_run_count
+    completed_tasks_in_this_run_count += 1
 
 
 def on_task_error(x):
@@ -65,6 +68,8 @@ def on_task_error(x):
     print(x)
     completed_tasks[x['experiment_named_id']] = x
     completed_tasks.sync()
+    global completed_tasks_in_this_run_count
+    completed_tasks_in_this_run_count += 1
 
 
 def get_experiment_result_detailed(experiment_path):
@@ -339,18 +344,19 @@ class SetupController:
             pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
 
         self.logger.info("waiting for workers to complete all jobs...")
-        prev_count_done = len(completed_tasks)
-        with tqdm(total=self.combination_count, initial=prev_count_done) as pbar:
+        prev_count_done = 0
+        with tqdm(total=previous_tasks['new'], initial=prev_count_done) as pbar:
             while True:
                 time.sleep(10)
-                if len(completed_tasks) >= self.combination_count:
-                    self.logger.info("finished all tasks")
+                if completed_tasks_in_this_run_count >= previous_tasks['new']:
+                    self.logger.info(
+                        f"finished all tasks ({completed_tasks_in_this_run_count} of {previous_tasks['new']})")
                     break
 
-                update_inc = len(completed_tasks) - prev_count_done
+                update_inc = completed_tasks_in_this_run_count - prev_count_done
                 if update_inc > 0:
                     pbar.update(update_inc)
-                    prev_count_done = len(completed_tasks)
+                    prev_count_done = completed_tasks_in_this_run_count
 
                     best_dev_snem = self._get_best_dev_snem()
                     pbar.set_postfix_str(f"dev-snem: {best_dev_snem:.4f}")
@@ -385,7 +391,7 @@ class SetupController:
 
     def _get_best_dev_snem(self):
         best_dev_snem = -1.0
-        for task in completed_tasks:
+        for task in completed_tasks.values():
             if task.get('details') and task['details'].get('dev_stats'):
                 best_dev_snem = max(best_dev_snem, task['details']['dev_stats'][self.snem])
         return best_dev_snem

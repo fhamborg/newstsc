@@ -54,6 +54,13 @@ def get_additional_scores(result):
     return scores
 
 
+def get_experiment_params(result):
+    params = result.copy()
+    del params['details']
+    del params['experiment_named_id']
+    return params
+
+
 def main():
     performance_table = []
 
@@ -66,16 +73,20 @@ def main():
         for language_model in language_models:
             for method in methods:
                 best_score, best_result = get_best_result(dataset_results, language_model, method, col_primary_eval)
+
                 if best_score != -1:
                     secondary_scores = get_additional_scores(best_result)
+                    params = get_experiment_params(best_result)
                 else:
                     secondary_scores = {}
+                    params = {}
 
                 performance_row = {col_dataset: dataset,
                                    col_language_model: language_model,
                                    col_method: method,
                                    col_primary_eval: best_score,
-                                   **secondary_scores}
+                                   **secondary_scores,
+                                   **params}
 
                 performance_table.append(performance_row)
 
