@@ -106,6 +106,10 @@ class FXDataset(Dataset):
         # add reference information
         example['example_id'] = example_id
 
+        # add original text and target (we can use that to create a mistake table)
+        example['orig_text'] = text
+        example['orig_target'] = target_phrase
+
         return example, label
 
     def __getitem__(self, index):

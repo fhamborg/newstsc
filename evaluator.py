@@ -1,6 +1,7 @@
 from collections import Counter
 from statistics import mean
 
+import jsonlines
 import numpy as np
 from sklearn import metrics
 
@@ -72,3 +73,11 @@ class Evaluator:
         self.logger.info('> recall_avg: {:.4f}, f1_posneg: {:.4f}, acc: {:.4f}, f1_macro: {:.4f}'.format(
             stats['recall_avg'], stats['f1_posneg'], stats['accuracy'], stats['f1_macro'],
         ))
+
+    def write_error_table(self, y_true, y_pred, texts_list, targets_list, filepath):
+        y_true_list = y_true.tolist()
+        y_pred_list = y_pred.tolist()
+
+        with jsonlines.open(filepath, 'w') as writer:
+            for true_label, pred_label, text, target in zip(y_true_list, y_pred_list, texts_list, targets_list):
+                writer.write({'true_label': true_label, 'pred_label': pred_label, 'text': text, 'target': target})

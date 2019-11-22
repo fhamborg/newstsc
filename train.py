@@ -250,8 +250,9 @@ class Instructor:
 
         return selected_model_path, selected_model_filename, selected_model_dev_stats
 
-    def _evaluate(self, data_loader):
+    def _evaluate(self, data_loader, get_examples=False, basepath=None):
         t_labels_all, t_outputs_all = None, None
+        t_texts_all, t_targets_all = [], []
 
         # switch model to evaluation mode
         self.model.eval()
@@ -260,6 +261,9 @@ class Instructor:
             for t_batch, t_sample_batched in enumerate(data_loader):
                 t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
+
+                t_texts = t_sample_batched['orig_text']
+                t_targets = t_sample_batched['orig_target']
 
                 t_outputs = self.model(t_inputs)
 
@@ -270,11 +274,17 @@ class Instructor:
                     t_labels_all = torch.cat((t_labels_all, t_labels), dim=0)
                     t_outputs_all = torch.cat((t_outputs_all, t_outputs), dim=0)
 
+                t_texts_all.extend(t_texts)
+                t_targets_all.extend(t_targets)
+
         # softmax: get predictions from outputs
         y_pred = torch.argmax(t_outputs_all, -1).cpu()
         y_true = t_labels_all.cpu()
 
         stats = self.evaluator.calc_statistics(y_true, y_pred)
+
+        if get_examples:
+            self.evaluator.write_error_table(y_true, y_pred, t_texts_all, t_targets_all, basepath + 'errortable.jsonl')
 
         return stats
 
@@ -417,7 +427,12 @@ class Instructor:
         self.model.eval()
 
         # do the actual evaluation
-        test_stats = self._evaluate(test_data_loader)
+        filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', selected_model_filename)
+        os.makedirs(filepath_stats_prefix, exist_ok=True)
+        if not filepath_stats_prefix.endswith('/'):
+            filepath_stats_prefix += '/'
+
+        test_stats = self._evaluate(test_data_loader, get_examples=True, basepath=filepath_stats_prefix)
         test_snem = test_stats[self.opt.snem]
 
         self.evaluator.print_stats(test_stats, "evaluation on test-set")
@@ -435,10 +450,7 @@ class Instructor:
 
         # save confusion matrices
         test_confusion_matrix = test_stats['confusion_matrix']
-        filepath_stats_prefix = os.path.join(self.opt.experiment_path, 'statistics', selected_model_filename)
-        os.makedirs(filepath_stats_prefix, exist_ok=True)
-        if not filepath_stats_prefix.endswith('/'):
-            filepath_stats_prefix += '/'
+
         create_save_plotted_confusion_matrix(test_confusion_matrix,
                                              expected_labels=self.sorted_expected_label_values,
                                              basepath=filepath_stats_prefix)
@@ -626,24 +638,12 @@ def main():
     opt.initializer = initializers[opt.initializer]
     opt.optimizer = optimizers[opt.optimizer]
 
-    logger.warning("scc196 dependent logic is active for 7 jobs")
-    logger.warning("scc196 dependent logic is active for 7 jobs")
-    logger.warning("scc196 dependent logic is active for 7 jobs")
-    logger.warning("scc196 depend"
-                   "ent logic is active for 7 jobs")
-
     if torch.cuda.is_available():
-        # special logic for scc196
-        num_cuda_devices = torch.cuda.device_count()
-
-        # use the devices that is the experiment id
-        # /data/scc/fhamborg/exp2/semeval14laptops_20191109-135937/0/
-        exp_number = int(opt.experiment_path.split('/')[-2])
-
-        cuda_dev_number = exp_number % num_cuda_devices
-
-        logger.warning("scc196 dependent logic is active for 7 jobs")
-        opt.device = torch.device('cuda:' + str(cuda_dev_number))
+        logger.info("arg: cuda device: {}".format(opt.device))
+        if opt.device:
+            opt.device = torch.device(opt.device)
+        else:
+            opt.device = torch.device('cuda:0')
         logger.info("GPGPU enabled. CUDA dev index: {}".format(opt.device.index))
     else:
         opt.device = torch.device('cpu')

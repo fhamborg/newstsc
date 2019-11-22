@@ -90,6 +90,17 @@ class SetupController:
         self.logger = get_logger()
         self.opt = options
 
+        self.cuda_devices = os.environ.get('SGE_GPU')
+        if self.cuda_devices:
+            self.logger.info("cuda devices:" + self.cuda_devices)
+            self.cuda_devices = self.cuda_devices.split(',')
+            self.logger.info(f"was assigned {len(self.cuda_devices)} cuda devices: {self.cuda_devices}")
+            if self.opt.num_workers < 0:
+                self.logger.info("num_workers < 0: using cuda device count")
+                self.opt.num_workers = len(self.cuda_devices)
+        else:
+            self.logger.warning("env not given: SGE_GPU")
+
         self.use_cross_validation = 0  # if 0: do not use cross validation
         self.snem = 'recall_avg'
         self.experiment_base_path = self.opt.experiments_path
@@ -277,6 +288,11 @@ class SetupController:
         self._add_arg(args, 'experiment_path', experiment_path)
         self._add_arg(args, 'crossval', self.use_cross_validation)
         self._add_arg(args, 'absa_task_format', self.absa_task_format)
+
+        if self.cuda_devices:
+            cuda_device = experiment_id % len(self.cuda_devices)
+            cuda_device_name = 'cuda:' + str(cuda_device)
+            self._add_arg(args, 'device', cuda_device_name)
 
         cmd = self.basecmd + args
         human_cmd = " ".join(cmd)
