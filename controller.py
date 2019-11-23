@@ -381,12 +381,17 @@ class SetupController:
         completed_tasks.close()
 
         experiments_rc_overview = Counter()
+        non_okay_experiment_ids = []
         for experiment_named_id, experiment_result in processed_results.items():
             rc = experiment_result['rc']
             experiments_rc_overview[rc] += 1
 
             if rc != 0:
-                self.logger.warning("experiment did not return 0: {}".format(experiment_result['experiment_id']))
+                non_okay_experiment_ids.append(experiment_result['experiment_id'])
+
+        if non_okay_experiment_ids:
+            self.logger.warning(
+                f"{len(non_okay_experiment_ids)} experiments did not return 0: {non_okay_experiment_ids}")
 
         # snem-based performance sort
         sorted_results = list(dict(processed_results).values())
