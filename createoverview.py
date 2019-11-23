@@ -2,6 +2,7 @@ import argparse
 import json
 import shelve
 
+import jsonlines
 import pandas as pd
 
 from fxlogger import get_logger
@@ -57,9 +58,18 @@ def main(opt):
     df.to_excel(opt.results_path + ".xlsx")
 
 
+def jsonl2xlsx(opt):
+    with jsonlines.open(opt.results_path, 'r') as reader:
+        lines = [line for line in reader]
+
+        df = pd.DataFrame(data=lines)
+        df.to_excel(opt.results_path + ".xlsx")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--results_path', type=str, required=True)
     opt = parser.parse_args()
 
-    main(opt)
+    # main(opt)
+    jsonl2xlsx(opt)
