@@ -3,7 +3,7 @@ combinations_absadata_0 = {
         # SPC
         # 'spc_bert',  # 'spc_distilbert', 'spc_roberta',
         # AEN
-        #'aen_bert',  # 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
+        # 'aen_bert',  # 'aen_distilbert', 'aen_roberta', 'aen_glove',  # 'aen_distilroberta'
         # LCF
         'lcf_bert',
     ],
@@ -11,7 +11,7 @@ combinations_absadata_0 = {
     'initializer': ['xavier_uniform_'],
     # TODO check this and other parameters, compare with available options in train.py
     'learning_rate': ['2e-5', '3e-5', '5e-5'],
-    'batch_size': ['16', '32'],
+    'batch_size': ['16'],  # '32'], # it seems that 32 is too large for some of the SCC machines (out-of-memory errors)
     'balancing': ['None', 'lossweighting', 'oversampling'],
     'devmode': ['False'],
     'num_epoch': ['3', '4'],
