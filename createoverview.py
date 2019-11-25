@@ -59,8 +59,16 @@ def main(opt):
 
 
 def jsonl2xlsx(opt):
+    labels = {2: 'positive', 1: 'neutral', 0: 'negative'}
+
     with jsonlines.open(opt.results_path, 'r') as reader:
-        lines = [line for line in reader]
+        lines = []
+        for line in reader:
+            if line['true_label'] != line['pred_label']:
+                line['true_label'] = labels[line['true_label']]
+                line['pred_label'] = labels[line['pred_label']]
+
+                lines.append(line)
 
         df = pd.DataFrame(data=lines)
         df.to_excel(opt.results_path + ".xlsx")
