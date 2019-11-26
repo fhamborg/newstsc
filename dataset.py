@@ -35,7 +35,7 @@ class RandomOversampler(torch.utils.data.sampler.Sampler):
         random.shuffle(self.sampled_indexes)
 
         get_logger().info(
-            f"upsampled to {len(self.sampled_indexes)} samples. label distribution: {Counter(sampled_labels)}")
+            f"oversampled to {len(self.sampled_indexes)} samples. label distribution: {Counter(sampled_labels)}")
 
     def __len__(self):
         return len(self.sampled_indexes)
@@ -46,13 +46,13 @@ class RandomOversampler(torch.utils.data.sampler.Sampler):
 
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer, named_polarity_to_class_number, sorted_expected_label_names,
-                 use_tp_placeholders, absa_task_format=False, devmode=False):
+                 use_tp_placeholders, task_format="newstsc", devmode=False):
         self.polarity_associations = named_polarity_to_class_number
         self.sorted_expected_label_names = sorted_expected_label_names
         self.tokenizer = tokenizer
         self.data = []
         self.use_target_phrase_placeholders = use_tp_placeholders
-        self.absa_task_format = absa_task_format
+        self.task_format = task_format
 
         logger.info("reading dataset file {}".format(filepath))
 
@@ -62,7 +62,7 @@ class FXDataset(Dataset):
                 tasks.append(task)
 
         if devmode:
-            logger.warning("DEV MODE IS ENABLED!")
+            logger.warning("DEV MODE IS ENABLED")
             logger.info("devmode=True: truncating dataset to 60 lines")
             tasks = tasks[:60]
 
@@ -76,7 +76,7 @@ class FXDataset(Dataset):
         logger.info("label distribution: {}".format(self.label_counter))
 
     def task_to_dataset_item(self, task):
-        if not self.absa_task_format:
+        if self.task_format == 'newstsc_old':
             text = task['text']
             target_phrase = task['targetphrase']
             outlet = task['outlet']
@@ -88,13 +88,30 @@ class FXDataset(Dataset):
             text_left = text[:start_char - 1]
             text_right = text[end_char + 1:]
             polarity = self.polarity_associations[label]
-        else:
+
+        elif self.task_format == 'newstsc':
+            target_phrase = task['target_mention']
+
+            text = task['local_context']
+            start_char = task['target_local_from']
+            end_char = task['target_local_to']
+            text_left = text[:start_char - 1]
+            text_right = text[end_char + 1:]
+
+            label = task['label']
+            polarity = self.polarity_associations[label]
+
+            example_id = task.get('example_id', -1)
+
+        elif self.task_format == 'absa':
             text_left = task['text_left']
             text_right = task['text_right']
             target_phrase = task['target_phrase']
             polarity = int(task['polarity']) + 1
             label = self.sorted_expected_label_names[polarity]
             example_id = -1
+        else:
+            raise Exception
 
         # text to indexes
         example = self.tokenizer.create_text_to_indexes(text_left, target_phrase, text_right,

@@ -90,16 +90,24 @@ class SetupController:
         self.logger = get_logger()
         self.opt = options
 
-        self.cuda_devices = os.environ.get('SGE_GPU')
-        if self.cuda_devices:
-            self.logger.info("cuda devices:" + self.cuda_devices)
-            self.cuda_devices = self.cuda_devices.split(',')
-            self.logger.info(f"was assigned {len(self.cuda_devices)} cuda devices: {self.cuda_devices}")
-            if self.opt.num_workers < 0:
-                self.logger.info("num_workers < 0: using cuda device count")
-                self.opt.num_workers = len(self.cuda_devices)
+        if self.opt.cuda_devices:
+            # to run on SCC
+            if self.opt.cuda_devices == 'SGE_GPU':
+                self.cuda_devices = os.environ.get('SGE_GPU')
+            else:
+                self.cuda_devices = self.opt.cuda_devices
+
+            if self.cuda_devices:
+                self.logger.info("cuda devices:" + self.cuda_devices)
+                self.cuda_devices = self.cuda_devices.split(',')
+                self.logger.info(f"was assigned {len(self.cuda_devices)} cuda devices: {self.cuda_devices}")
+                if self.opt.num_workers < 0:
+                    self.logger.info("num_workers < 0: using cuda device count")
+                    self.opt.num_workers = len(self.cuda_devices)
+
         else:
-            self.logger.warning("env not given: SGE_GPU")
+            # do not use CUDA
+            self.cuda_devices = None
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
         self.snem = 'recall_avg'
@@ -174,20 +182,22 @@ class SetupController:
         else:
             self.logger.info("not using cross validation".format(self.use_cross_validation))
             if self.opt.dataset == 'poltsanews_rel801010_allhuman':
-                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.poltsanews_rel801010_allhuman(
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.poltsanews_rel801010_allhuman(
                     self.basepath_data)
             elif self.opt.dataset == 'semeval14restaurants':
-                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14restaurants(
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.semeval14restaurants(
                     self.basepath_data)
             elif self.opt.dataset == 'semeval14laptops':
-                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.semeval14laptops(
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.semeval14laptops(
                     self.basepath_data)
             elif self.opt.dataset == 'acl14twitter':
-                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.acl14twitter(
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.acl14twitter(
                     self.basepath_data)
             elif self.opt.dataset == 'sentinews':
-                self.dataset_preparer, self.datasetname, self.absa_task_format = DatasetPreparer.sentinews(
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.sentinews(
                     self.basepath_data)
+            elif self.opt.dataset == 'newstsc':
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.newstsc(self.basepath_data)
             else:
                 raise Exception("unknown dataset: {}".format(self.opt.dataset))
 
@@ -287,7 +297,7 @@ class SetupController:
         self._add_arg(args, 'dataset_name', self.datasetname)
         self._add_arg(args, 'experiment_path', experiment_path)
         self._add_arg(args, 'crossval', self.use_cross_validation)
-        self._add_arg(args, 'absa_task_format', self.absa_task_format)
+        self._add_arg(args, 'task_format', self.task_format)
 
         if self.cuda_devices:
             cuda_device = experiment_id % len(self.cuda_devices)
@@ -437,6 +447,10 @@ if __name__ == '__main__':
     parser.add_argument("--rerun_non_rc0", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--num_workers', type=int, default=1)
     parser.add_argument('--results_path', type=str, default=None)
+    parser.add_argument('--cuda_devices', type=str, default=None, help='Comma separated list of cuda device IDs, e.g., '
+                                                                       '0,1,2,3; or SGE_GPU to read this list from '
+                                                                       'the environment variable SGE_GPU. If not defined,'
+                                                                       'CPU will be used instead of GPU.')
     opt = parser.parse_args()
 
     SetupController(opt).run()

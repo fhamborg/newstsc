@@ -211,7 +211,7 @@ class DatasetPreparer:
     @classmethod
     def poltsanews_rel801010_allhuman(cls, basepath):
         name = 'poltsanews'
-        absa_task_format = False
+        task_format = 'newstsc_old'
         human_created_filenames = ['human.jsonl']
         non_human_created_filenames = ['train_20191021_233454.jsonl']
 
@@ -227,12 +227,12 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
 
     @classmethod
     def poltsanews_crossval8010_allhuman(cls, basepath):
         name = 'poltsanews'
-        absa_task_format = False
+        task_format = 'newstsc_old'
         human_created_filenames = ['human.jsonl']
         non_human_created_filenames = ['train_20191021_233454.jsonl']
 
@@ -247,12 +247,12 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
 
     @classmethod
     def acl14twitter(cls, basepath):
         name = 'acl14twitter'
-        absa_task_format = True
+        task_format = 'absa'
         human_created_filenames = ['train.raw.jsonl']
         non_human_created_filenames = []
 
@@ -268,12 +268,12 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
 
     @classmethod
     def semeval14laptops(cls, basepath):
         name = 'semeval14laptops'
-        absa_task_format = True
+        task_format = 'absa'
         human_created_filenames = ['Laptops_Train.xml.seg.jsonl']
         non_human_created_filenames = []
 
@@ -289,12 +289,12 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
 
     @classmethod
     def semeval14restaurants(cls, basepath):
         name = 'semeval14restaurants'
-        absa_task_format = True
+        task_format = 'absa'
         human_created_filenames = ['Restaurants_Train.xml.seg.jsonl']
         non_human_created_filenames = []
 
@@ -310,12 +310,12 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
 
     @classmethod
     def sentinews(cls, basepath):
         name = 'sentinews'
-        absa_task_format = False
+        task_format = 'newstsc_old'
         human_created_filenames = ['alltasks.jsonl']
         non_human_created_filenames = []
 
@@ -331,7 +331,28 @@ class DatasetPreparer:
         }
 
         dprep.init_set(sets_info)
-        return dprep, name, absa_task_format
+        return dprep, name, task_format
+
+    @classmethod
+    def newstsc(cls, basepath):
+        name = 'newstsc'
+        task_format = 'newstsc'
+        human_created_filenames = ['train.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 2000, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 300, 'nonhum-weight': 0},
+            'test':
+                {'file': 'test.jsonl'},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, task_format
 
 
 if __name__ == '__main__':

@@ -54,23 +54,23 @@ class Instructor:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
                                          self.polarity_associations, self.sorted_expected_label_names,
-                                         self.opt.use_tp_placeholders, self.opt.absa_task_format, self.opt.devmode)
+                                         self.opt.use_tp_placeholders, self.opt.task_format, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.absa_task_format, self.opt.devmode)
+                                     self.opt.task_format, self.opt.devmode)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
                                       self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                      self.opt.absa_task_format, self.opt.devmode)
+                                      self.opt.task_format, self.opt.devmode)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                    self.opt.absa_task_format, self.opt.devmode)
+                                    self.opt.task_format, self.opt.devmode)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.absa_task_format, self.opt.devmode)
+                                     self.opt.task_format, self.opt.devmode)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -521,7 +521,7 @@ def main():
     parser.add_argument('--eval_only_after_last_epoch', type=str2bool, nargs='?', const=True, default=False,
                         help="if False, evaluate the best model that was seen during any training epoch. if True, "
                              "evaluate only the model that was trained through all num_epoch epochs.")
-    parser.add_argument('--absa_task_format', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--task_format', type=str, default='newstsc')
     parser.add_argument('--pretrained_model_name', type=str, default=None,
                         help='has to be placed in folder pretrained_models')
 

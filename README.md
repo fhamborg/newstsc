@@ -1,4 +1,4 @@
-# Concept Perception - Target-dependent Sentiment Analysis (cope-tsa)
+# Target-dependent Sentiment Analysis in News Articles (cope-tsa)
 
 
 
