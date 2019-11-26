@@ -17,7 +17,12 @@ conda install --yes -c anaconda requests gensim openpyxl
 pip install pytorch-transformers
 ```
 
-## To setup GloVe:
+## Domain adapated 
+As mentioned in the paper, we fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
+it, place the folder `downloaded-folder/bert/bert_news_ccnc_10mio_3ep` into 
+`downloaded-folder/code/pretrained_models/bert_news_ccnc_10mio_3ep`.
+
+## GloVe:
 ```
 cd embeddings/glove/data
 wget http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip
