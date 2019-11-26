@@ -118,7 +118,7 @@ class SetupController:
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
-                              'pretrained_model_name']
+                              'pretrained_model_name', 'state_dict']
         combinations = combinations_absadata_0
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the

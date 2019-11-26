@@ -20,7 +20,7 @@ pip install pytorch-transformers
 ## Domain adapated 
 As mentioned in the paper, we fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
 it, place the folder `downloaded-folder/bert/bert_news_ccnc_10mio_3ep` into 
-`downloaded-folder/code/pretrained_models/bert_news_ccnc_10mio_3ep`.
+`downloaded-folder/code/cope-tsa/pretrained_models/bert_news_ccnc_10mio_3ep`.
 
 ## GloVe:
 ```

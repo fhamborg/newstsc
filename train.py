@@ -117,6 +117,12 @@ class Instructor:
 
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
+            if self.opt.state_dict and self.opt.state_dict != 'None':
+                pathname = 'pretrained_models/state_dicts/' + self.opt.state_dict
+                # load the weights frorm the state_dict
+                logger.info(f"loading weights from {pathname}")
+                self.model.load_state_dict(torch.load(pathname))
+
         elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
                 self.tokenizer = Tokenizer4GloVe(self.opt.max_seq_len)
@@ -524,6 +530,7 @@ def main():
     parser.add_argument('--task_format', type=str, default='newstsc')
     parser.add_argument('--pretrained_model_name', type=str, default=None,
                         help='has to be placed in folder pretrained_models')
+    parser.add_argument('--state_dict', type=str, default=None)
 
     opt = parser.parse_args()
 
