@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "train.py", line 14, in <module>
+    import torch
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/__init__.py", line 307, in <module>
+    import torch.nn.quantized
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/nn/quantized/__init__.py", line 6, in <module>
+    from .modules import *  # noqa: F401
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/nn/quantized/modules/__init__.py", line 6, in <module>
+    from .conv import Conv2d
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/nn/quantized/modules/conv.py", line 14, in <module>
+    from torch._ops import ops
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/_ops.py", line 9, in <module>
+    import torch.jit
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/jit/__init__.py", line 1693, in <module>
+    for name, method in _get_methods(torch.nn.Module):
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/site-packages/torch/jit/__init__.py", line 1673, in _get_methods
+    return inspect.getmembers(cls, predicate=lambda x: inspect.isfunction(x) or inspect.ismethod(x))
+  File "/Users/felix/anaconda3/envs/ctsa/lib/python3.7/inspect.py", line 357, in getmembers
+    results.sort(key=lambda pair: pair[0])
+KeyboardInterrupt
