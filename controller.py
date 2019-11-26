@@ -24,7 +24,7 @@ import os
 import shelve
 import subprocess
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime
 from itertools import product
 
@@ -102,7 +102,8 @@ class SetupController:
                 self.cuda_devices = self.cuda_devices.split(',')
                 self.logger.info(f"was assigned {len(self.cuda_devices)} cuda devices: {self.cuda_devices}")
                 if self.opt.num_workers < 0:
-                    self.logger.info("num_workers < 0: using cuda device count")
+                    self.logger.info(
+                        f"num_workers < 0: using cuda device count. setting num_workers={len(self.cuda_devices)}")
                     self.opt.num_workers = len(self.cuda_devices)
 
         else:
@@ -330,11 +331,13 @@ class SetupController:
         self.logger.info("found {} previous results".format(len(completed_tasks)))
 
         self.logger.info("preparing experiment setups...")
-        experiment_descs = []
+        experiment_descs = defaultdict(list)
         previous_tasks = Counter()
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
                 _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
+                pool_index = i % self.opt.num_workers
+
                 if _experiment_named_id in completed_tasks:
                     task_desc = completed_tasks[_experiment_named_id]
 
@@ -343,8 +346,9 @@ class SetupController:
                             "task {} was already executed, but with rc={}. rerunning.".format(_experiment_named_id,
                                                                                               task_desc['rc']))
                         cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
-                        experiment_descs.append((i, _experiment_named_id, named_combination, cmd, human_cmd,
-                                                 experiment_path))
+
+                        experiment_descs[pool_index].append((i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                                             experiment_path))
                         previous_tasks['rcnon0'] += 1
                         del completed_tasks[_experiment_named_id]
                     else:
@@ -354,8 +358,8 @@ class SetupController:
                         previous_tasks['rc0'] += 1
                 else:
                     cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
-                    experiment_descs.append((i, _experiment_named_id, named_combination, cmd, human_cmd,
-                                             experiment_path))
+                    experiment_descs[pool_index].append((i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                                         experiment_path))
                     previous_tasks['new'] += 1
                 pbar.update(1)
 
@@ -363,11 +367,13 @@ class SetupController:
         self.logger.info("{}".format(previous_tasks))
 
         self.logger.info("starting {} experiments".format(self.combination_count))
-        self.logger.info("creating process pool with {} workers".format(self.opt.num_workers))
+        self.logger.info("creating {} process pools with each 1 worker".format(self.opt.num_workers))
 
-        pool = multiprocessing.Pool(processes=self.opt.num_workers)
-        for desc in experiment_descs:
-            pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
+        for pool_index in range(self.opt.num_workers):
+            pool = multiprocessing.Pool(processes=1)
+            for desc in experiment_descs[pool_index]:
+                pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
+            self.logger.info(f"created pool with {len(experiment_descs[pool_index])} tasks, processed by 1 worker")
 
         self.logger.info("waiting for workers to complete all jobs...")
         prev_count_done = 0

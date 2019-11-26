@@ -31,10 +31,9 @@ combinations_absadata_0 = {
     'eval_only_after_last_epoch': ['True'],
     'local_context_focus': ['cdm', 'cdw'],  # ['cdw', 'cdm']
     'SRD': ['3'],
-    'pretrained_model_name': ['default'],
-    # 'pretrained_model_name': ['bert_news_ccnc_10mio_3ep', 'bert_news_ccnc_10mio_2ep', 'bert_news_ccnc_10mio_1ep',
-    #                          'default', 'bert_news_ccnc_10mio_3ep', 'laptops_and_restaurants_2mio_ep15',
-    #                          'laptops_1mio_ep30', 'restaurants_10mio_ep3'],
+    # 'pretrained_model_name': ['default'],
+    'pretrained_model_name': ['default', 'bert_news_ccnc_10mio_3ep', 'laptops_and_restaurants_2mio_ep15',
+                              'laptops_1mio_ep30', 'restaurants_10mio_ep3'],
     'state_dict': ['None',
                    'lcf_bert_acl14twitter_val_recall_avg_0.7349_epoch3',
                    'lcf_bert_semeval14laptops_val_recall_avg_0.7853_epoch3',
