@@ -1,10 +1,10 @@
 #!/bin/bash
 ###################################
-#$ -N copetsa-news       # the name of the job
+#$ -N newstsc1           # the name of the job
 #$ -l h_rt=168:00:00     # max run time, see https://www.scc.uni-konstanz.de/summary/current-activities/
 #$-l h_vmem=10G          # reserved GB per slot (for each CPU)
-#$ -o /data/scc/fhamborg/newstsc.out
-#$ -e /data/scc/fhamborg/newstsc.err
+#$ -o /data/scc/fhamborg/newstsc1.out
+#$ -e /data/scc/fhamborg/newstsc1.err
 #$ -m bea
 #$ -M felix.hamborg@uni-konstanz.de
 #$ -q gpu                # to run on nodes with GPGPU
@@ -16,4 +16,4 @@ module load anaconda
 source activate ctsacuda
 
 echo "starting job"
-python controller.py --dataset newstsc --experiments_path /data/scc/fhamborg/exp3 --continue_run True --num_workers -1 --results_path results/results_newstsc --cuda_devices SGE_GPU
+python controller.py --dataset newstsc --experiments_path /data/scc/fhamborg/exp1 --continue_run True --num_workers -1 --results_path results/results_newstsc1 --cuda_devices SGE_GPU --combi_id 1

@@ -35,7 +35,7 @@ def non_scalar_to_str(d):
     return new_d
 
 
-def main(opt):
+def shelve2xlsx(opt):
     completed_tasks = shelve.open(opt.results_path)
     logger.info("found {} results".format(len(completed_tasks)))
 
@@ -77,7 +77,10 @@ def jsonl2xlsx(opt):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--results_path', type=str, required=True)
+    parser.add_argument('--mode', type=str, required=True)
     opt = parser.parse_args()
 
-    # main(opt)
-    jsonl2xlsx(opt)
+    if opt.mode == 'shelve':
+        shelve2xlsx(opt)
+    elif opt.mode == 'jsonl':
+        jsonl2xlsx(opt)

@@ -33,7 +33,8 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
-from combinations_absadata_0 import combinations_absadata_0
+from combinations_absadata_0 import combinations_absadata_0, combinations_absadata_1, combinations_absadata_2, \
+    combinations_absadata_3, combinations_absadata_4
 from fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
@@ -120,7 +121,20 @@ class SetupController:
                               'spc_lm_representation_distilbert', 'finetune_glove',
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
                               'pretrained_model_name', 'state_dict']
-        combinations = combinations_absadata_0
+
+        if self.opt.combi_id == 0:
+            combinations = combinations_absadata_0
+        elif self.opt.combi_id == 1:
+            combinations = combinations_absadata_1
+        elif self.opt.combi_id == 2:
+            combinations = combinations_absadata_2
+        elif self.opt.combi_id == 3:
+            combinations = combinations_absadata_3
+        elif self.opt.combi_id == 4:
+            combinations = combinations_absadata_4
+        else:
+            raise Exception
+
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the
         # condition to be satisfied
@@ -300,6 +314,7 @@ class SetupController:
         self._add_arg(args, 'crossval', self.use_cross_validation)
         self._add_arg(args, 'task_format', self.task_format)
 
+        cuda_device = -1
         if self.cuda_devices:
             cuda_device = experiment_id % len(self.cuda_devices)
             cuda_device_name = 'cuda:' + str(cuda_device)
@@ -311,13 +326,13 @@ class SetupController:
         with open(os.path.join(experiment_path, 'experiment_cmd.sh'), 'w') as writer:
             writer.write(human_cmd)
 
-        return cmd, human_cmd, experiment_path
+        return cmd, human_cmd, experiment_path, cuda_device
 
     def run(self):
         global completed_tasks
 
         if not self.opt.results_path:
-            results_path = "results_{}".format(self.datasetname)
+            results_path = "results/default_results_{}".format(self.datasetname)
         else:
             results_path = self.opt.results_path
 
@@ -336,7 +351,8 @@ class SetupController:
         with tqdm(total=self.combination_count) as pbar:
             for i, named_combination in enumerate(self.named_combinations):
                 _experiment_named_id = self._experiment_named_id_from_named_combination(named_combination)
-                pool_index = i % self.opt.num_workers
+
+                pool_id = i % self.opt.num_workers
 
                 if _experiment_named_id in completed_tasks:
                     task_desc = completed_tasks[_experiment_named_id]
@@ -345,10 +361,15 @@ class SetupController:
                         self.logger.debug(
                             "task {} was already executed, but with rc={}. rerunning.".format(_experiment_named_id,
                                                                                               task_desc['rc']))
-                        cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
+                        cmd, human_cmd, experiment_path, cuda_device_id = self.prepare_single_setup(named_combination,
+                                                                                                    i)
+                        if cuda_device_id != -1:
+                            pool_id = cuda_device_id
 
-                        experiment_descs[pool_index].append((i, _experiment_named_id, named_combination, cmd, human_cmd,
-                                                             experiment_path))
+                        experiment_descs[pool_id].append(
+                            (i, _experiment_named_id, named_combination, cmd, human_cmd,
+                             experiment_path))
+
                         previous_tasks['rcnon0'] += 1
                         del completed_tasks[_experiment_named_id]
                     else:
@@ -357,9 +378,12 @@ class SetupController:
                         self.logger.debug("previous result: {}".format(completed_tasks[_experiment_named_id]))
                         previous_tasks['rc0'] += 1
                 else:
-                    cmd, human_cmd, experiment_path = self.prepare_single_setup(named_combination, i)
-                    experiment_descs[pool_index].append((i, _experiment_named_id, named_combination, cmd, human_cmd,
-                                                         experiment_path))
+                    cmd, human_cmd, experiment_path, cuda_device_id = self.prepare_single_setup(named_combination, i)
+                    if cuda_device_id != -1:
+                        pool_id = cuda_device_id
+
+                    experiment_descs[pool_id].append((i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                                      experiment_path))
                     previous_tasks['new'] += 1
                 pbar.update(1)
 
@@ -369,11 +393,16 @@ class SetupController:
         self.logger.info("starting {} experiments".format(self.combination_count))
         self.logger.info("creating {} process pools with each 1 worker".format(self.opt.num_workers))
 
+        if len(self.cuda_devices) != self.opt.num_workers:
+            self.logger.warning(
+                "number of cuda devices does not match number of workers: {} vs. {}".format(len(self.cuda_devices),
+                                                                                            self.opt.num_workers))
+
         for pool_index in range(self.opt.num_workers):
             pool = multiprocessing.Pool(processes=1)
             for desc in experiment_descs[pool_index]:
                 pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
-            self.logger.info(f"created pool with {len(experiment_descs[pool_index])} tasks, processed by 1 worker")
+            self.logger.info(f"created pool with {len(experiment_descs[pool_index])} tasks, each processed by 1 worker")
 
         self.logger.info("waiting for workers to complete all jobs...")
         prev_count_done = 0
@@ -453,6 +482,7 @@ if __name__ == '__main__':
     parser.add_argument("--rerun_non_rc0", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--num_workers', type=int, default=1)
     parser.add_argument('--results_path', type=str, default=None)
+    parser.add_argument('--combi_id', type=int, default=0)
     parser.add_argument('--cuda_devices', type=str, default=None, help='Comma separated list of cuda device IDs, e.g., '
                                                                        '0,1,2,3; or SGE_GPU to read this list from '
                                                                        'the environment variable SGE_GPU. If not defined,'
