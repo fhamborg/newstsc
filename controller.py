@@ -436,7 +436,7 @@ class SetupController:
 
         if non_okay_experiment_ids:
             self.logger.warning(
-                f"{len(non_okay_experiment_ids)} experiments did not return 0: {non_okay_experiment_ids}")
+                f"{len(non_okay_experiment_ids)} experiments did not return 0: {sorted(non_okay_experiment_ids)}")
 
         # snem-based performance sort
         sorted_results = list(dict(processed_results).values())
