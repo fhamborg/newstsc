@@ -40,12 +40,14 @@ class Instructor:
         logger.info("initialized pretrained model: {}".format(opt.model_name))
 
         self.polarity_associations = {'positive': 2, 'neutral': 1, 'negative': 0}
+        self.polarity_associations_inv = {2: 'positive', 1: 'neutral', 0: 'negative'}
         self.sorted_expected_label_values = [0, 1, 2]
         self.sorted_expected_label_names = ['negative', 'neutral', 'positive']
 
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
-        self.load_datasets()
+        if self.opt.training_mode:
+            self.load_datasets()
 
         self._print_args()
 
@@ -121,7 +123,7 @@ class Instructor:
                 pathname = 'pretrained_models/state_dicts/' + self.opt.state_dict
                 # load the weights frorm the state_dict
                 logger.info(f"loading weights from {pathname}")
-                self.model.load_state_dict(torch.load(pathname))
+                self.model.load_state_dict(torch.load(pathname, map_location=self.opt.device))
 
         elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
@@ -478,62 +480,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean pad_value expected.')
 
 
-def main():
-    # Hyper Parameters
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', default=None, type=str)
-    parser.add_argument('--dataset_name', default=None, type=str,
-                        help='name of the sub-folder in \'datasets\' containing files called [train,dev,test].jsonl')
-    parser.add_argument('--dataset_path', default=None, type=str,
-                        help='relative or absolute path to dataset folder. If defined, will be used instead of dataset_name')
-    parser.add_argument('--optimizer', default='adam', type=str)
-    parser.add_argument('--initializer', default='xavier_uniform_', type=str)
-    parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
-    parser.add_argument('--dropout', default=0.1, type=float)
-    parser.add_argument('--l2reg', default=0.01, type=float)
-    parser.add_argument('--num_epoch', default=10, type=int, help='try larger number for non-BERT models')
-    parser.add_argument('--batch_size', default=64, type=int, help='try 16, 32, 64 for BERT models')
-    parser.add_argument('--log_step', default=5, type=int)
-    parser.add_argument('--embed_dim', default=300, type=int)
-    parser.add_argument('--hidden_dim', default=300, type=int)
-    parser.add_argument('--bert_dim', default=768, type=int)
-    parser.add_argument('--max_seq_len', default=150, type=int)
-    parser.add_argument('--polarities_dim', default=3, type=int)
-    parser.add_argument('--hops', default=3, type=int)
-    parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
-    parser.add_argument('--seed', default=1337, type=int, help='set seed for reproducibility')
-    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
-    parser.add_argument('--SRD', default=3, type=int, help='semantic-relative-distance, see the paper of LCF-BERT '
-                                                           'model')
-    parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
-    parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
-                        help="devmode, default off, enable by using True")
-    parser.add_argument('--experiment_path', default=None, type=str,
-                        help='if defined, all data will be read from / saved to a folder in the experiments folder')
-    parser.add_argument('--crossval', default=0, type=int,
-                        help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
-    parser.add_argument('--balancing', type=str, default=None)
-    parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
-                        help="True: enable label smoothing regularization; False: disable")
-    parser.add_argument('--spc_lm_representation', type=str, default='mean_last')
-    parser.add_argument('--spc_lm_representation_distilbert', type=str, default=None)
-    parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
-                        help="replace target_phrases with a placeholder. default: off")
-    parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input; target_text '
-                                                                                   'or text_target')
-    parser.add_argument('--aen_lm_representation', type=str, default='last')
-    parser.add_argument('--use_early_stopping', type=str2bool, nargs='?', const=True, default=False)
-    parser.add_argument('--finetune_glove', type=str2bool, nargs='?', const=True, default=False)
-    parser.add_argument('--eval_only_after_last_epoch', type=str2bool, nargs='?', const=True, default=False,
-                        help="if False, evaluate the best model that was seen during any training epoch. if True, "
-                             "evaluate only the model that was trained through all num_epoch epochs.")
-    parser.add_argument('--task_format', type=str, default='newstsc')
-    parser.add_argument('--pretrained_model_name', type=str, default=None,
-                        help='has to be placed in folder pretrained_models')
-    parser.add_argument('--state_dict', type=str, default=None)
-
-    opt = parser.parse_args()
-
+def prepare_and_start_instructur(opt):
     if opt.eval_only_after_last_epoch:
         assert not opt.use_early_stopping
 
@@ -633,18 +580,6 @@ def main():
     if not opt.experiment_path.endswith('/'):
         opt.experiment_path = opt.experiment_path + '/'
 
-    if not opt.dataset_path:
-        logger.debug("dataset_path not defined, creating from dataset_name...")
-        opt.dataset_path = os.path.join('datasets', opt.dataset_name)
-        if not opt.dataset_path.endswith('/'):
-            opt.dataset_path = opt.dataset_path + '/'
-        logger.debug("dataset_path created from dataset_name: {}".format(opt.dataset_path))
-    else:
-        logger.debug("dataset_path defined: {}".format(opt.dataset_path))
-
-    opt.initializer = initializers[opt.initializer]
-    opt.optimizer = optimizers[opt.optimizer]
-
     if torch.cuda.is_available():
         logger.info("arg: cuda device: {}".format(opt.device))
         if opt.device:
@@ -660,16 +595,91 @@ def main():
     else:
         logger.info("using CPU (cuda not available)")
 
-    # set dataset_path to include experiment_path
-    opt.dataset_path = os.path.join(opt.experiment_path, opt.dataset_path)
-
     ins = Instructor(opt)
 
-    if opt.crossval > 0:
-        ins.run_crossval()
+    if opt.training_mode:
+        if not opt.dataset_path:
+            logger.debug("dataset_path not defined, creating from dataset_name...")
+            opt.dataset_path = os.path.join('datasets', opt.dataset_name)
+            if not opt.dataset_path.endswith('/'):
+                opt.dataset_path = opt.dataset_path + '/'
+            logger.debug("dataset_path created from dataset_name: {}".format(opt.dataset_path))
+        else:
+            logger.debug("dataset_path defined: {}".format(opt.dataset_path))
+
+        # set dataset_path to include experiment_path
+        opt.dataset_path = os.path.join(opt.experiment_path, opt.dataset_path)
+
+        opt.initializer = initializers[opt.initializer]
+        opt.optimizer = optimizers[opt.optimizer]
+
+        if opt.crossval > 0:
+            ins.run_crossval()
+        else:
+            ins.run()
     else:
-        ins.run()
+        return ins
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--training_mode', type=str2bool, nargs='?', const=True, default=True)
+    parser.add_argument('--model_name', default=None, type=str)
+    parser.add_argument('--dataset_name', default=None, type=str,
+                        help='name of the sub-folder in \'datasets\' containing files called [train,dev,test].jsonl')
+    parser.add_argument('--dataset_path', default=None, type=str,
+                        help='relative or absolute path to dataset folder. If defined, will be used instead of dataset_name')
+    parser.add_argument('--optimizer', default='adam', type=str)
+    parser.add_argument('--initializer', default='xavier_uniform_', type=str)
+    parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
+    parser.add_argument('--dropout', default=0.1, type=float)
+    parser.add_argument('--l2reg', default=0.01, type=float)
+    parser.add_argument('--num_epoch', default=10, type=int, help='try larger number for non-BERT models')
+    parser.add_argument('--batch_size', default=64, type=int, help='try 16, 32, 64 for BERT models')
+    parser.add_argument('--log_step', default=5, type=int)
+    parser.add_argument('--embed_dim', default=300, type=int)
+    parser.add_argument('--hidden_dim', default=300, type=int)
+    parser.add_argument('--bert_dim', default=768, type=int)
+    parser.add_argument('--max_seq_len', default=150, type=int)
+    parser.add_argument('--polarities_dim', default=3, type=int)
+    parser.add_argument('--hops', default=3, type=int)
+    parser.add_argument('--device', default=None, type=str, help='e.g., cuda:0; if None, CPU will be used')
+    parser.add_argument('--seed', default=1337, type=int, help='set seed for reproducibility')
+    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
+    parser.add_argument('--SRD', default=3, type=int, help='semantic-relative-distance, see the paper of LCF-BERT '
+                                                           'model')
+    parser.add_argument('--snem', default='recall_avg', help='see evaluator.py for valid options')
+    parser.add_argument("--devmode", type=str2bool, nargs='?', const=True, default=False,
+                        help="devmode, default off, enable by using True")
+    parser.add_argument('--experiment_path', default=None, type=str,
+                        help='if defined, all data will be read from / saved to a folder in the experiments folder')
+    parser.add_argument('--crossval', default=0, type=int,
+                        help='if k>0 k-fold crossval mode is enabled. the tool will merge ')
+    parser.add_argument('--balancing', type=str, default=None)
+    parser.add_argument("--lsr", type=str2bool, nargs='?', const=True, default=False,
+                        help="True: enable label smoothing regularization; False: disable")
+    parser.add_argument('--spc_lm_representation', type=str, default='mean_last')
+    parser.add_argument('--spc_lm_representation_distilbert', type=str, default=None)
+    parser.add_argument('--use_tp_placeholders', type=str2bool, nargs='?', const=True, default=False,
+                        help="replace target_phrases with a placeholder. default: off")
+    parser.add_argument('--spc_input_order', type=str, default='text_target', help='SPC: order of input; target_text '
+                                                                                   'or text_target')
+    parser.add_argument('--aen_lm_representation', type=str, default='last')
+    parser.add_argument('--use_early_stopping', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--finetune_glove', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--eval_only_after_last_epoch', type=str2bool, nargs='?', const=True, default=False,
+                        help="if False, evaluate the best model that was seen during any training epoch. if True, "
+                             "evaluate only the model that was trained through all num_epoch epochs.")
+    parser.add_argument('--task_format', type=str, default='newstsc')
+    parser.add_argument('--pretrained_model_name', type=str, default=None,
+                        help='has to be placed in folder pretrained_models')
+    parser.add_argument('--state_dict', type=str, default=None)
+
+    opt = parser.parse_args()
+
+    return opt
 
 
 if __name__ == '__main__':
-    main()
+    opt = parse_arguments()
+    prepare_and_start_instructur(opt)
