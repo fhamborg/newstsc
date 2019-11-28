@@ -33,8 +33,10 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
-from combinations_absadata_0 import combinations_absadata_0, combinations_absadata_1, combinations_absadata_2, \
+from combinations_absadata import combinations_absadata_0, combinations_absadata_1, combinations_absadata_2, \
     combinations_absadata_3, combinations_absadata_4
+from combinations_tp_placeholder import combinations_tpplaceholder_0, combinations_tpplaceholder_1, \
+    combinations_tpplaceholder_2, combinations_tpplaceholder_3, combinations_tpplaceholder_4
 from fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
@@ -122,16 +124,32 @@ class SetupController:
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
                               'pretrained_model_name', 'state_dict']
 
-        if self.opt.combi_id == 0:
-            combinations = combinations_absadata_0
-        elif self.opt.combi_id == 1:
-            combinations = combinations_absadata_1
-        elif self.opt.combi_id == 2:
-            combinations = combinations_absadata_2
-        elif self.opt.combi_id == 3:
-            combinations = combinations_absadata_3
-        elif self.opt.combi_id == 4:
-            combinations = combinations_absadata_4
+        if self.opt.combi_mode == 'absadata':
+            if self.opt.combi_id == 0:
+                combinations = combinations_absadata_0
+            elif self.opt.combi_id == 1:
+                combinations = combinations_absadata_1
+            elif self.opt.combi_id == 2:
+                combinations = combinations_absadata_2
+            elif self.opt.combi_id == 3:
+                combinations = combinations_absadata_3
+            elif self.opt.combi_id == 4:
+                combinations = combinations_absadata_4
+            else:
+                raise Exception
+        elif self.opt.combi_mode == 'tpplace':
+            if self.opt.combi_id == 0:
+                combinations = combinations_tpplaceholder_0
+            elif self.opt.combi_id == 1:
+                combinations = combinations_tpplaceholder_1
+            elif self.opt.combi_id == 2:
+                combinations = combinations_tpplaceholder_2
+            elif self.opt.combi_id == 3:
+                combinations = combinations_tpplaceholder_3
+            elif self.opt.combi_id == 4:
+                combinations = combinations_tpplaceholder_4
+            else:
+                raise Exception
         else:
             raise Exception
 
@@ -482,6 +500,7 @@ if __name__ == '__main__':
     parser.add_argument("--rerun_non_rc0", type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--num_workers', type=int, default=1)
     parser.add_argument('--results_path', type=str, default=None)
+    parser.add_argument('--combi_mode', type=str)
     parser.add_argument('--combi_id', type=int, default=0)
     parser.add_argument('--cuda_devices', type=str, default=None, help='Comma separated list of cuda device IDs, e.g., '
                                                                        '0,1,2,3; or SGE_GPU to read this list from '
