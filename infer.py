@@ -32,12 +32,20 @@ class TargetSentimentClassifier:
         self.model.eval()
         torch.autograd.set_grad_enabled(False)
 
-    def infer(self, text_left: str, target_mention: str, text_right: str):
+    def infer(self, text_left: str = None, target_mention: str = None, text_right: str = None, text: str = None,
+              target_mention_from: int = None, target_mention_to: int = None):
         """
         Calculates sentiment as to target_mention in a text that is a concatenation of text_left,
         target_mention, and text_right. Note that text_left and text_right should end with a space (or comma, etc.)),
         or end with a space, respectively.
         """
+        assert not text_left and text or text_left and not text
+
+        if text:
+            text_left = text[:target_mention_from]
+            target_mention = text[target_mention_from:target_mention_to]
+            text_right = text[target_mention_from:]
+
         # assert text_left.endswith(' ') # we cannot handle commas, if we have this check
         assert not target_mention.startswith(' ') and not target_mention.endswith(' ')
         # assert text_right.startswith(' ')
@@ -72,6 +80,9 @@ if __name__ == '__main__':
     opt = parser.parse_args()
 
     tsc = TargetSentimentClassifier(opt.model_name, opt.pretrained_model_name, opt.state_dict)
-    print(tsc.infer("Mr. Trump said that ", "Barack Obama", " was a lias.")[0])
-    print(tsc.infer("Whatever you think of  ", "President Trump",
-                    ", you have to admit that he’s an astute reader of politics.")[0])
+    print(tsc.infer(text_left="Mr. Trump said that ", target_mention="Barack Obama", text_right=" was a lias.")[0])
+    print(tsc.infer(text_left="Whatever you think of  ", target_mention="President Trump",
+                    text_right=", you have to admit that he’s an astute reader of politics.")[0])
+    print(tsc.infer(text=
+                    "A former employee of the Senate intelligence committee, James A. Wolfe, has been arrested on charges of lying to the FBI about contacts with multiple reporters and appeared in federal court Friday in Baltimore.",
+                    target_mention_from=56, target_mention_to=70)[0])
