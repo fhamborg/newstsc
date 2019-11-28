@@ -33,10 +33,7 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
-from combinations_absadata import combinations_absadata_0, combinations_absadata_1, combinations_absadata_2, \
-    combinations_absadata_3, combinations_absadata_4
-from combinations_tp_placeholder import combinations_tpplaceholder_0, combinations_tpplaceholder_1, \
-    combinations_tpplaceholder_2, combinations_tpplaceholder_3, combinations_tpplaceholder_4
+from combinations_default import combinations_default_0
 from fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
