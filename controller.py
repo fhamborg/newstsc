@@ -121,30 +121,9 @@ class SetupController:
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
                               'pretrained_model_name', 'state_dict']
 
-        if self.opt.combi_mode == 'absadata':
+        if self.opt.combi_mode == 'default':
             if self.opt.combi_id == 0:
-                combinations = combinations_absadata_0
-            elif self.opt.combi_id == 1:
-                combinations = combinations_absadata_1
-            elif self.opt.combi_id == 2:
-                combinations = combinations_absadata_2
-            elif self.opt.combi_id == 3:
-                combinations = combinations_absadata_3
-            elif self.opt.combi_id == 4:
-                combinations = combinations_absadata_4
-            else:
-                raise Exception
-        elif self.opt.combi_mode == 'tpplace':
-            if self.opt.combi_id == 0:
-                combinations = combinations_tpplaceholder_0
-            elif self.opt.combi_id == 1:
-                combinations = combinations_tpplaceholder_1
-            elif self.opt.combi_id == 2:
-                combinations = combinations_tpplaceholder_2
-            elif self.opt.combi_id == 3:
-                combinations = combinations_tpplaceholder_3
-            elif self.opt.combi_id == 4:
-                combinations = combinations_tpplaceholder_4
+                combinations = combinations_default_0
             else:
                 raise Exception
         else:
