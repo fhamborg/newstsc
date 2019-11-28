@@ -37,7 +37,8 @@ class TargetSentimentClassifier:
         """
         Calculates sentiment as to target_mention in a text that is a concatenation of text_left,
         target_mention, and text_right. Note that text_left and text_right should end with a space (or comma, etc.)),
-        or end with a space, respectively.
+        or end with a space, respectively. Alternatively, the target can be selected via target_mention_from and
+        target_mention_to in text.
         """
         assert not text_left and text or text_left and not text
 
