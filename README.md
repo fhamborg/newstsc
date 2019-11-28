@@ -17,10 +17,22 @@ conda install --yes -c anaconda requests gensim openpyxl
 pip install pytorch-transformers
 ```
 
-## Domain adapated 
-As mentioned in the paper, we fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
-it, place the folder `downloaded-folder/bert/bert_news_ccnc_10mio_3ep` into 
-`downloaded-folder/code/cope-tsa/pretrained_models/bert_news_ccnc_10mio_3ep`.
+For optimal classification performance, we recommend using our [news-adapted BERT language model](https://github.com/fhamborg/cope-tsa/releases/tag/bert_news_v1.0_3e).
+See instructions below for setting it up.
+
+## News-adapted BERT 
+We fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
+it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
+extract it, and place the folder `bert_news_ccnc_10mio_3ep` into 
+`pretrained_models/`.
+
+Terminal friends may instead use (when in the project's root directory):
+```
+wget https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip
+unzip bert_news_ccnc_10mio_3ep.zip
+rm -f bert_news_ccnc_10mio_3ep.zip
+mv bert_news_ccnc_10mio_3ep pretrained_models/
+```
 
 ## GloVe:
 ```
