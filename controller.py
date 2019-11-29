@@ -42,7 +42,12 @@ completed_tasks_in_this_run_count = 0
 
 def start_worker(experiment_id, experiment_named_id, named_combination, cmd, human_cmd, experiment_path,
                  running_processes):
-    device = named_combination.get('device', None)
+    if '--device' in cmd:
+        device_index_in_list = cmd.index('--device')
+        device = cmd[device_index_in_list + 1]
+    else:
+        device = -1
+
     running_processes[experiment_id] = (True, device)
     logger = get_logger()
 
@@ -399,7 +404,7 @@ class SetupController:
         manager = multiprocessing.Manager()
         running_processes = manager.dict()
         for pool_index in range(self.opt.num_workers):
-            pool = multiprocessing.Pool(processes=1)
+            pool = multiprocessing.Pool(processes=1, maxtasksperchild=1)
             for desc in experiment_descs[pool_index]:
                 proc_args = desc + (running_processes,)  # must be a tuple
                 pool.apply_async(start_worker, args=proc_args, callback=on_task_done,
@@ -410,7 +415,7 @@ class SetupController:
         prev_count_done = 0
         with tqdm(total=previous_tasks['new'], initial=prev_count_done) as pbar:
             while completed_tasks_in_this_run_count < previous_tasks['new']:
-                time.sleep(1)
+                time.sleep(10)
                 update_inc = completed_tasks_in_this_run_count - prev_count_done
 
                 if update_inc > 0:
