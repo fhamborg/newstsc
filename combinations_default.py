@@ -11,7 +11,7 @@ combinations_default_0 = {
     'initializer': ['xavier_uniform_'],
     'learning_rate': ['2e-5', '3e-5', '5e-5'],
     'batch_size': ['16'],  # '32'], # it seems that 32 is too large for some of the SCC machines (out-of-memory errors)
-    'balancing': ['lossweighting'],  # ['None', 'lossweighting', 'oversampling']
+    'balancing': ['lossweighting'],  # ['None', 'lossweighting', 'oversampling'],
     'devmode': ['False'],
     'num_epoch': ['3', '4'],
     'lsr': ['True', 'False'],
@@ -19,7 +19,7 @@ combinations_default_0 = {
     'spc_lm_representation_distilbert': ['mean_last'],
     # ['sum_last', 'sum_last_four', 'sum_last_two', 'sum_all', 'mean_last', 'mean_last_four', 'mean_last_two', 'mean_all'],
     'spc_lm_representation': ['pooler_output'],
-    # ['pooler_output', 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all', 'mean_last'],  # 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
+    # ['pooler_output', 'sum_last', 'sum_last_four', 'sum_last_two', 'sum_all', 'mean_last', 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
     'spc_input_order': ['text_target'],  # 'target_text',
     'aen_lm_representation': ['last'],
     # ['last', 'sum_last_four', 'sum_last_two', 'sum_all', 'mean_last_four'],  # 'mean_last_two', 'mean_all'],
