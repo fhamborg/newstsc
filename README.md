@@ -2,6 +2,8 @@
 Code for our paper submitted to the ACL 2020. Note that some files had to be changed temporarily due to the 
 double-blind requirements of ACL 2020.
 
+This readme consists of two main parts: installation and how to use cope-tsa. For both, there are convenient instructions depending on two main use cases of the system: target-dependent sentiment classification (using our best performing model) or training your own models.
+
 # Installation
 To keep things easy, we use Anaconda for setting up all requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). cope-tsa was tested on MacOS; other OS may work, too. Let us know :-)
 
