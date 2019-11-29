@@ -27,8 +27,8 @@ See instructions below for setting it up.
 
 Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
 
-## News-adapted BERT 
-We fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
+## News-adapted BERT (recommended, optional)
+We fine-tuned BERT on 10M sentences randomly sampled from news articles from the [Common Crawl News Crawl](https://commoncrawl.org/2016/10/news-dataset-available/). To use
 it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
 extract it, and place the folder `bert_news_ccnc_10mio_3ep` into 
 `pretrained_models/`.
@@ -41,13 +41,20 @@ rm -f bert_news_ccnc_10mio_3ep.zip
 mv bert_news_ccnc_10mio_3ep pretrained_models/
 ```
 
-## GloVe:
+## GloVe (optional)
+BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
 ```
 cd embeddings/glove/data
 wget http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip
 unzip glove.42B.300d.zip
 rm -f glove.42B.300d.zip
 python gensimconvert.py
+```
+
+# Target-dependent Sentiment Classification
+Target-dependent sentiment classification works out-of-the-box if you setup our state_dict (you may also train your own, see below). Have a look at infer.py or give it a try:
+```
+python infer.py
 ```
 
 # Training 
