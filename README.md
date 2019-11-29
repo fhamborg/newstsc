@@ -22,7 +22,12 @@ conda install --yes -c anaconda requests gensim openpyxl
 pip install pytorch-transformers
 ```
 
-If you just want to classify sentiment in sentences and do not want to train your own model: we provide the model that performed best in our evaluation. You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
+If you want to train your own models, that's it! Still, see below for optional things to setup that may improve the performance.
+If you want to perform target-dependent sentiment classification on your own data, see `Use our model` (or, of course, train your own).
+
+## Use our model
+If you just want to classify sentiment in sentences and do not want to train your own model: we provide the model that performed best in our evaluation. 
+You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
 
 Terminal friends may instead use (when in the project's root directory):
 ```
