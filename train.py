@@ -595,8 +595,6 @@ def prepare_and_start_instructur(opt):
     else:
         logger.info("using CPU (cuda not available)")
 
-    ins = Instructor(opt)
-
     if opt.training_mode:
         if not opt.dataset_path:
             logger.debug("dataset_path not defined, creating from dataset_name...")
@@ -610,6 +608,9 @@ def prepare_and_start_instructur(opt):
         # set dataset_path to include experiment_path
         opt.dataset_path = os.path.join(opt.experiment_path, opt.dataset_path)
 
+    ins = Instructor(opt)
+
+    if opt.training_mode:
         opt.initializer = initializers[opt.initializer]
         opt.optimizer = optimizers[opt.optimizer]
 

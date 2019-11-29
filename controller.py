@@ -40,7 +40,10 @@ completed_tasks = None  # will be shelve (dict) later
 completed_tasks_in_this_run_count = 0
 
 
-def start_worker(experiment_id, experiment_named_id, named_combination, cmd, human_cmd, experiment_path):
+def start_worker(experiment_id, experiment_named_id, named_combination, cmd, human_cmd, experiment_path,
+                 running_processes):
+    device = named_combination.get('device', None)
+    running_processes[experiment_id] = (True, device)
     logger = get_logger()
 
     logger.debug("starting single setup: {}".format(human_cmd))
@@ -50,6 +53,7 @@ def start_worker(experiment_id, experiment_named_id, named_combination, cmd, hum
 
     experiment_details = get_experiment_result_detailed(experiment_path)
 
+    running_processes[experiment_id] = (False, device)
     return {**named_combination,
             **{'rc': completed_process.returncode, 'experiment_id': experiment_id},
             'details': experiment_details, 'experiment_named_id': experiment_named_id}
@@ -387,35 +391,40 @@ class SetupController:
         self.logger.info("starting {} experiments".format(self.combination_count))
         self.logger.info("creating {} process pools with each 1 worker".format(self.opt.num_workers))
 
-        if len(self.cuda_devices) != self.opt.num_workers:
+        if self.cuda_devices and len(self.cuda_devices) != self.opt.num_workers:
             self.logger.warning(
                 "number of cuda devices does not match number of workers: {} vs. {}".format(len(self.cuda_devices),
                                                                                             self.opt.num_workers))
 
+        manager = multiprocessing.Manager()
+        running_processes = manager.dict()
         for pool_index in range(self.opt.num_workers):
             pool = multiprocessing.Pool(processes=1)
             for desc in experiment_descs[pool_index]:
-                pool.apply_async(start_worker, desc, callback=on_task_done, error_callback=on_task_error)
+                proc_args = desc + (running_processes,)  # must be a tuple
+                pool.apply_async(start_worker, args=proc_args, callback=on_task_done,
+                                 error_callback=on_task_error)
             self.logger.info(f"created pool with {len(experiment_descs[pool_index])} tasks, each processed by 1 worker")
 
         self.logger.info("waiting for workers to complete all jobs...")
         prev_count_done = 0
         with tqdm(total=previous_tasks['new'], initial=prev_count_done) as pbar:
-            while True:
-                time.sleep(10)
-                if completed_tasks_in_this_run_count >= previous_tasks['new']:
-                    self.logger.info(
-                        f"finished all tasks ({completed_tasks_in_this_run_count} of {previous_tasks['new']})")
-                    break
-
+            while completed_tasks_in_this_run_count < previous_tasks['new']:
+                time.sleep(1)
                 update_inc = completed_tasks_in_this_run_count - prev_count_done
+
                 if update_inc > 0:
                     pbar.update(update_inc)
                     prev_count_done = completed_tasks_in_this_run_count
 
-                    best_dev_snem = self._get_best_dev_snem()
-                    pbar.set_postfix_str(f"dev-snem: {best_dev_snem:.4f}")
+                best_dev_snem = self._get_best_dev_snem()
+                sorted_running_procs = sorted(self._get_running_processes(running_processes),
+                                              key=lambda running_device: running_device[1])
+                pbar.set_postfix_str(f'dev-snem: {best_dev_snem:.4f}; prcs/devs: {sorted_running_procs}')
 
+        self.logger.info(f"finished all tasks ({completed_tasks_in_this_run_count} of {previous_tasks['new']})")
+
+        # copy and close shelve to preserve its original state
         processed_results = dict(completed_tasks)
         completed_tasks.close()
 
@@ -455,6 +464,10 @@ class SetupController:
             if task.get('details') and task['details'].get('dev_stats'):
                 best_dev_snem = max(best_dev_snem, task['details']['dev_stats'][self.snem])
         return best_dev_snem
+
+    def _get_running_processes(self, running_processes):
+        return [(exp_id, running_device[1]) for exp_id, running_device in running_processes.items()
+                if running_device[0]]
 
 
 def str2bool(v):
