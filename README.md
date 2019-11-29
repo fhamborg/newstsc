@@ -5,6 +5,7 @@ double-blind requirements of ACL 2020.
 # Installation
 We use Anaconda for setting up all requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/) - it's easy :-) cope-tsa was tested on MacOS.
 
+## Minimum installation
 ```bash
 conda create --yes -n ctsacuda python=3.7
 conda activate ctsacuda
