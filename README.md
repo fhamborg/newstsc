@@ -3,6 +3,8 @@ Code for our paper submitted to the ACL 2020. Note that some files had to be cha
 double-blind requirements of ACL 2020.
 
 # Installation
+We use Anaconda for setting up all requirements. If you do not have it yet, follow the (easy) [installation instructions](https://docs.anaconda.com/anaconda/install/).
+
 ```bash
 conda create --yes -n ctsacuda python=3.7
 conda activate ctsacuda
