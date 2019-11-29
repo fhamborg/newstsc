@@ -26,24 +26,10 @@ pip install pytorch-transformers
 If you want to train your own models, that's it! Still, see below for optional things to setup that may improve the performance.
 If you want to perform target-dependent sentiment classification on your own data, see `Use our model` (or, of course, train your own).
 
-## Use our model
-If you just want to classify sentiment in sentences and do not want to train your own model: we provide the model that performed best in our evaluation. 
-You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
+## Use cope-tsa for classification
+If you just want to classify sentiment in sentences and do not want to train your own model, follow these instructions to download our news-adapted BERT language model and our fine-tuned weights for the model.
 
-Terminal friends may instead use (when in the project's root directory):
-```
-wget https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
-unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
-rm -f lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
-mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
-```
-
-For optimal classification performance, we recommend using our [news-adapted BERT language model](https://github.com/fhamborg/cope-tsa/releases/tag/bert_news_v1.0_3e).
-See instructions below for setting it up.
-
-Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
-
-## News-adapted BERT (recommended, optional)
+### Download news-adapted BERT
 We fine-tuned BERT on 10M sentences randomly sampled from news articles from the [Common Crawl News Crawl](https://commoncrawl.org/2016/10/news-dataset-available/). To use
 it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
 extract it, and place the folder `bert_news_ccnc_10mio_3ep` into 
@@ -56,6 +42,20 @@ unzip bert_news_ccnc_10mio_3ep.zip
 rm -f bert_news_ccnc_10mio_3ep.zip
 mv bert_news_ccnc_10mio_3ep pretrained_models/
 ```
+
+### Download fine-tuned weights
+You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
+
+Terminal friends may instead use (when in the project's root directory):
+```
+wget https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+rm -f lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
+```
+
+## Train your own models
+You can start training right away after completing the [core installation](https://github.com/fhamborg/cope-tsa/#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](https://github.com/fhamborg/cope-tsa/#core-installation)
 
 ## GloVe (optional)
 BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
@@ -95,6 +95,9 @@ unnecessary combinations (e.g., some arguments may only be used for a specific m
 pool to run experiments of these argument combinations in parallel. After completion, `controller.py` creates a summary,
 which contains detailed results, including evaluation performance, of all experiments. By using `createoverview.py`, you
 can export this summary into an Excel spreadsheet.   
+
+# Additional notes
+Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
 
 # Acknowledgements
 The core functionality of this repository is strongly based on 
