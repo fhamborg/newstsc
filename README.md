@@ -22,6 +22,8 @@ pip install pytorch-transformers
 For optimal classification performance, we recommend using our [news-adapted BERT language model](https://github.com/fhamborg/cope-tsa/releases/tag/bert_news_v1.0_3e).
 See instructions below for setting it up.
 
+Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
+
 ## News-adapted BERT 
 We fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
 it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
