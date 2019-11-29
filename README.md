@@ -10,9 +10,11 @@ conda create --yes -n ctsacuda python=3.7
 conda activate ctsacuda
 conda install --yes pandas tqdm scikit-learn
 
-# with CUDA 10.0 (choose this if you have an NVIDIA GPU that supports CUDA)
+# choose either, first is recommended if you have an NVIDIA GPU that supports CUDA)
+# with CUDA 10.0
 conda install --yes pytorch torchvision cudatoolkit=10.1 -c pytorch 
-# without CUDA (calculations will be performed on your CPU): conda install --yes pytorch torchvision -c pytorch
+# without CUDA (calculations will be performed on your CPU)
+conda install --yes pytorch torchvision -c pytorch
 
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate imbalanced-learn
 conda install --yes -c anaconda requests gensim openpyxl
