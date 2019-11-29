@@ -55,9 +55,9 @@ mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
 ```
 
 ## Train your own models
-You can start training right away after completing the [core installation](https://github.com/fhamborg/cope-tsa/#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](https://github.com/fhamborg/cope-tsa/#core-installation)
+You can start training right away after completing the [core installation](https://github.com/fhamborg/cope-tsa/#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](https://github.com/fhamborg/cope-tsa/blob/master/README.md#download-news-adapted-bert).
 
-## GloVe (optional)
+### GloVe (optional)
 BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
 ```
 cd embeddings/glove/data
@@ -67,19 +67,20 @@ rm -f glove.42B.300d.zip
 python gensimconvert.py
 ```
 
-# Target-dependent Sentiment Classification
+# How to use cope-tsa
+## Target-dependent Sentiment Classification
 Target-dependent sentiment classification works out-of-the-box if you setup our state_dict (you may also train your own, see below). Have a look at infer.py or give it a try:
 ```
 python infer.py
 ```
 
-# Training 
+## Training 
 There are two entry points to the system. `train.py` is used to train and evaluate a specific model on a specific dataset using 
 specific hyperparameters. We call a single run an _experiment_. `controller.py` is used to run multiple experiments 
 automatically. This is for example useful for model selection and evaluating hundreds or thousands of combinations of 
 models, hyperparameters, and datasets.
 
-## Running a single experiment 
+### Running a single experiment 
 `train.py` allows fine-grained control over the training and evaluation process, yet for most command line arguments
 we provide useful defaults. Important arguments include `--model_name` (which model is used, e.g., `LCF_BERT`) and 
 `--dataset_name` (which dataset is used, e.g., `newstsc`). For more information refer to `train.py` and 
@@ -89,7 +90,7 @@ we provide useful defaults. Important arguments include `--model_name` (which mo
 python train.py --model_name lcf_bert --optimizer adam --initializer xavier_uniform_ --learning_rate 2e-5 --batch_size 16 --balancing None --num_epoch 3 --lsr True --use_tp_placeholders False --eval_only_after_last_epoch True --devmode False --local_context_focus cdm --SRD 3 --pretrained_model_name bert_news_ccnc_10mio_3ep --snem recall_avg --dataset_name newstsc --experiment_path ./experiments/newstsc_20191126-115759/0/ --crossval 0 --task_format newstsc
 ```
 
-## Running multiple experiments
+### Running multiple experiments
 `controller.py` takes a set of values for each argument, creates combinations of arguments, applies conditions to remove
 unnecessary combinations (e.g., some arguments may only be used for a specific model), and creates a multiprocessing 
 pool to run experiments of these argument combinations in parallel. After completion, `controller.py` creates a summary,
