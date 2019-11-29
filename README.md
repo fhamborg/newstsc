@@ -3,25 +3,42 @@ Code for our paper submitted to the ACL 2020. Note that some files had to be cha
 double-blind requirements of ACL 2020.
 
 # Installation
+We use Anaconda for setting up all requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/) - it's easy :-) cope-tsa was tested on MacOS.
+
 ```bash
 conda create --yes -n ctsacuda python=3.7
 conda activate ctsacuda
-conda install --yes pandas tqdm scikit-learn
 
+# choose either, first is recommended if you have an NVIDIA GPU that supports CUDA)
 # with CUDA 10.0
 conda install --yes pytorch torchvision cudatoolkit=10.1 -c pytorch 
-# w/o cuda: conda install --yes pytorch torchvision -c pytorch
+# without CUDA (calculations will be performed on your CPU)
+conda install --yes pytorch torchvision -c pytorch
 
+conda install --yes pandas tqdm scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate imbalanced-learn
 conda install --yes -c anaconda requests gensim openpyxl
+
 pip install pytorch-transformers
+```
+
+If you just want to classify sentiment in sentences and do not want to train your own model: we provide the model that performed best in our evaluation. You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
+
+Terminal friends may instead use (when in the project's root directory):
+```
+wget https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+rm -f lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
 ```
 
 For optimal classification performance, we recommend using our [news-adapted BERT language model](https://github.com/fhamborg/cope-tsa/releases/tag/bert_news_v1.0_3e).
 See instructions below for setting it up.
 
-## News-adapted BERT 
-We fine-tuned BERT on 10M sentences randomly sampled from the Common Crawl News Crawl. To use
+Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
+
+## News-adapted BERT (recommended, optional)
+We fine-tuned BERT on 10M sentences randomly sampled from news articles from the [Common Crawl News Crawl](https://commoncrawl.org/2016/10/news-dataset-available/). To use
 it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
 extract it, and place the folder `bert_news_ccnc_10mio_3ep` into 
 `pretrained_models/`.
@@ -34,13 +51,20 @@ rm -f bert_news_ccnc_10mio_3ep.zip
 mv bert_news_ccnc_10mio_3ep pretrained_models/
 ```
 
-## GloVe:
+## GloVe (optional)
+BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
 ```
 cd embeddings/glove/data
 wget http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip
 unzip glove.42B.300d.zip
 rm -f glove.42B.300d.zip
 python gensimconvert.py
+```
+
+# Target-dependent Sentiment Classification
+Target-dependent sentiment classification works out-of-the-box if you setup our state_dict (you may also train your own, see below). Have a look at infer.py or give it a try:
+```
+python infer.py
 ```
 
 # Training 
@@ -72,7 +96,4 @@ The core functionality of this repository is strongly based on
 open source.
 
 # License
-An open-source license will be added after review. 
-
-Copyright by the authors.
- 
+[MIT License](LICENSE).
