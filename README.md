@@ -25,7 +25,7 @@ conda install --yes -c anaconda requests gensim openpyxl
 pip install pytorch-transformers
 ```
 
-If you want to *train your own models*, that's it! Still, see below for optional things to setup that may improve the performance.
+If you want to *train your own models*, that's it! Still, see [below](#train-your-own-models) for optional things to setup that may improve the performance.
 
 If you want to perform *target-dependent sentiment classification on your own news articles*, see [Use cope-tsa for classification](#use-cope-tsa-for-classification) (or, of course, train your own).
 
