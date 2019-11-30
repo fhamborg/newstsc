@@ -2,20 +2,20 @@
 Code for our paper submitted to the ACL 2020. Note that some files had to be changed temporarily due to the 
 double-blind requirements of ACL 2020.
 
-This readme consists of two main parts: installation and how to use cope-tsa. For both, there are convenient instructions depending on two main use cases of the system: target-dependent sentiment classification (using our best performing model) or training your own models.
+This readme consists of two main parts: installation of cope-tsa and how to use it. For both, there are instructions describing two use cases of the system: target-dependent sentiment classification your own data (using our best performing model) or training your own models (using the NewsTSC dataset or any other).
 
 # Installation
-To keep things easy, we use Anaconda for setting up all requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). cope-tsa was tested on MacOS; other OS may work, too. Let us know :-)
+To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). cope-tsa was tested on MacOS; other OS may work, too. Let us know :-)
 
 ## Core installation
 ```bash
 conda create --yes -n ctsacuda python=3.7
 conda activate ctsacuda
 
-# choose either, first is recommended if you have an NVIDIA GPU that supports CUDA)
+# choose either of both: the first is recommended if you have an NVIDIA GPU that supports CUDA
 # with CUDA 10.0
 conda install --yes pytorch torchvision cudatoolkit=10.1 -c pytorch 
-# without CUDA (calculations will be performed on your CPU)
+# without CUDA (calculations will be performed on your CPU, not recommended for training your own model but should be okay if you only classify sentiment in news articles)
 conda install --yes pytorch torchvision -c pytorch
 
 conda install --yes pandas tqdm scikit-learn
@@ -25,8 +25,9 @@ conda install --yes -c anaconda requests gensim openpyxl
 pip install pytorch-transformers
 ```
 
-If you want to train your own models, that's it! Still, see below for optional things to setup that may improve the performance.
-If you want to perform target-dependent sentiment classification on your own data, see `Use our model` (or, of course, train your own).
+If you want to *train your own models*, that's it! Still, see below for optional things to setup that may improve the performance.
+
+If you want to perform *target-dependent sentiment classification on your own news articles*, see [Use cope-tsa for classification](#use-cope-tsa-for-classification) (or, of course, train your own).
 
 ## Use cope-tsa for classification
 If you just want to classify sentiment in sentences and do not want to train your own model, follow these instructions to download our news-adapted BERT language model and our fine-tuned weights for the model.
