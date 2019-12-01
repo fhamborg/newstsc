@@ -54,6 +54,7 @@ Terminal friends may instead use (when in the project's root directory):
 wget https://github.com/fhamborg/newstsc/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 rm -f lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+mkdir pretrained_models/state_dicts
 mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
 ```
 
