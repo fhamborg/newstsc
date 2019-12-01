@@ -2,10 +2,10 @@
 Code for our paper submitted to the ACL 2020. Note that some files had to be changed temporarily due to the 
 double-blind requirements of ACL 2020.
 
-This readme consists of two main parts: installation of cope-tsa and how to use it. For both, there are instructions describing two use cases of the system: target-dependent sentiment classification your own data (using our best performing model) or training your own models (using the NewsTSC dataset or any other).
+This readme consists of two main parts: installation of NewsTSC and how to use it. For both, there are instructions describing two use cases of the system: target-dependent sentiment classification your own data (using our best performing model) or training your own models (using the NewsTSC dataset or any other).
 
 # Installation
-To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). cope-tsa was tested on MacOS; other OS may work, too. Let us know :-)
+To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS; other OS may work, too. Let us know :-)
 
 ## Core installation
 ```bash
@@ -27,31 +27,31 @@ pip install pytorch-transformers
 
 If you want to *train your own models*, that's it! Still, see [below](#train-your-own-models) for optional things to setup that may improve the performance.
 
-If you want to perform *target-dependent sentiment classification on your own news articles*, see [Use cope-tsa for classification](#use-cope-tsa-for-classification) (or, of course, train your own).
+If you want to perform *target-dependent sentiment classification on your own news articles*, see [Use NewsTSC for classification](#use-newstsc-for-classification) (or, of course, train your own).
 
-## Use cope-tsa for classification
+## Use NewsTSC for classification
 If you just want to classify sentiment in sentences and do not want to train your own model, follow these instructions to download our news-adapted BERT language model and our fine-tuned weights for the model.
 
 ### Download news-adapted BERT
 We fine-tuned BERT on 10M sentences randomly sampled from news articles from the [Common Crawl News Crawl](https://commoncrawl.org/2016/10/news-dataset-available/). To use
-it, download the [model](https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
+it, download the [model](https://github.com/fhamborg/newstsc/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip), 
 extract it, and place the folder `bert_news_ccnc_10mio_3ep` into 
 `pretrained_models/`.
 
 Terminal friends may instead use (when in the project's root directory):
 ```
-wget https://github.com/fhamborg/cope-tsa/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip
+wget https://github.com/fhamborg/newstsc/releases/download/bert_news_v1.0_3e/bert_news_ccnc_10mio_3ep.zip
 unzip bert_news_ccnc_10mio_3ep.zip
 rm -f bert_news_ccnc_10mio_3ep.zip
 mv bert_news_ccnc_10mio_3ep pretrained_models/
 ```
 
 ### Download fine-tuned weights
-You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
+You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/newstsc/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
 
 Terminal friends may instead use (when in the project's root directory):
 ```
-wget https://github.com/fhamborg/cope-tsa/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
+wget https://github.com/fhamborg/newstsc/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 rm -f lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
@@ -61,7 +61,7 @@ mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
 You can start training right away after completing the [core installation](#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](#download-news-adapted-bert).
 
 ### GloVe (optional)
-BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
+BERT-based models yield higher performance, but NewsTSC also supports GloVe for TSC. You can install GloVe embeddings as follows.
 ```
 cd embeddings/glove/data
 wget http://nlp.stanford.edu/data/wordvecs/glove.42B.300d.zip
@@ -70,7 +70,7 @@ rm -f glove.42B.300d.zip
 python gensimconvert.py
 ```
 
-# How to use cope-tsa
+# How to use NewsTSC
 ## Target-dependent Sentiment Classification
 Target-dependent sentiment classification works out-of-the-box if you setup our state_dict (you may also train your own, see below). Have a look at infer.py or give it a try:
 ```
