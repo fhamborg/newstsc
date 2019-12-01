@@ -58,7 +58,7 @@ mv lcf_bert_newstsc_val_recall_avg_0.5954_epoch3 pretrained_models/state_dicts
 ```
 
 ## Train your own models
-You can start training right away after completing the [core installation](https://github.com/fhamborg/cope-tsa/#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](https://github.com/fhamborg/cope-tsa/blob/master/README.md#download-news-adapted-bert).
+You can start training right away after completing the [core installation](#core-installation). However, for improved performance we recommend to use the news-adapted BERT language model (for download instructions, see [here](#download-news-adapted-bert).
 
 ### GloVe (optional)
 BERT-based models yield higher performance, but cope-tsa also supports GloVe for TSC. You can install GloVe embeddings as follows.
