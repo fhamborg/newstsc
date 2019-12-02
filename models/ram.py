@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from layers.dynamic_rnn import DynamicLSTM
+from newstsc.layers.dynamic_rnn import DynamicLSTM
 
 
 class RAM(nn.Module):

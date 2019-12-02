@@ -7,7 +7,7 @@ import torch
 from gensim.models import KeyedVectors
 from pytorch_transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
 
-from embeddings.glove import gensim_path, pickle_path
+from newstsc.embeddings.glove import gensim_path, pickle_path
 from fxlogger import get_logger
 
 

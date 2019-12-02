@@ -4,15 +4,16 @@ import torch
 import torch.nn.functional as F
 
 from fxlogger import get_logger
-from train import prepare_and_start_instructur, parse_arguments
+from newstsc.train import prepare_and_start_instructur, parse_arguments
 
 
 class TargetSentimentClassifier:
-    def __init__(self, model_name, pretrained_model_name=None, state_dict=None):
-        default_opts = parse_arguments()
+    def __init__(self, model_name, pretrained_model_name=None, state_dict=None, device=None):
+        default_opts = parse_arguments(override_args=True)
         default_opts.model_name = model_name
         default_opts.pretrained_model_name = pretrained_model_name
         default_opts.state_dict = state_dict
+        default_opts.device = device
 
         self.logger = get_logger()
 
@@ -32,6 +33,10 @@ class TargetSentimentClassifier:
         self.model.eval()
         torch.autograd.set_grad_enabled(False)
 
+    @classmethod
+    def create_default(cls, device=None):
+        return cls('lcf_bert', 'bert_news_ccnc_10mio_3ep', 'lcf_bert_newstsc_val_recall_avg_0.5954_epoch3', device)
+
     def infer(self, text_left: str = None, target_mention: str = None, text_right: str = None, text: str = None,
               target_mention_from: int = None, target_mention_to: int = None):
         """
@@ -48,7 +53,7 @@ class TargetSentimentClassifier:
             text_right = text[target_mention_from:]
 
         # assert text_left.endswith(' ') # we cannot handle commas, if we have this check
-        assert not target_mention.startswith(' ') and not target_mention.endswith(' ')
+        assert not target_mention.startswith(' ') and not target_mention.endswith(' '), f"target_mention={target_mention}; text={text}"
         # assert text_right.startswith(' ')
 
         indexed_example = self.tokenizer.create_text_to_indexes(text_left, target_mention, text_right,
@@ -72,11 +77,12 @@ class TargetSentimentClassifier:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--device', default=None, type=str, help='e.g., cuda:0; if None, CPU will be used')
     parser.add_argument('--model_name', default='lcf_bert', type=str)
     parser.add_argument('--pretrained_model_name', type=str, default='bert_news_ccnc_10mio_3ep',
                         help='has to be placed in folder pretrained_models')
     parser.add_argument('--state_dict', type=str, default='lcf_bert_newstsc_val_recall_avg_0.5954_epoch3')
+    parser.add_argument('--device', default=None, type=str,
+                        help='e.g., cuda:0; if None: any CUDA device will be used if available, else CPU')
 
     opt = parser.parse_args()
 

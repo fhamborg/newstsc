@@ -17,17 +17,17 @@ from jsonlines import jsonlines
 from pytorch_transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
 from torch.utils.data import DataLoader, random_split, ConcatDataset
 
-from crossentropylosslsr import CrossEntropyLoss_LSR
-from dataset import FXDataset, RandomOversampler
-from earlystopping import EarlyStopping
-from evaluator import Evaluator
-from fxlogger import get_logger
-from models import RAM
-from models.aen import AEN_Base
-from models.lcf import LCF_BERT
-from models.spc import SPC_Base
-from plotter_utils import create_save_plotted_confusion_matrix
-from tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
+from newstsc.crossentropylosslsr import CrossEntropyLoss_LSR
+from newstsc.dataset import FXDataset, RandomOversampler
+from newstsc.earlystopping import EarlyStopping
+from newstsc.evaluator import Evaluator
+from newstsc.fxlogger import get_logger
+from newstsc.models.aen import AEN_Base
+from newstsc.models.lcf import LCF_BERT
+from newstsc.models.ram import RAM
+from newstsc.models.spc import SPC_Base
+from newstsc.plotter_utils import create_save_plotted_confusion_matrix
+from newstsc.tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
 
 logger = get_logger()
 
@@ -119,11 +119,10 @@ class Instructor:
 
             self.model = self.opt.model_class(pretrained_model, self.opt).to(self.opt.device)
 
-            if self.opt.state_dict and self.opt.state_dict != 'None':
-                pathname = 'pretrained_models/state_dicts/' + self.opt.state_dict
-                # load the weights frorm the state_dict
-                logger.info(f"loading weights from {pathname}")
-                self.model.load_state_dict(torch.load(pathname, map_location=self.opt.device))
+            if self.opt.state_dict:
+                # load weights from the state_dict
+                logger.info(f"loading weights from {self.opt.state_dict}")
+                self.model.load_state_dict(torch.load(self.opt.state_dict, map_location=self.opt.device))
 
         elif self.opt.model_name in ['aen_glove', 'ram']:
             if not only_model:
@@ -481,6 +480,9 @@ def str2bool(v):
 
 
 def prepare_and_start_instructur(opt):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    opt.base_path = dir_path
+
     if opt.eval_only_after_last_epoch:
         assert not opt.use_early_stopping
 
@@ -567,13 +569,19 @@ def prepare_and_start_instructur(opt):
     }
     opt.model_class = model_classes[opt.model_name]
 
+    # add base_path to model-related paths
     if not opt.pretrained_model_name or opt.pretrained_model_name == 'default':
         if opt.model_name in ['ram', 'aen_glove']:
             pass
         else:
             opt.pretrained_model_name = model_name_to_pretrained_model_name[opt.model_name]
     else:
-        opt.pretrained_model_name = 'pretrained_models/' + opt.pretrained_model_name
+        opt.pretrained_model_name = os.path.join(opt.base_path, 'pretrained_models', opt.pretrained_model_name)
+
+    if opt.state_dict and opt.state_dict != 'None':
+        opt.state_dict = os.path.join(opt.base_path, 'pretrained_models', 'state_dicts', opt.state_dict)
+    else:
+        opt.state_dict = None
 
     if not opt.experiment_path:
         opt.experiment_path = '.'
@@ -622,7 +630,7 @@ def prepare_and_start_instructur(opt):
         return ins
 
 
-def parse_arguments():
+def parse_arguments(override_args=False):
     parser = argparse.ArgumentParser()
     parser.add_argument('--training_mode', type=str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--model_name', default=None, type=str)
@@ -676,9 +684,13 @@ def parse_arguments():
                         help='has to be placed in folder pretrained_models')
     parser.add_argument('--state_dict', type=str, default=None)
 
-    opt = parser.parse_args()
+    # if own_args == None -> parse_args will use sys.argv
+    # if own_args == [] -> parse_args will use this empty list instead
+    own_args = None
+    if override_args:
+        own_args = []
 
-    return opt
+    return parser.parse_args(args=own_args)
 
 
 if __name__ == '__main__':

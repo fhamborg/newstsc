@@ -7,9 +7,9 @@ import torch
 import torch.nn as nn
 
 from fxlogger import get_logger
-from layers.attention import Attention
-from layers.point_wise_feed_forward import PositionwiseFeedForward
-from layers.squeeze_embedding import SqueezeEmbedding
+from newstsc.layers.attention import Attention
+from newstsc.layers.point_wise_feed_forward import PositionwiseFeedForward
+from newstsc.layers.squeeze_embedding import SqueezeEmbedding
 
 logger = get_logger()
 
