@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 logger = get_logger()
 

@@ -2,7 +2,7 @@
 # Copyright by Bjarten
 # License: MIT
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 
 class EarlyStopping:

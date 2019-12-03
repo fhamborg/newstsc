@@ -8,7 +8,7 @@ from imblearn.over_sampling import RandomOverSampler
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 # get logger
 logger = get_logger()

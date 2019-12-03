@@ -13,7 +13,7 @@ from shutil import copyfile
 import jsonlines
 from tabulate import tabulate
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 
 class DatasetPreparer:

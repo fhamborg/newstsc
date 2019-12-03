@@ -5,7 +5,7 @@ import jsonlines
 import numpy as np
 from sklearn import metrics
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 
 class Evaluator:

@@ -3,7 +3,7 @@ import argparse
 import torch
 import torch.nn.functional as F
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 from newstsc.train import prepare_and_start_instructur, parse_arguments
 
 
@@ -93,3 +93,8 @@ if __name__ == '__main__':
     print(tsc.infer(text=
                     "A former employee of the Senate intelligence committee, James A. Wolfe, has been arrested on charges of lying to the FBI about contacts with multiple reporters and appeared in federal court Friday in Baltimore.",
                     target_mention_from=56, target_mention_to=70)[0])
+    print(tsc.infer(
+        text_left="While Mr. Abe lavished praise on Mr. Trump for the sanctions campaign, which he said had brought North Korea to the table, he did not repeat ",
+        target_mention="the president's",
+        text_right="words about an end to the Korean War."
+    ))

@@ -5,7 +5,7 @@ import shelve
 import jsonlines
 import pandas as pd
 
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 logger = get_logger()
 

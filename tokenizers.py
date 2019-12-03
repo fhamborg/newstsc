@@ -8,7 +8,7 @@ from gensim.models import KeyedVectors
 from pytorch_transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
 
 from newstsc.embeddings.glove import gensim_path, pickle_path
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 
 class ExampleRepresentation:

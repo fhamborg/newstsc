@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
 from combinations_default import combinations_default_0
-from fxlogger import get_logger
+from newstsc.fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
 completed_tasks_in_this_run_count = 0
