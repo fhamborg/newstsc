@@ -5,7 +5,7 @@ double-blind requirements of ACL 2020.
 This readme consists of two main parts: installation of NewsTSC and how to use it. For both, there are instructions describing two use cases of the system: target-dependent sentiment classification your own data (using our best performing model) or training your own models (using the NewsTSC dataset or any other).
 
 # Installation
-To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS; other OS may work, too. Let us know :-)
+To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu; other OS may work, too. Let us know :-)
 
 ## Core installation
 ```bash
