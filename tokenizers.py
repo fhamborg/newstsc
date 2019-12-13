@@ -1,3 +1,4 @@
+import math
 import pickle
 import time
 from abc import ABC, abstractmethod
@@ -5,38 +6,21 @@ from abc import ABC, abstractmethod
 import numpy as np
 import torch
 from gensim.models import KeyedVectors
+from newstsc.embeddings.glove import gensim_path, pickle_path
 from pytorch_transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer
 
-from newstsc.embeddings.glove import gensim_path, pickle_path
 from fxlogger import get_logger
 
 
-class ExampleRepresentation:
-    def __init__(self):
-        self.indexes_special_text_target = None
-        self.indexes_special_target_text = None
-        self.bert_segments_ids = None
-        self.text_raw_with_special_indices = None
-        self.target_phrase_with_special_indexes = None
-        self.text_raw_indices = None
-        self.text_raw_without_aspect_indices = None
-        self.text_left_indices = None
-        self.text_left_with_aspect_indices = None
-        self.text_right_indices = None
-        self.text_right_with_aspect_indices = None
-        self.target_phrase_indexes = None
-        self.target_phrase_in_text = None
-        self.polarity = None
-        self.example_id = None
-
-
 class FXTokenizer(ABC):
-    def __init__(self):
+    def __init__(self, global_context_max_seqs_per_doc):
         self.logger = get_logger()
         self.count_truncated = 0
         self.count_all_sequences_where_we_count_truncation = 0
+        self.max_seqs_per_doc = global_context_max_seqs_per_doc
 
-    def create_text_to_indexes(self, text_left, target_phrase, text_right, use_target_phrase_placeholders):
+    def create_text_to_indexes(self, text_left, target_phrase, text_right, use_target_phrase_placeholders,
+                               global_context=None):
         if use_target_phrase_placeholders:
             target_phrase = 'placeholder'
 
@@ -75,6 +59,12 @@ class FXTokenizer(ABC):
             self.with_special_tokens(text_left + " " + target_phrase + " " + text_right))
         target_phrase_with_special_indexes = self.text_to_sequence(self.with_special_tokens(target_phrase))
 
+        if global_context:
+            global_context_ids, global_context_type_ids, global_context_attention_mask = self.long_text_to_sequences(
+                global_context)
+        else:
+            global_context_ids, global_context_type_ids, global_context_attention_mask = None
+
         indexes = {
             'special_text_target': special_text_target,
             'special_target_text': special_target_text,
@@ -89,12 +79,22 @@ class FXTokenizer(ABC):
             'text_right_indices': text_right_indices,
             'text_right_with_target_phrase_indices': text_right_with_target_phrase_indices,
             'target_phrase_indexes': target_phrase_indexes,
-            'target_phrase_in_text': target_phrase_in_text,
+            # 'target_phrase_in_text': target_phrase_in_text,
         }
+
+        for i in range(len(global_context_ids)):
+            indexes["global_context_ids{}".format(i)] = global_context_ids[i]
+            indexes["global_context_type_ids{}".format(i)] = global_context_type_ids[i]
+            indexes["global_context_attention_mask{}".format(i)] = global_context_attention_mask[i]
+
         return indexes
 
     @abstractmethod
     def text_to_sequence(self, text, reverse=False, padding='post', truncating='post', count_truncated=False):
+        pass
+
+    @abstractmethod
+    def long_text_to_sequences(self, text):
         pass
 
     @abstractmethod
@@ -136,7 +136,7 @@ class FXTokenizer(ABC):
 
 
 class Tokenizer4Distilbert(FXTokenizer):
-    def __init__(self, max_seq_len, pretrained_distilbert_name):
+    def __init__(self, pretrained_distilbert_name, max_seq_len):
         super().__init__()
         self.tokenizer = DistilBertTokenizer.from_pretrained(pretrained_distilbert_name)
         self.max_seq_len = max_seq_len
@@ -165,10 +165,11 @@ class Tokenizer4Distilbert(FXTokenizer):
 
 
 class Tokenizer4Bert(FXTokenizer):
-    def __init__(self, max_seq_len, pretrained_bert_name):
-        super().__init__()
+    def __init__(self, pretrained_bert_name, max_seq_len, global_context_seqs_per_doc):
+        super().__init__(global_context_seqs_per_doc)
         self.tokenizer = BertTokenizer.from_pretrained(pretrained_bert_name)
         self.max_seq_len = max_seq_len
+        self.max_seq_per_doc = global_context_seqs_per_doc
         self.pad_value = 0  # taken from original ABSA code, plus the 0th vocab entry is pad, see
         # https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip file: vocab.txt
 
@@ -181,6 +182,61 @@ class Tokenizer4Bert(FXTokenizer):
         return self.pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating,
                                      pad_value=self.pad_value, count_truncated=count_truncated)
 
+    def long_text_to_sequences(self, text):
+        tokenized_text = self.tokenizer.tokenize(text)
+
+        max_input_length = self.max_seq_len  # before: 512
+        max_sequences_per_document = math.ceil(len(tokenized_text) / (max_input_length - 2))
+        assert max_sequences_per_document <= self.max_seq_per_doc, "document too large"
+
+        all_input_ids = []
+        all_input_type_ids = []
+        all_input_attention_mask = []
+
+        count_seq = 0
+        for seq_index, i in enumerate(range(0, len(tokenized_text), (max_input_length - 2))):
+            raw_tokens = tokenized_text[i:i + (max_input_length - 2)]
+            tokens = []
+            input_type_ids = []
+
+            tokens.append("[CLS]")
+            input_type_ids.append(0)
+            for token in raw_tokens:
+                tokens.append(token)
+                input_type_ids.append(0)
+            tokens.append("[SEP]")
+            input_type_ids.append(0)
+
+            input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
+            attention_masks = [1] * len(input_ids)
+
+            while len(input_ids) < max_input_length:
+                input_ids.append(0)
+                input_type_ids.append(0)
+                attention_masks.append(0)
+
+            assert len(input_ids) == self.max_seq_len and len(attention_masks) == self.max_seq_len and len(
+                input_type_ids) == self.max_seq_len
+
+            all_input_ids.append(np.asarray(input_ids).reshape((self.max_seq_len,)))
+            all_input_type_ids.append(np.asarray(input_type_ids).reshape((self.max_seq_len,)))
+            all_input_attention_mask.append(np.asarray(attention_masks).reshape((self.max_seq_len,)))
+
+            count_seq += 1
+
+        input_ids = [0] * max_input_length
+        input_type_ids = [0] * max_input_length
+        attention_masks = [0] * max_input_length
+
+        diff = self.max_seq_per_doc - count_seq
+        if diff > 0:
+            for remainder_index in range(diff):
+                all_input_ids.append(np.asarray(input_ids).reshape((self.max_seq_len,)))
+                all_input_type_ids.append(np.asarray(input_type_ids).reshape((self.max_seq_len,)))
+                all_input_attention_mask.append(np.asarray(attention_masks).reshape((self.max_seq_len,)))
+
+        return all_input_ids, all_input_type_ids, all_input_attention_mask
+
     def with_special_tokens(self, text_a, text_b=None):
         if text_b:
             return "[CLS] {} [SEP] {} [SEP]".format(text_a, text_b)
@@ -189,7 +245,7 @@ class Tokenizer4Bert(FXTokenizer):
 
 
 class Tokenizer4Roberta(FXTokenizer):
-    def __init__(self, max_seq_len, pretrained_model_name):
+    def __init__(self, pretrained_model_name, max_seq_len):
         super().__init__()
         self.tokenizer = RobertaTokenizer.from_pretrained(pretrained_model_name)
         self.max_seq_len = max_seq_len

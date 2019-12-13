@@ -46,13 +46,14 @@ class RandomOversampler(torch.utils.data.sampler.Sampler):
 
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer, named_polarity_to_class_number, sorted_expected_label_names,
-                 use_tp_placeholders, task_format="newstsc", devmode=False):
+                 use_tp_placeholders, task_format="newstsc", devmode=False, use_global_context=False):
         self.polarity_associations = named_polarity_to_class_number
         self.sorted_expected_label_names = sorted_expected_label_names
         self.tokenizer = tokenizer
         self.data = []
         self.use_target_phrase_placeholders = use_tp_placeholders
         self.task_format = task_format
+        self.use_global_context = use_global_context
 
         logger.info("reading dataset file {}".format(filepath))
 
@@ -62,9 +63,10 @@ class FXDataset(Dataset):
                 tasks.append(task)
 
         if devmode:
+            k = 3
             logger.warning("DEV MODE IS ENABLED")
-            logger.info("devmode=True: truncating dataset to 60 lines")
-            tasks = tasks[:60]
+            logger.info("devmode=True: truncating dataset to {} lines".format(k))
+            tasks = tasks[:k]
 
         self.label_counter = Counter()
         with tqdm(total=len(tasks)) as pbar:
@@ -79,6 +81,7 @@ class FXDataset(Dataset):
         if self.task_format == 'newstsc_old':
             text = task['text']
             target_phrase = task['targetphrase']
+            global_context = None
             outlet = task['outlet']
             year_month_publish = task['year_month_publish']
             example_id = task['example_id']
@@ -91,6 +94,7 @@ class FXDataset(Dataset):
 
         elif self.task_format == 'newstsc':
             target_phrase = task['target_mention']
+            global_context = task['global_context']
 
             text = task['local_context']
             start_char = task['target_local_from']
@@ -109,13 +113,15 @@ class FXDataset(Dataset):
             target_phrase = task['target_phrase']
             polarity = int(task['polarity']) + 1
             label = self.sorted_expected_label_names[polarity]
+            global_context = None
             example_id = -1
         else:
             raise Exception
 
         # text to indexes
         example = self.tokenizer.create_text_to_indexes(text_left, target_phrase, text_right,
-                                                        self.use_target_phrase_placeholders)
+                                                        self.use_target_phrase_placeholders,
+                                                        global_context=global_context)
 
         # add polarity
         example['polarity'] = polarity

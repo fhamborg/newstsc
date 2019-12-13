@@ -7,12 +7,19 @@
 # The code is based on repository: https://github.com/yangheng95/LCF-ABSA
 
 
+import numpy as np
 import torch
 import torch.nn as nn
-import copy
-import numpy as np
-
 from pytorch_transformers.modeling_bert import BertPooler, BertSelfAttention
+
+
+class GlobalContext(nn.Module):
+    def __init__(self, global_context_seqs_per_doc):
+        super(GlobalContext, self).__init__()
+        self.global_context_seqs_per_doc = global_context_seqs_per_doc
+
+    def forward(self, inputs):
+        pass
 
 
 class SelfAttention(nn.Module):
@@ -31,19 +38,29 @@ class SelfAttention(nn.Module):
 
 
 class LCF_BERT(nn.Module):
-    def __init__(self, bert, opt):
+    def __init__(self, bert, opt, is_global_configuration=False):
         super(LCF_BERT, self).__init__()
 
         self.bert_spc = bert
         self.opt = opt
+        self.is_global_configuration = is_global_configuration
+
         # self.bert_local = copy.deepcopy(bert)  # Uncomment the line to use dual Bert
         self.bert_local = bert  # Default to use single Bert and reduce memory requirements
-        self.dropout = nn.Dropout(opt.dropout)
-        self.bert_SA = SelfAttention(bert.config, opt)
-        self.linear_double = nn.Linear(opt.bert_dim * 2, opt.bert_dim)
-        self.linear_single = nn.Linear(opt.bert_dim, opt.bert_dim)
+        self.dropout = nn.Dropout(self.opt.dropout)
+        self.bert_SA = SelfAttention(bert.config, self.opt)
+        self.linear_double = nn.Linear(self.opt.bert_dim * 2, self.opt.bert_dim)
+        self.linear_single = nn.Linear(self.opt.bert_dim, self.opt.bert_dim)
         self.bert_pooler = BertPooler(bert.config)
-        self.dense = nn.Linear(opt.bert_dim, opt.polarities_dim)
+
+        if self.opt.use_global_context:
+            self.gc_bert = bert
+            self.linear_gc_merger = nn.Linear(self.opt.bert_dim * self.opt.global_context_seqs_per_doc,
+                                              self.opt.bert_dim)
+            self.linear_lcf_and_gc_merger = nn.Linear(self.opt.bert_dim * 2, self.opt.bert_dim)
+
+        if not self.is_global_configuration:
+            self.dense = nn.Linear(self.opt.bert_dim, self.opt.polarities_dim)
 
     def feature_dynamic_mask(self, text_local_indices, aspect_indices):
         texts = text_local_indices.cpu().numpy()
@@ -92,11 +109,20 @@ class LCF_BERT(nn.Module):
         masked_text_raw_indices = torch.from_numpy(masked_text_raw_indices)
         return masked_text_raw_indices.to(self.opt.device)
 
+    def _get_inputs_for_global_context_segment(self, inputs, segment_index, offset):
+        assert segment_index < self.opt.global_context_seqs_per_doc, "segment_index({}) >= max_num_components({})".format(
+            segment_index, self.opt.global_context_seqs_per_doc)
+
+        in0 = inputs[offset + segment_index * 3]
+        in1 = inputs[offset + segment_index * 3 + 1]
+        in2 = inputs[offset + segment_index * 3 + 2]
+
+        return in0, in1, in2
+
     def forward(self, inputs):
-        text_bert_indices = inputs[0]
-        bert_segments_ids = inputs[1]
-        text_local_indices = inputs[2]
-        aspect_indices = inputs[3]
+        text_bert_indices, bert_segments_ids, text_local_indices, aspect_indices = inputs[0], inputs[1], inputs[2], \
+                                                                                   inputs[3]
+        batch_size = text_bert_indices.shape[0]
 
         bert_spc_out, _, _ = self.bert_spc(text_bert_indices, bert_segments_ids)
         bert_spc_out = self.dropout(bert_spc_out)
@@ -116,6 +142,27 @@ class LCF_BERT(nn.Module):
         mean_pool = self.linear_double(out_cat)
         self_attention_out = self.bert_SA(mean_pool)
         pooled_out = self.bert_pooler(self_attention_out)
-        dense_out = self.dense(pooled_out)
 
-        return dense_out
+        if self.opt.use_global_context:
+            lst_gc_segments = []
+
+            for i in range(self.opt.global_context_seqs_per_doc):
+                gci, gct, gca = self._get_inputs_for_global_context_segment(inputs, i, 4)
+                _, gc_bert_pooler_output, _ = self.gc_bert(gci, gct, gca)
+                gc_bert_pooler_output = self.dropout(gc_bert_pooler_output)
+                lst_gc_segments.append(gc_bert_pooler_output)
+
+            # merge with main output
+            gc_segments = torch.cat(lst_gc_segments, dim=-1)
+            merged_gc_segments = self.linear_gc_merger(gc_segments)
+            merged_pooled_out_and_global_context = torch.cat((pooled_out, merged_gc_segments), dim=-1)
+            pooled_out = self.linear_lcf_and_gc_merger(merged_pooled_out_and_global_context)
+
+        # if we use LCF as is, i.e., not in the context of globalsenti, then apply the original last dense layer to get
+        # 3 classes for each document
+        if not self.is_global_configuration:
+            dense_out = self.dense(pooled_out)
+            return dense_out
+        # otherwise return the pooled output, since it seems to be a proper representation of LCF's output
+        else:
+            return pooled_out

@@ -16,4 +16,5 @@ module load anaconda
 source activate ctsacuda
 
 echo "starting job"
-python controller.py --dataset newstsc --experiments_path /data/scc/fhamborg/exp0 --continue_run True --num_workers -1 --results_path results/results_newstsc0 --cuda_devices SGE_GPU --combi_mode default --combi_id 0
+python controller.py --dataset newstscg --experiments_path /data/scc/fhamborg/exp0 --continue_run True --num_workers -1 --results_path results/results_newstsc0 --cuda_devices SGE_GPU --combi_mode default --combi_id 0
+echo "finished job"

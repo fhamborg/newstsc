@@ -8,14 +8,18 @@ import argparse
 import math
 import os
 import random
+import sys
 import time
 
 import numpy
 import torch
 import torch.nn as nn
 from jsonlines import jsonlines
-from pytorch_transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
-from torch.utils.data import DataLoader, random_split, ConcatDataset
+
+cur_path = os.path.dirname(os.path.realpath(__file__))
+par_path = os.path.dirname(cur_path)
+sys.path.append(cur_path)
+sys.path.append(par_path)
 
 from newstsc.crossentropylosslsr import CrossEntropyLoss_LSR
 from newstsc.dataset import FXDataset, RandomOversampler
@@ -26,8 +30,11 @@ from newstsc.models.aen import AEN_Base
 from newstsc.models.lcf import LCF_BERT
 from newstsc.models.ram import RAM
 from newstsc.models.spc import SPC_Base
+from newstsc.models.globalsenti import Global_LCF
 from newstsc.plotter_utils import create_save_plotted_confusion_matrix
 from newstsc.tokenizers import Tokenizer4Bert, Tokenizer4Distilbert, Tokenizer4GloVe, Tokenizer4Roberta
+from pytorch_transformers import BertModel, DistilBertModel, RobertaModel, PreTrainedModel
+from torch.utils.data import DataLoader, random_split, ConcatDataset
 
 logger = get_logger()
 
@@ -56,23 +63,24 @@ class Instructor:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
                                          self.polarity_associations, self.sorted_expected_label_names,
-                                         self.opt.use_tp_placeholders, self.opt.task_format, self.opt.devmode)
+                                         self.opt.use_tp_placeholders, self.opt.task_format, self.opt.devmode,
+                                         self.opt.use_global_context)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.task_format, self.opt.devmode)
+                                     self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
             self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
                                       self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                      self.opt.task_format, self.opt.devmode)
+                                      self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
             self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                    self.opt.task_format, self.opt.devmode)
+                                    self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
             self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.task_format, self.opt.devmode)
+                                     self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 
@@ -100,13 +108,14 @@ class Instructor:
                                    'spc_bert', 'spc_roberta', 'lcf_bert']:
             if not only_model:
                 if self.opt.model_name in ['aen_bert', 'spc_bert', 'lcf_bert']:
-                    self.tokenizer = Tokenizer4Bert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                    self.tokenizer = Tokenizer4Bert(self.opt.pretrained_model_name, self.opt.max_seq_len,
+                                                    self.opt.global_context_seqs_per_doc)
                 elif self.opt.model_name in ['aen_distilbert', 'spc_distilbert']:
-                    self.tokenizer = Tokenizer4Distilbert(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                    self.tokenizer = Tokenizer4Distilbert(self.opt.pretrained_model_name, self.opt.max_seq_len, )
                 elif self.opt.model_name in ['aen_roberta', 'spc_roberta']:
-                    self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                    self.tokenizer = Tokenizer4Roberta(self.opt.pretrained_model_name, self.opt.max_seq_len, )
                 elif self.opt.model_name in ['aen_distilroberta', 'spc_distiloberta']:
-                    self.tokenizer = Tokenizer4Roberta(self.opt.max_seq_len, self.opt.pretrained_model_name)
+                    self.tokenizer = Tokenizer4Roberta(self.opt.pretrained_model_name, self.opt.max_seq_len, )
 
             if self.opt.model_name in ['aen_bert', 'spc_bert', 'lcf_bert']:
                 pretrained_model = BertModel.from_pretrained(self.opt.pretrained_model_name, output_hidden_states=True)
@@ -185,6 +194,18 @@ class Instructor:
                 optimizer.zero_grad()
                 inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
                 targets = sample_batched['polarity'].to(self.opt.device)
+
+                if self.opt.use_global_context:
+                    str_gci = 'global_context_ids{}'
+                    str_gct = 'global_context_type_ids{}'
+                    str_gca = 'global_context_attention_mask{}'
+                    for i in range(self.opt.global_context_seqs_per_doc):
+                        gci = sample_batched[str_gci.format(i)]
+                        gct = sample_batched[str_gct.format(i)]
+                        gca = sample_batched[str_gca.format(i)]
+                        inputs.append(gci)
+                        inputs.append(gct)
+                        inputs.append(gca)
 
                 outputs = self.model(inputs)
 
@@ -503,6 +524,7 @@ def prepare_and_start_instructur(opt):
         torch.backends.cudnn.benchmark = False
 
     model_classes = {
+        'global_lcf': Global_LCF,
         'ram': RAM,
         # AEN
         'aen_bert': AEN_Base,
@@ -518,6 +540,7 @@ def prepare_and_start_instructur(opt):
         'lcf_bert': LCF_BERT,
     }
     model_name_to_pretrained_model_name = {
+        'global_lcf': 'bert-base-uncased',
         # bert
         'aen_bert': 'bert-base-uncased',
         'spc_bert': 'bert-base-uncased',
@@ -538,6 +561,8 @@ def prepare_and_start_instructur(opt):
         input_columns_spc = ['special_text_target', 'segments_ids_text_target']
 
     input_columns = {
+        'global_lcf': ['special_text_target', 'segments_ids_text_target', 'text_raw_with_special_indices',
+                       'target_phrase_with_special_indexes'],
         # SPC
         'spc_bert': input_columns_spc,
         'spc_distilbert': input_columns_spc,
@@ -683,6 +708,8 @@ def parse_arguments(override_args=False):
     parser.add_argument('--pretrained_model_name', type=str, default=None,
                         help='has to be placed in folder pretrained_models')
     parser.add_argument('--state_dict', type=str, default=None)
+    parser.add_argument('--use_global_context', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--global_context_seqs_per_doc', type=int, default=20)
 
     # if own_args == None -> parse_args will use sys.argv
     # if own_args == [] -> parse_args will use this empty list instead

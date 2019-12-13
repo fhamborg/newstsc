@@ -354,6 +354,27 @@ class DatasetPreparer:
         dprep.init_set(sets_info)
         return dprep, name, task_format
 
+    @classmethod
+    def newstscg(cls, basepath):
+        name = 'newstscg'
+        task_format = 'newstsc'
+        human_created_filenames = ['train.jsonl']
+        non_human_created_filenames = []
+
+        dprep = cls(name, basepath, human_created_filenames, non_human_created_filenames)
+
+        sets_info = {
+            'train':
+                {'human-weight': 2000, 'nonhum-weight': 0},
+            'dev':
+                {'human-weight': 300, 'nonhum-weight': 0},
+            'test':
+                {'file': 'test.jsonl'},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, task_format
+
 
 if __name__ == '__main__':
     DatasetPreparer.sentinews("controller_data/datasets")

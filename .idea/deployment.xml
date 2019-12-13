@@ -5,7 +5,7 @@
       <paths name="scc">
         <serverdata>
           <mappings>
-            <mapping deploy="/code/cope-tsa" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/code/newstsc" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/experiments" />

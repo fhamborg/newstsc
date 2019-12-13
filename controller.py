@@ -128,7 +128,8 @@ class SetupController:
                               'spc_lm_representation', 'spc_input_order', 'aen_lm_representation',
                               'spc_lm_representation_distilbert', 'finetune_glove',
                               'eval_only_after_last_epoch', 'devmode', 'local_context_focus', 'SRD',
-                              'pretrained_model_name', 'state_dict']
+                              'pretrained_model_name', 'state_dict', 'use_global_context',
+                              'global_context_seqs_per_doc']
 
         if self.opt.combi_mode == 'default':
             if self.opt.combi_id == 0:
@@ -216,6 +217,8 @@ class SetupController:
                     self.basepath_data)
             elif self.opt.dataset == 'newstsc':
                 self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.newstsc(self.basepath_data)
+            elif self.opt.dataset == 'newstscg':
+                self.dataset_preparer, self.datasetname, self.task_format = DatasetPreparer.newstscg(self.basepath_data)
             else:
                 raise Exception("unknown dataset: {}".format(self.opt.dataset))
 
@@ -360,21 +363,27 @@ class SetupController:
                 if _experiment_named_id in completed_tasks:
                     task_desc = completed_tasks[_experiment_named_id]
 
-                    if self.opt.rerun_non_rc0 and task_desc['rc'] != 0:
-                        self.logger.debug(
-                            "task {} was already executed, but with rc={}. rerunning.".format(_experiment_named_id,
-                                                                                              task_desc['rc']))
-                        cmd, human_cmd, experiment_path, cuda_device_id = self.prepare_single_setup(named_combination,
-                                                                                                    i)
-                        if cuda_device_id != -1:
-                            pool_id = cuda_device_id
+                    if task_desc['rc'] != 0:
+                        if self.opt.rerun_non_rc0:
+                            self.logger.debug(
+                                "task {} was already executed, but with rc={}. rerunning.".format(_experiment_named_id,
+                                                                                                  task_desc['rc']))
+                            cmd, human_cmd, experiment_path, cuda_device_id = self.prepare_single_setup(
+                                named_combination,
+                                i)
+                            if cuda_device_id != -1:
+                                pool_id = cuda_device_id
 
-                        experiment_descs[pool_id].append(
-                            (i, _experiment_named_id, named_combination, cmd, human_cmd,
-                             experiment_path))
+                            experiment_descs[pool_id].append(
+                                (i, _experiment_named_id, named_combination, cmd, human_cmd,
+                                 experiment_path))
 
-                        previous_tasks['rcnon0'] += 1
-                        del completed_tasks[_experiment_named_id]
+                            previous_tasks['new'] += 1
+                            del completed_tasks[_experiment_named_id]
+                        else:
+                            self.logger.debug("task {} was already executed, but with rc={}. not rerunning.".format(
+                                _experiment_named_id, task_desc['rc']))
+                            previous_tasks['rcnon0'] += 1
                     else:
                         # rerun tasks where the rc != 0 (always rerun tasks that have not been executed at all, yet)
                         self.logger.debug("skipping experiment: {}".format(_experiment_named_id))
@@ -390,7 +399,8 @@ class SetupController:
                     previous_tasks['new'] += 1
                 pbar.update(1)
 
-        self.logger.info("summary (rc0 is increased also for non-0 tasks, if rerun_non_rc0 is not set)")
+        self.logger.info(
+            "summary (new is also increased for tasks that were executed previously but yielded rc!=0 - if rerun_non_rc0==True")
         self.logger.info("{}".format(previous_tasks))
 
         self.logger.info("starting {} experiments".format(self.combination_count))
