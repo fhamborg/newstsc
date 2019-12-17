@@ -17,6 +17,7 @@ class FXTokenizer(ABC):
         self.logger = get_logger()
         self.count_truncated = 0
         self.count_all_sequences_where_we_count_truncation = 0
+        self.count_truncated_long_docs = 0
         self.max_seqs_per_doc = global_context_max_seqs_per_doc
 
     def create_text_to_indexes(self, text_left, target_phrase, text_right, use_target_phrase_placeholders,
@@ -187,7 +188,10 @@ class Tokenizer4Bert(FXTokenizer):
 
         max_input_length = self.max_seq_len  # before: 512
         max_sequences_per_document = math.ceil(len(tokenized_text) / (max_input_length - 2))
-        assert max_sequences_per_document <= self.max_seq_per_doc, "document too large"
+        document_too_large = max_sequences_per_document > self.max_seq_per_doc
+        if document_too_large:
+            self.logger.debug("document too large")
+            self.count_truncated_long_docs += 1
 
         all_input_ids = []
         all_input_type_ids = []

@@ -8,8 +8,8 @@
 #$ -m bea
 #$ -M felix.hamborg@uni-konstanz.de
 #$ -q gpu                # to run on nodes with GPGPU
-#$ -l gpu=8              # number of reserved GPUs
-#$ -pe smp 8             # number of reserved nodes (8 CPUs), 1 CPU for each GPU (= 8 CPUs in total)
+#$ -l gpu=7              # number of reserved GPUs
+#$ -pe smp 7             # number of reserved nodes (8 CPUs), 1 CPU for each GPU (= 8 CPUs in total)
 
 module load cuda
 module load anaconda

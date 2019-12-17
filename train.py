@@ -86,6 +86,7 @@ class Instructor:
 
         logger.info("truncated sequences of in total: {} / {}".format(self.tokenizer.count_truncated,
                                                                       self.tokenizer.count_all_sequences_where_we_count_truncation))
+        logger.info("truncated long docs: {}".format(self.tokenizer.count_truncated_long_docs))
 
     def _print_args(self):
         n_trainable_params, n_nontrainable_params = 0, 0
@@ -170,6 +171,27 @@ class Instructor:
 
         return selected_model_filename, selected_model_path
 
+    def _select_inputs(self, sample_batched):
+        """
+        Selects the input data fields, thereby handles other options that influence data selection, too, e.g.,
+        use_global_context.
+        """
+        inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
+
+        if self.opt.use_global_context:
+            str_gci = 'global_context_ids{}'
+            str_gct = 'global_context_type_ids{}'
+            str_gca = 'global_context_attention_mask{}'
+            for i in range(self.opt.global_context_seqs_per_doc):
+                gci = sample_batched[str_gci.format(i)]
+                gct = sample_batched[str_gct.format(i)]
+                gca = sample_batched[str_gca.format(i)]
+                inputs.append(gci.to(self.opt.device))
+                inputs.append(gct.to(self.opt.device))
+                inputs.append(gca.to(self.opt.device))
+
+        return inputs
+
     def _train(self, criterion, optimizer, train_data_loader, dev_data_loader, fold_number=None):
         global_step = 0
         selected_model_path = None
@@ -192,20 +214,8 @@ class Instructor:
                 global_step += 1
                 # clear gradient accumulators
                 optimizer.zero_grad()
-                inputs = [sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
+                inputs = self._select_inputs(sample_batched)
                 targets = sample_batched['polarity'].to(self.opt.device)
-
-                if self.opt.use_global_context:
-                    str_gci = 'global_context_ids{}'
-                    str_gct = 'global_context_type_ids{}'
-                    str_gca = 'global_context_attention_mask{}'
-                    for i in range(self.opt.global_context_seqs_per_doc):
-                        gci = sample_batched[str_gci.format(i)]
-                        gct = sample_batched[str_gct.format(i)]
-                        gca = sample_batched[str_gca.format(i)]
-                        inputs.append(gci)
-                        inputs.append(gct)
-                        inputs.append(gca)
 
                 outputs = self.model(inputs)
 
@@ -287,7 +297,7 @@ class Instructor:
 
         with torch.no_grad():
             for t_batch, t_sample_batched in enumerate(data_loader):
-                t_inputs = [t_sample_batched[col].to(self.opt.device) for col in self.opt.input_columns]
+                t_inputs = self._select_inputs(t_sample_batched)
                 t_labels = t_sample_batched['polarity'].to(self.opt.device)
 
                 t_texts = t_sample_batched['orig_text']
