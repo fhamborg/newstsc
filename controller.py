@@ -34,6 +34,7 @@ from tqdm import tqdm
 
 from DatasetPreparer import DatasetPreparer
 from combinations_default import combinations_default_0
+from combinations_g import combinations_g_0
 from fxlogger import get_logger
 
 completed_tasks = None  # will be shelve (dict) later
@@ -131,13 +132,16 @@ class SetupController:
                               'pretrained_model_name', 'state_dict', 'use_global_context',
                               'global_context_seqs_per_doc']
 
+        combinations = None
         if self.opt.combi_mode == 'default':
             if self.opt.combi_id == 0:
                 combinations = combinations_default_0
-            else:
-                raise Exception
-        else:
-            raise Exception
+        elif self.opt.combi_mode == 'combinations_g_0':
+            if self.opt.combi_id == 0:  #
+                combinations = combinations_g_0
+
+        if not combinations:
+            raise ValueError("combination(mode={}, id={}) not defined".format(self.opt.combi_mode, self.opt.combi_id))
 
         # key: name of parameter that is only applied if its conditions are met
         # pad_value: list of tuples, consisting of parameter name and the pad_value it needs to have in order for the

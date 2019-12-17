@@ -1,4 +1,4 @@
-combinations_default_0 = {
+combinations_g_0 = {
     'model_name': [
         # SPC
         # 'spc_bert', 'spc_distilbert', 'spc_roberta',
