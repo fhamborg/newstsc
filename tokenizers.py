@@ -64,7 +64,7 @@ class FXTokenizer(ABC):
             global_context_ids, global_context_type_ids, global_context_attention_mask = self.long_text_to_sequences(
                 global_context)
         else:
-            global_context_ids, global_context_type_ids, global_context_attention_mask = None
+            global_context_ids, global_context_type_ids, global_context_attention_mask = None, None, None
 
         indexes = {
             'special_text_target': special_text_target,
@@ -83,10 +83,11 @@ class FXTokenizer(ABC):
             # 'target_phrase_in_text': target_phrase_in_text,
         }
 
-        for i in range(len(global_context_ids)):
-            indexes["global_context_ids{}".format(i)] = global_context_ids[i]
-            indexes["global_context_type_ids{}".format(i)] = global_context_type_ids[i]
-            indexes["global_context_attention_mask{}".format(i)] = global_context_attention_mask[i]
+        if global_context:
+            for i, id in enumerate(global_context_ids):
+                indexes[f"global_context_ids{i}"] = id
+                indexes[f"global_context_type_ids{i}"] = global_context_type_ids[i]
+                indexes[f"global_context_attention_mask{i}"] = global_context_attention_mask[i]
 
         return indexes
 
