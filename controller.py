@@ -136,8 +136,8 @@ class SetupController:
         if self.opt.combi_mode == 'default':
             if self.opt.combi_id == 0:
                 combinations = combinations_default_0
-        elif self.opt.combi_mode == 'combinations_g_0':
-            if self.opt.combi_id == 0:  #
+        elif self.opt.combi_mode == 'combinations_g':
+            if self.opt.combi_id == 0:
                 combinations = combinations_g_0
 
         if not combinations:
