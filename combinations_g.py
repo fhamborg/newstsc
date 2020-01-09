@@ -13,7 +13,7 @@ combinations_g_0 = {
     'batch_size': ['1'],  # ['16', '32'], # on SCC, 16 is fine for normal operation, 1 is fine for global models
     'balancing': ['lossweighting'],  # ['None', 'lossweighting', 'oversampling'],
     'devmode': ['False'],
-    'num_epoch': ['3', '4'],
+    'num_epoch': ['10', '20', '40'],
     'lsr': ['True', 'False'],
     'use_tp_placeholders': ['False'],  # ['False', 'True'],
     'spc_lm_representation_distilbert': ['mean_last'],

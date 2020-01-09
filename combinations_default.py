@@ -10,7 +10,7 @@ combinations_default_0 = {
     'optimizer': ['adam'],
     'initializer': ['xavier_uniform_'],
     'learning_rate': ['2e-5', '3e-5', '5e-5'],
-    'batch_size': ['16'],  # ['1', '16', '32'], # on SCC, 16 is fine for normal operation, 1 is fine for global models
+    'batch_size': ['16'],  # ['16', '32'], # on SCC, 16 is fine for normal operation, 1 is fine for global models
     'balancing': ['lossweighting'],  # ['None', 'lossweighting', 'oversampling'],
     'devmode': ['False'],
     'num_epoch': ['3', '4'],
