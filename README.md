@@ -30,7 +30,7 @@ If you want to *train your own models*, that's it! Still, see [below](#train-you
 If you want to perform *target-dependent sentiment classification on your own news articles*, see [Use NewsTSC for classification](#use-newstsc-for-classification) (or, of course, train your own).
 
 ## Use NewsTSC for classification
-If you just want to classify sentiment in sentences and do not want to train your own model, follow these instructions to download our news-adapted BERT language model and our fine-tuned weights for the model.
+If you want to classify sentiment in sentences and do not want to train your own model, follow these instructions to download our news-adapted BERT language model and our fine-tuned weights for the model.
 
 ### Download news-adapted BERT
 We fine-tuned BERT on 10M sentences randomly sampled from news articles from the [Common Crawl News Crawl](https://commoncrawl.org/2016/10/news-dataset-available/). To use
