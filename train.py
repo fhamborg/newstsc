@@ -16,6 +16,8 @@ import torch
 import torch.nn as nn
 from jsonlines import jsonlines
 
+from dependencyparser import DependencyParser
+
 cur_path = os.path.dirname(os.path.realpath(__file__))
 par_path = os.path.dirname(cur_path)
 sys.path.append(cur_path)
@@ -53,34 +55,38 @@ class Instructor:
 
         self.evaluator = Evaluator(self.sorted_expected_label_values, self.polarity_associations, self.opt.snem)
 
+        self.trainset = None
+        self.devset = None
+        self.testset = None
+        self.all_datasets = None
+        self.crossvalset = None
+        self.dependency_parser = None
+
         if self.opt.training_mode:
             self.load_datasets()
 
         self._print_args()
 
+    def _load_dataset(self, path):
+        return FXDataset(path, self.tokenizer, self.polarity_associations, self.sorted_expected_label_names,
+                         self.opt.use_tp_placeholders, self.opt.task_format, self.opt.devmode,
+                         self.opt.use_global_context, self.dependency_parser)
+
     def load_datasets(self):
+        if self.opt.dependency_mode == 'dependency_tensor':
+            self.dependency_parser = DependencyParser()
+
         if self.opt.crossval > 0:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
-            self.crossvalset = FXDataset(self.opt.dataset_path + 'crossval.jsonl', self.tokenizer,
-                                         self.polarity_associations, self.sorted_expected_label_names,
-                                         self.opt.use_tp_placeholders, self.opt.task_format, self.opt.devmode,
-                                         self.opt.use_global_context)
-            self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
+            self.crossvalset = self._load_dataset(self.opt.dataset_path + 'crossval.jsonl')
+            self.testset = self._load_dataset(self.opt.dataset_path + 'test.jsonl')
             self.all_datasets = [self.crossvalset, self.testset]
             logger.info("loaded crossval datasets from {}".format(self.opt.dataset_path))
         else:
             logger.info("loading datasets {} from {}".format(self.opt.dataset_name, self.opt.dataset_path))
-            self.trainset = FXDataset(self.opt.dataset_path + 'train.jsonl', self.tokenizer, self.polarity_associations,
-                                      self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                      self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
-            self.devset = FXDataset(self.opt.dataset_path + 'dev.jsonl', self.tokenizer, self.polarity_associations,
-                                    self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                    self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
-            self.testset = FXDataset(self.opt.dataset_path + 'test.jsonl', self.tokenizer, self.polarity_associations,
-                                     self.sorted_expected_label_names, self.opt.use_tp_placeholders,
-                                     self.opt.task_format, self.opt.devmode, self.opt.use_global_context)
+            self.trainset = self._load_dataset(self.opt.dataset_path + 'train.jsonl')
+            self.devset = self._load_dataset(self.opt.dataset_path + 'dev.jsonl')
+            self.testset = self._load_dataset(self.opt.dataset_path + 'test.jsonl')
             self.all_datasets = [self.trainset, self.devset, self.testset]
             logger.info("loaded datasets from {}".format(self.opt.dataset_path))
 

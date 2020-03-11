@@ -20,9 +20,13 @@ conda install --yes pytorch torchvision -c pytorch
 
 conda install --yes pandas tqdm scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate imbalanced-learn
-conda install --yes -c anaconda requests gensim openpyxl
+conda install --yes -c anaconda requests gensim openpyxl networkx
 
 pip install pytorch-transformers
+
+pip install spacy==2.1.0
+python -m spacy download en_core_web_lg
+pip install neuralcoref --no-binary neuralcoref
 ```
 
 If you want to *train your own models*, that's it! Still, see [below](#train-your-own-models) for optional things to setup that may improve the performance.

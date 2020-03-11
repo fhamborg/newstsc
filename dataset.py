@@ -46,7 +46,8 @@ class RandomOversampler(torch.utils.data.sampler.Sampler):
 
 class FXDataset(Dataset):
     def __init__(self, filepath, tokenizer, named_polarity_to_class_number, sorted_expected_label_names,
-                 use_tp_placeholders, task_format="newstsc", devmode=False, use_global_context=False):
+                 use_tp_placeholders, task_format="newstsc", devmode=False, use_global_context=False,
+                 use_dependency_tensor: bool = False):
         self.polarity_associations = named_polarity_to_class_number
         self.sorted_expected_label_names = sorted_expected_label_names
         self.tokenizer = tokenizer
@@ -54,6 +55,7 @@ class FXDataset(Dataset):
         self.use_target_phrase_placeholders = use_tp_placeholders
         self.task_format = task_format
         self.use_global_context = use_global_context
+        self.use_dependency_tensor = use_dependency_tensor
 
         logger.info("reading dataset file {}".format(filepath))
 
