@@ -22,7 +22,7 @@ conda install --yes pandas tqdm scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate imbalanced-learn
 conda install --yes -c anaconda requests gensim openpyxl networkx
 
-pip install pytorch-transformers
+pip install pytorch-transformers>=1.2.0
 
 pip install spacy==2.1.0
 python -m spacy download en_core_web_lg
