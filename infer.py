@@ -4,11 +4,6 @@ import argparse
 import torch
 import torch.nn.functional as F
 
-cur_path = os.path.dirname(os.path.realpath(__file__))
-par_path = os.path.dirname(cur_path)
-sys.path.append(cur_path)
-sys.path.append(par_path)
-
 from newstsc.fxlogger import get_logger
 from newstsc.train import prepare_and_start_instructur, parse_arguments
 
