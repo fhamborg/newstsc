@@ -21,7 +21,7 @@ class FXTokenizer(ABC):
         self.max_seqs_per_doc = global_context_max_seqs_per_doc
 
     def create_text_to_indexes(self, text_left, target_phrase, text_right, use_target_phrase_placeholders,
-                               global_context=None):
+                               global_context=None, focus_vector=None):
         if use_target_phrase_placeholders:
             target_phrase = 'placeholder'
 
@@ -80,6 +80,7 @@ class FXTokenizer(ABC):
             'text_right_indices': text_right_indices,
             'text_right_with_target_phrase_indices': text_right_with_target_phrase_indices,
             'target_phrase_indexes': target_phrase_indexes,
+            'focus_vector': focus_vector,
             # 'target_phrase_in_text': target_phrase_in_text,
         }
 

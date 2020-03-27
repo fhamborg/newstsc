@@ -148,7 +148,6 @@ class LCF_BERT(nn.Module):
             inputs[2],
             inputs[3],
         )
-        batch_size = text_bert_indices.shape[0]
 
         bert_spc_out, _, _ = self.bert_spc(text_bert_indices, bert_segments_ids)
         bert_spc_out = self.dropout(bert_spc_out)

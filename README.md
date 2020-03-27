@@ -21,7 +21,7 @@ conda install --yes pytorch torchvision -c pytorch
 conda install --yes pandas tqdm scikit-learn
 conda install --yes -c conda-forge boto3 regex sacremoses jsonlines matplotlib tabulate imbalanced-learn
 conda install --yes -c anaconda requests gensim openpyxl networkx
-
+  
 pip install pytorch-transformers
 
 pip install spacy==2.1.0
@@ -53,7 +53,7 @@ mv bert_news_ccnc_10mio_3ep pretrained_models/
 ### Download fine-tuned weights
 You can download the model that performed best during our evaluation. Download it [here](https://github.com/fhamborg/newstsc/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip), extract it, and place the folder `lcf_bert_newstsc_val_recall_avg_0.5954_epoch3` into `pretrained_models/state_dicts/`.
 
-Terminal friends may instead use (when in the project's root directory):
+Alternatively, execute the following:
 ```
 wget https://github.com/fhamborg/newstsc/releases/download/news_v1.0/lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
 unzip lcf_bert_newstsc_val_recall_avg_0.5954_epoch3.zip
