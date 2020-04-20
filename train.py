@@ -16,7 +16,6 @@ import torch
 import torch.nn as nn
 from jsonlines import jsonlines
 
-from dependencyparser import DependencyParser
 from models.fx import FX_BERT
 
 cur_path = os.path.dirname(os.path.realpath(__file__))
@@ -75,9 +74,10 @@ class Instructor:
         self.crossvalset = None
         self.dependency_parser = None
         if self.opt.focus_mode:
-            self.dependency_parser = DependencyParser(
-                self.opt.focus_mode, self.opt.max_seq_len
-            )
+            # self.dependency_parser = DependencyParser(
+            #    self.opt.focus_mode, self.opt.max_seq_len
+            # )
+            pass
 
         if self.opt.training_mode:
             self.load_datasets()
@@ -167,7 +167,12 @@ class Instructor:
             "fx_bert",
         ]:
             if not only_model:
-                if self.opt.model_name in ["aen_bert", "spc_bert", "lcf_bert", "fx_bert"]:
+                if self.opt.model_name in [
+                    "aen_bert",
+                    "spc_bert",
+                    "lcf_bert",
+                    "fx_bert",
+                ]:
                     self.tokenizer = Tokenizer4Bert(
                         self.opt.pretrained_model_name,
                         self.opt.max_seq_len,

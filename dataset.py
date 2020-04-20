@@ -136,7 +136,7 @@ class FXDataset(Dataset):
         logger.debug("T: '" + target_phrase + "'")
         logger.debug("R: '" + text_right + "'")
 
-        focus_vector = None
+        focus_vector = 0
         if self.dependency_parser:
             focus_vector = self.dependency_parser.process_sentence(
                 text, start_char, end_char
