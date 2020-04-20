@@ -113,8 +113,8 @@ class FXDataset(Dataset):
             text = task["local_context"]
             start_char = task["target_local_from"]
             end_char = task["target_local_to"]
-            text_left = text[: start_char - 1]
-            text_right = text[end_char + 1 :]
+            text_left = text[:start_char]
+            text_right = text[end_char:]
 
             label = task["label"]
             polarity = self.polarity_associations[label]
@@ -131,6 +131,10 @@ class FXDataset(Dataset):
             example_id = -1
         else:
             raise Exception
+
+        logger.debug("L: '" + text_left + "'")
+        logger.debug("T: '" + target_phrase + "'")
+        logger.debug("R: '" + text_right + "'")
 
         focus_vector = None
         if self.dependency_parser:

@@ -37,5 +37,7 @@ combinations_default_0 = {
     # ['None', 'lcf_bert_acl14twitter_val_recall_avg_0.7349_epoch3', 'lcf_bert_semeval14laptops_val_recall_avg_0.7853_epoch3', 'lcf_bert_semeval14restaurants_val_recall_avg_0.7672_epoch2', 'lcf_bert_newstsc_val_recall_avg_0.5954_epoch3'],
     "use_global_context": ["True"],  # ['True', 'False']
     "global_context_seqs_per_doc": ["20"],  # ['20']
-    "focus_mode": [DependencyParser.ID_TARGET_DEPENDENT_WEIGHTS_DEPDIST_COREF],
+    "focus_mode": [
+        "None"
+    ],  # DependencyParser.ID_TARGET_DEPENDENT_WEIGHTS_DEPDIST_COREF
 }
