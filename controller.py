@@ -135,7 +135,7 @@ class SetupController:
             self.cuda_devices = None
 
         self.use_cross_validation = 0  # if 0: do not use cross validation
-        self.snem = "recall_avg"
+        self.snem = "f1_macro"
         self.experiment_base_path = self.opt.experiments_path
 
         args_names_ordered = [

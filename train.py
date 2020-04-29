@@ -961,7 +961,7 @@ def parse_arguments(override_args=False):
         help="semantic-relative-distance, see the paper of LCF-BERT " "model",
     )
     parser.add_argument(
-        "--snem", default="recall_avg", help="see evaluator.py for valid options"
+        "--snem", default="f1_macro", help="see evaluator.py for valid options"
     )
     parser.add_argument(
         "--devmode",
