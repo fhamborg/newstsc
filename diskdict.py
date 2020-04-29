@@ -1,9 +1,10 @@
 from pathlib import Path
 import pickle
+from typing import Union
 
 
 class DiskDict(dict):
-    def __init__(self, sync_path: Path):
+    def __init__(self, sync_path: Union[Path, str]):
         if type(sync_path) == str:
             sync_path = Path(sync_path)
         self.path = sync_path
