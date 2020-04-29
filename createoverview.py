@@ -42,14 +42,17 @@ def shelve2xlsx(opt):
     flattened_results = {}
 
     for named_id, result in completed_tasks.items():
-        if result['rc'] == 0:
-            test_stats = rename_flatten(result['details']['test_stats'], 'test_stats')
-            dev_stats = rename_flatten(result['details']['dev_stats'], 'dev_stats')
+        if result["rc"] == 0:
+            test_stats = rename_flatten(result["details"]["test_stats"], "test_stats")
+            dev_stats = rename_flatten(result["details"]["dev_stats"], "dev_stats")
 
-            flattened_result = {**without_keys(result, ['details']), **dev_stats,
-                                **test_stats}
+            flattened_result = {
+                **without_keys(result, ["details"]),
+                **dev_stats,
+                **test_stats,
+            }
         else:
-            flattened_result = {**without_keys(result, ['details'])}
+            flattened_result = {**without_keys(result, ["details"])}
 
         scalared_flattened_result = non_scalar_to_str(flattened_result)
         flattened_results[named_id] = scalared_flattened_result
@@ -59,14 +62,14 @@ def shelve2xlsx(opt):
 
 
 def jsonl2xlsx(opt):
-    labels = {2: 'positive', 1: 'neutral', 0: 'negative'}
+    labels = {2: "positive", 1: "neutral", 0: "negative"}
 
-    with jsonlines.open(opt.results_path, 'r') as reader:
+    with jsonlines.open(opt.results_path, "r") as reader:
         lines = []
         for line in reader:
-            if line['true_label'] != line['pred_label']:
-                line['true_label'] = labels[line['true_label']]
-                line['pred_label'] = labels[line['pred_label']]
+            if line["true_label"] != line["pred_label"]:
+                line["true_label"] = labels[line["true_label"]]
+                line["pred_label"] = labels[line["pred_label"]]
 
                 lines.append(line)
 
@@ -74,13 +77,18 @@ def jsonl2xlsx(opt):
         df.to_excel(opt.results_path + ".xlsx")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    # --results_path results/results_newstsc_newstscemnlp1 --mode shelve
     parser = argparse.ArgumentParser()
-    parser.add_argument('--results_path', type=str, required=True)
-    parser.add_argument('--mode', type=str, required=True)
+    parser.add_argument(
+        "--results_path",
+        type=str,
+        default="results/123123.dat",
+    )
+    parser.add_argument("--mode", type=str, default="shelve")
     opt = parser.parse_args()
 
-    if opt.mode == 'shelve':
+    if opt.mode == "shelve":
         shelve2xlsx(opt)
-    elif opt.mode == 'jsonl':
+    elif opt.mode == "jsonl":
         jsonl2xlsx(opt)

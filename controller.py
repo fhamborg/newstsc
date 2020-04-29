@@ -21,7 +21,6 @@ b) return model from best epoch (or from best fold???!?)
 import argparse
 import multiprocessing
 import os
-import shelve
 import subprocess
 import time
 from collections import Counter, defaultdict
@@ -35,9 +34,10 @@ from tqdm import tqdm
 from DatasetPreparer import DatasetPreparer
 from combinations_default import combinations_default_0
 from combinations_g import combinations_g_0
+from diskdict import DiskDict
 from fxlogger import get_logger
 
-completed_tasks = None  # will be shelve (dict) later
+completed_tasks = None  # will be DiskDict later
 completed_tasks_in_this_run_count = 0
 
 
@@ -79,7 +79,7 @@ def start_worker(
 def on_task_done(x):
     # result_list is modified only by the main process, not the pool workers.
     completed_tasks[x["experiment_named_id"]] = x
-    completed_tasks.sync()
+    completed_tasks.sync_to_disk()
     global completed_tasks_in_this_run_count
     completed_tasks_in_this_run_count += 1
 
@@ -88,7 +88,7 @@ def on_task_error(x):
     # result_list is modified only by the main process, not the pool workers.
     print(x)
     completed_tasks[x["experiment_named_id"]] = x
-    completed_tasks.sync()
+    completed_tasks.sync_to_disk()
     global completed_tasks_in_this_run_count
     completed_tasks_in_this_run_count += 1
 
@@ -470,7 +470,7 @@ class SetupController:
         else:
             self.logger.info("continuing previous run(s)")
 
-        completed_tasks = shelve.open(results_path)
+        completed_tasks = DiskDict(results_path)
         self.logger.info("found {} previous results".format(len(completed_tasks)))
 
         self.logger.info("preparing experiment setups...")
@@ -600,6 +600,7 @@ class SetupController:
                 if update_inc > 0:
                     pbar.update(update_inc)
                     prev_count_done = completed_tasks_in_this_run_count
+                    completed_tasks.sync_to_disk()
 
                 best_dev_snem = self._get_best_dev_snem()
                 sorted_running_procs = sorted(
@@ -610,6 +611,7 @@ class SetupController:
                     f"dev-snem: {best_dev_snem:.4f}; prcs/devs: {sorted_running_procs}"
                 )
 
+        completed_tasks.sync_to_disk()
         self.logger.info(
             f"finished all tasks ({completed_tasks_in_this_run_count} of {previous_tasks['new']})"
         )
