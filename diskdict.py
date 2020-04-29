@@ -19,4 +19,4 @@ class DiskDict(dict):
         with open(self.path, "wb") as file:
             tmp_dct = super().copy()
             pickle.dump(tmp_dct, file)
-            print(f"saved DiskDict with {len(tmp_dct)} items to {self.path}")
+            # print(f"saved DiskDict with {len(tmp_dct)} items to {self.path}")

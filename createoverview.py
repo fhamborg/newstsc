@@ -1,10 +1,11 @@
 import argparse
 import json
-import shelve
+
 
 import jsonlines
 import pandas as pd
 
+from diskdict import DiskDict
 from fxlogger import get_logger
 
 logger = get_logger()
@@ -36,7 +37,7 @@ def non_scalar_to_str(d):
 
 
 def shelve2xlsx(opt):
-    completed_tasks = shelve.open(opt.results_path)
+    completed_tasks = DiskDict(opt.results_path)
     logger.info("found {} results".format(len(completed_tasks)))
 
     flattened_results = {}
@@ -78,17 +79,15 @@ def jsonl2xlsx(opt):
 
 
 if __name__ == "__main__":
-    # --results_path results/results_newstsc_newstscemnlp1 --mode shelve
+    # --results_path results/results_newstsc_newstscemnlp1 --mode diskdict
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--results_path",
-        type=str,
-        default="results/123123.dat",
+        "--results_path", type=str, default="results/results_newstsc_newstscemnlp1",
     )
-    parser.add_argument("--mode", type=str, default="shelve")
+    parser.add_argument("--mode", type=str, default="diskdict")
     opt = parser.parse_args()
 
-    if opt.mode == "shelve":
+    if opt.mode == "diskdict":
         shelve2xlsx(opt)
     elif opt.mode == "jsonl":
         jsonl2xlsx(opt)
