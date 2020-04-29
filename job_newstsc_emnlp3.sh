@@ -1,6 +1,6 @@
 #!/bin/bash
 ###################################
-#$ -N newstscemn3           # the name of the job
+#$ -N n3           # the name of the job
 #$ -l h_rt=168:00:00     # max run time, see https://www.scc.uni-konstanz.de/summary/current-activities/
 #$-l h_vmem=10G          # reserved GB per slot (for each CPU)
 #$ -o /data/scc/fhamborg/newstscemn3.out

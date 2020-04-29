@@ -618,7 +618,7 @@ class SetupController:
 
         # copy and close shelve to preserve its original state
         processed_results = dict(completed_tasks)
-        completed_tasks.close()
+        completed_tasks.sync_to_disk()
 
         experiments_rc_overview = Counter()
         non_okay_experiment_ids = []
