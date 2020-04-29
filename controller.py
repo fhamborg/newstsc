@@ -303,6 +303,24 @@ class SetupController:
                     self.datasetname,
                     self.task_format,
                 ) = DatasetPreparer.newstsc2(self.basepath_data)
+            elif self.opt.dataset == "newstsc3":
+                (
+                    self.dataset_preparer,
+                    self.datasetname,
+                    self.task_format,
+                ) = DatasetPreparer.newstsc3(self.basepath_data)
+            elif self.opt.dataset == "newstsc4":
+                (
+                    self.dataset_preparer,
+                    self.datasetname,
+                    self.task_format,
+                ) = DatasetPreparer.newstsc4(self.basepath_data)
+            elif self.opt.dataset == "newstsc5":
+                (
+                    self.dataset_preparer,
+                    self.datasetname,
+                    self.task_format,
+                ) = DatasetPreparer.newstsc5(self.basepath_data)
             elif self.opt.dataset == "newstscg":
                 (
                     self.dataset_preparer,

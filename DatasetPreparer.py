@@ -417,6 +417,66 @@ class DatasetPreparer:
         return dprep, name, task_format
 
     @classmethod
+    def newstsc3(cls, basepath):
+        name = "newstsc3"
+        task_format = "newstsc"
+        human_created_filenames = ["train.jsonl"]
+        non_human_created_filenames = []
+
+        dprep = cls(
+            name, basepath, human_created_filenames, non_human_created_filenames
+        )
+
+        sets_info = {
+            "train": {"human-weight": 4000, "nonhum-weight": 0},
+            "dev": {"human-weight": 600, "nonhum-weight": 0},
+            "test": {"file": "test.jsonl"},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, task_format
+
+    @classmethod
+    def newstsc4(cls, basepath):
+        name = "newstsc4"
+        task_format = "newstsc"
+        human_created_filenames = ["train.jsonl"]
+        non_human_created_filenames = []
+
+        dprep = cls(
+            name, basepath, human_created_filenames, non_human_created_filenames
+        )
+
+        sets_info = {
+            "train": {"human-weight": 4000, "nonhum-weight": 0},
+            "dev": {"human-weight": 600, "nonhum-weight": 0},
+            "test": {"file": "test.jsonl"},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, task_format
+
+    @classmethod
+    def newstsc5(cls, basepath):
+        name = "newstsc5"
+        task_format = "newstsc"
+        human_created_filenames = ["train.jsonl"]
+        non_human_created_filenames = []
+
+        dprep = cls(
+            name, basepath, human_created_filenames, non_human_created_filenames
+        )
+
+        sets_info = {
+            "train": {"human-weight": 4000, "nonhum-weight": 0},
+            "dev": {"human-weight": 600, "nonhum-weight": 0},
+            "test": {"file": "test.jsonl"},
+        }
+
+        dprep.init_set(sets_info)
+        return dprep, name, task_format
+
+    @classmethod
     def newstscg(cls, basepath):
         name = "newstscg"
         task_format = "newstsc"

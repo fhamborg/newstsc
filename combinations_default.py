@@ -15,7 +15,7 @@ combinations_default_0 = {
     "batch_size": [
         "16"
     ],  # ['16', '32'], # on SCC, 16 is fine for normal operation, 1 is fine for global models
-    "balancing": ["lossweighting"],  # ['None', 'lossweighting', 'oversampling'],
+    "balancing": ['None', 'lossweighting', 'oversampling'],  # ['None', 'lossweighting', 'oversampling'],
     "devmode": ["False"],
     "num_epoch": ["3", "4"],
     "lsr": ["True", "False"],
