@@ -4,6 +4,8 @@ import pickle
 
 class DiskDict(dict):
     def __init__(self, sync_path: Path):
+        if type(sync_path) == str:
+            sync_path = Path(sync_path)
         self.path = sync_path
 
         if self.path.exists():
