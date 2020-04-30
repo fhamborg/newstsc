@@ -442,10 +442,11 @@ class SetupController:
         self._add_arg(args, "crossval", self.use_cross_validation)
         self._add_arg(args, "task_format", self.task_format)
 
-        cuda_device = -1
+        cuda_device_id = -1
         if self.cuda_devices:
-            cuda_device = experiment_id % len(self.cuda_devices)
-            cuda_device_name = "cuda:" + str(cuda_device)
+            cuda_device_index = experiment_id % len(self.cuda_devices)
+            cuda_device_id = self.cuda_devices[cuda_device_index]
+            cuda_device_name = "cuda:" + str(cuda_device_id)
             self._add_arg(args, "device", cuda_device_name)
 
         cmd = self.basecmd + args
@@ -454,7 +455,7 @@ class SetupController:
         with open(os.path.join(experiment_path, "experiment_cmd.sh"), "w") as writer:
             writer.write(human_cmd)
 
-        return cmd, human_cmd, experiment_path, cuda_device
+        return cmd, human_cmd, experiment_path, cuda_device_id
 
     def run(self):
         global completed_tasks
