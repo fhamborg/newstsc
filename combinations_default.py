@@ -1,11 +1,9 @@
-from dependencyparser import DependencyParser
-
 combinations_default_0 = {
     "model_name": [
         # SPC
-        # 'spc_bert', 'spc_distilbert', 'spc_roberta',
+        'spc_bert',# 'spc_distilbert', 'spc_roberta',
         # AEN
-        # 'aen_bert', 'aen_distilbert', 'aen_roberta', 'aen_glove', 'aen_distilroberta'
+        'aen_bert',# 'aen_distilbert', 'aen_roberta', 'aen_glove', 'aen_distilroberta'
         # LCF
         "lcf_bert",
     ],
@@ -13,7 +11,7 @@ combinations_default_0 = {
     "initializer": ["xavier_uniform_"],
     "learning_rate": ["2e-5", "3e-5", "5e-5"],
     "batch_size": [
-        "16"
+        "16", "32"
     ],  # ['16', '32'], # on SCC, 16 is fine for normal operation, 1 is fine for global models
     "balancing": ['None', 'lossweighting', 'oversampling'],  # ['None', 'lossweighting', 'oversampling'],
     "devmode": ["False"],
