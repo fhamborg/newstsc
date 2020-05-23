@@ -501,8 +501,8 @@ class SetupController:
                                 experiment_path,
                                 cuda_device_id,
                             ) = self.prepare_single_setup(named_combination, i)
-                            if cuda_device_id != -1:
-                                pool_id = cuda_device_id
+                            # if cuda_device_id != -1:
+                            #    pool_id = cuda_device_id
 
                             experiment_descs[pool_id].append(
                                 (
@@ -542,8 +542,8 @@ class SetupController:
                         experiment_path,
                         cuda_device_id,
                     ) = self.prepare_single_setup(named_combination, i)
-                    if cuda_device_id != -1:
-                        pool_id = cuda_device_id
+                    # if cuda_device_id != -1:
+                    #    pool_id = cuda_device_id
 
                     experiment_descs[pool_id].append(
                         (
