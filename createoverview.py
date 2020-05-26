@@ -82,7 +82,7 @@ if __name__ == "__main__":
     # --results_path results/results_newstsc_newstscemn1 --mode diskdict
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--results_path", type=str, default="results/results_newstsc_newstscemn5",
+        "--results_path", type=str, default="results/results_newstsc_newstscemn2",
     )
     parser.add_argument("--mode", type=str, default="diskdict")
     opt = parser.parse_args()
