@@ -3,11 +3,10 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="469868e9-1597-49bb-a634-0eaa43dbf214" name="scc" url="http://scc2.uni-konstanz.de">
-        <fileTransfer host="scc2.uni-konstanz.de" port="22" rootFolder="/home/scc/fhamborg/" accessType="SFTP" authAgent="true">
+        <fileTransfer rootFolder="/home/scc/fhamborg/" accessType="SFTP" sshConfigId="89ce940e-3d25-4081-ac36-5cbd5a312316" sshConfig="scc">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
-          <option name="port" value="22" />
         </fileTransfer>
       </webServer>
     </option>
