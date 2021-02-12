@@ -6,7 +6,7 @@ This readme consists of two main parts: installation of NewsTSC and how to use i
 1. How to easily classify your own data (using our best performing model).
 2. How to train your own models (using the NewsTSC dataset or any other dataset).
 
-If you're only interested in the dataset files, please click [here]().
+If you only want to download the dataset, please click [here](https://github.com/fhamborg/newstsc/raw/master/newstsc-dataset.zip).
 
 # Installation
 To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu. Other OS may work, too. Let us know :-)
