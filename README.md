@@ -1,11 +1,13 @@
 # Target-dependent Sentiment Classification in News Articles (NewsTSC)
-Code for our paper submitted to the ACL 2020. Note that some files had to be changed temporarily due to the 
-double-blind requirements of ACL 2020.
+Code and dataset for our paper "Towards Target-dependent Sentiment Classification in News Articles" accepted at the iConference 2021.
 
-This readme consists of two main parts: installation of NewsTSC and how to use it. For both, there are instructions describing two use cases of the system: target-dependent sentiment classification your own data (using our best performing model) or training your own models (using the NewsTSC dataset or any other).
+This readme consists of two main parts: installation of NewsTSC and how to use it. For both, there are instructions describing two use cases of the system: 
+
+1. How to easily classify your own data (using our best performing model).
+2. How to train your own models (using the NewsTSC dataset or any other dataset).
 
 # Installation
-To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu; other OS may work, too. Let us know :-)
+To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu. Other OS may work, too. Let us know :-)
 
 ## Core installation
 ```bash
@@ -109,9 +111,21 @@ can export this summary into an Excel spreadsheet.
 Note that we currently use `pytorch-transformers` for increased performance. You can also use the more recent `transformers` package, but it will lead to a [performance drop](https://github.com/songyouwei/ABSA-PyTorch/issues/27#issuecomment-551058509).
 
 # Acknowledgements
-The core functionality of this repository is strongly based on 
-[ABSA-PyTorch](https://github.com/songyouwei/ABSA-PyTorch). We thank Song et al. for making their excellent repository
-open source.
+This repository is strongly based on [ABSA-PyTorch](https://github.com/songyouwei/ABSA-PyTorch). We thank Song et al. for making their excellent repository open source. We also wish to thank J. Dix, M. Luettecke, and T. Spinde for their support on creating the dataset.
+
+# How to cite
+If you are using the dataset, please cite our [paper](http://www.gipp.com/wp-content/papercite-data/pdf/hamborg2021.pdf):
+```
+@InProceedings{Hamborg2021,
+  author    = {Hamborg, Felix and Donnay, Karsten and Gipp, Bela},
+  title     = {Towards Target-dependent Sentiment Classification in News Articles},
+  booktitle = {Proceedings of the iConference 2021},
+  year      = {2021},
+  month     = {Mar.},
+  location  = {Beijing, China (Virtual Event)},
+}
+```
+You can find more information on this and other news projects on our [website](https://felix.hamborg.eu/).
 
 # License
 [MIT License](LICENSE).
