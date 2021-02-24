@@ -1,5 +1,5 @@
 # Target-dependent Sentiment Classification in News Articles (NewsTSC)
-Code and dataset for our paper "Towards Target-dependent Sentiment Classification in News Articles" accepted at the iConference 2021.
+Code and dataset for our [paper](https://www.gipp.com/wp-content/papercite-data/pdf/hamborg2021.pdf) "Towards Target-dependent Sentiment Classification in News Articles" accepted at the iConference 2021.
 
 This readme consists of two main parts: installation of NewsTSC and how to use it. For both, there are instructions describing two use cases of the system: 
 
