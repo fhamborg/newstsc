@@ -9,7 +9,7 @@ This readme consists of two main parts: installation of NewsTSC and how to use i
 If you only want to download the dataset, please click [here](https://github.com/fhamborg/newstsc/raw/master/newstsc-dataset.zip).
 
 # Installation
-To keep things easy, we use Anaconda for setting up requirements. If you do not have it yet, follow Anaconda's [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu. Other OS may work, too. Let us know :-)
+To setup the required environment, we use Anaconda. If you haven't installed Anaconda yet, first follow their [installation instructions](https://docs.anaconda.com/anaconda/install/). NewsTSC was tested on MacOS and Ubuntu. Other OS may work, too. Let us know :-)
 
 ## Core installation
 ```bash
