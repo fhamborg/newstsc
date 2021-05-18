@@ -1,3 +1,14 @@
+# Announcement
+We recommend using our newer, improved [model and dataset](https://github.com/fhamborg/NewsMTSC), which have various advantages, most importantly: 
+
+1. larger dataset (11k sentences rather than 3k),
+2. improved labels in the dataset, e.g., including more realistic cases of sentiment in news articles, such as through subtle word choice, and
+3. improved model that achieves better classification performance.
+
+The repository you are currently viewing is not maintained any longer.
+
+# [Click here to go to NewsMTSC](https://github.com/fhamborg/NewsMTSC)
+
 # Target-dependent Sentiment Classification in News Articles (NewsTSC)
 Code and dataset for our [paper](https://www.gipp.com/wp-content/papercite-data/pdf/hamborg2021.pdf) "Towards Target-dependent Sentiment Classification in News Articles" accepted at the iConference 2021.
 
